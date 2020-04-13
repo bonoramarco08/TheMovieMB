@@ -18,11 +18,13 @@ public class FavoriteFragment extends Fragment {
 
     private FavoriteViewModel dashboardViewModel;
 
+
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         dashboardViewModel =
                 ViewModelProviders.of(this).get(FavoriteViewModel.class);
         View root = inflater.inflate(R.layout.fragment_favorite, container, false);
+        /*
         final TextView textView = root.findViewById(R.id.text_dashboard);
         dashboardViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
@@ -30,6 +32,7 @@ public class FavoriteFragment extends Fragment {
                 textView.setText(s);
             }
         });
+        */
         return root;
     }
 }
