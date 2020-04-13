@@ -7,7 +7,6 @@ import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
-import android.graphics.Movie;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
@@ -24,7 +23,10 @@ public class MovieProvider extends ContentProvider {
     public static Uri MOVIES_URI = Uri.parse(ContentResolver.SCHEME_CONTENT + "://" + AUTORITY + "/" + BASE_PATH_MOVIES);
     private MovieDatabaseHelper dBHelper;
     private static final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
-
+    static {
+        uriMatcher.addURI(AUTORITY, BASE_PATH_MOVIES, ALL_MOVIE);
+        uriMatcher.addURI(AUTORITY, BASE_PATH_MOVIES + "/#", SINGLE_MOVIE);
+    }
 
 
     @Override
@@ -82,11 +84,48 @@ public class MovieProvider extends ContentProvider {
 
     @Override
     public int delete(@NonNull Uri uri, @Nullable String s, @Nullable String[] strings) {
-        return 0;
+        String vTableName = "";
+        String vQuery = "";
+        SQLiteDatabase vDb = dBHelper.getWritableDatabase();
+        switch (uriMatcher.match(uri)) {
+            case ALL_MOVIE:
+                vTableName = MovieTableHelper.TABLE_NAME;
+                vQuery = s;
+                break;
+
+            case SINGLE_MOVIE:
+                vTableName = MovieTableHelper.TABLE_NAME;
+                vQuery = MovieTableHelper._ID + " = " + uri.getLastPathSegment();
+                if (s != null) {
+                    vQuery += " AND " + s;
+                }
+                break;
+        }
+        int vDeleteRows = vDb.delete(vTableName, vQuery, strings);
+        getContext().getContentResolver().notifyChange(uri, null);
+        return vDeleteRows;
     }
 
     @Override
     public int update(@NonNull Uri uri, @Nullable ContentValues contentValues, @Nullable String s, @Nullable String[] strings) {
-        return 0;
+        String vTableName = "";
+        String vQuery = "";
+        SQLiteDatabase vDb = dBHelper.getWritableDatabase();
+        switch (uriMatcher.match(uri)) {
+            case ALL_MOVIE:
+                vTableName = MovieTableHelper.TABLE_NAME;
+                vQuery = s;
+                break;
+            case SINGLE_MOVIE:
+                vTableName = MovieTableHelper.TABLE_NAME;
+                vQuery = MovieTableHelper._ID + " = " + uri.getLastPathSegment();
+                if (s != null) {
+                    vQuery += " AND " + s;
+                }
+                break;
+        }
+        int vUpdateRows = vDb.update(vTableName, contentValues, vQuery, strings);
+        getContext().getContentResolver().notifyChange(uri, null);
+        return vUpdateRows;
     }
 }

@@ -15,6 +15,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <provider
+            android:authorities="com.example.themoviemb.data.MovieProvider"
+            android:name="com.example.themoviemb.data.MovieProvider"
+            android:exported="false">
+        </provider>
     </application>
+
 
 </manifest>
