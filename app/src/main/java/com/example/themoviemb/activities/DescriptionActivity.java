@@ -1,8 +1,10 @@
-package com.example.themoviemb;
+package com.example.themoviemb.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.example.themoviemb.R;
 
 public class DescriptionActivity extends AppCompatActivity {
 
