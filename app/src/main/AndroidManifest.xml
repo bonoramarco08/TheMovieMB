@@ -9,18 +9,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".HomeActivity"
+            android:label="@string/title_activity_home">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <provider
-            android:authorities="com.example.themoviemb.data.MovieProvider"
-            android:name="com.example.themoviemb.data.MovieProvider"
-            android:exported="false">
-        </provider>
-    </application>
+        <activity android:name=".DescriptionActivity" />
+        <activity android:name=".MainActivity">
+        </activity>
 
+        <provider
+            android:name=".data.MovieProvider"
+            android:authorities="com.example.themoviemb.data.MovieProvider"
+            android:exported="false" />
+    </application>
 
 </manifest>
