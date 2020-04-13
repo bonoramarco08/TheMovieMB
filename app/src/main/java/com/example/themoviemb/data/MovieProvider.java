@@ -5,6 +5,9 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteQueryBuilder;
+import android.graphics.Movie;
 import android.net.Uri;
 
 import androidx.annotation.NonNull;
@@ -32,18 +35,48 @@ public class MovieProvider extends ContentProvider {
     @Nullable
     @Override
     public Cursor query(@NonNull Uri uri, @Nullable String[] strings, @Nullable String s, @Nullable String[] strings1, @Nullable String s1) {
-        return null;
+        SQLiteDatabase vDb = dBHelper.getReadableDatabase();
+        SQLiteQueryBuilder vBuilder = new SQLiteQueryBuilder();
+        switch (uriMatcher.match(uri)) {
+            case SINGLE_MOVIE:
+                vBuilder.setTables(MovieTableHelper.TABLE_NAME);
+                vBuilder.appendWhere(MovieTableHelper._ID + " = " + uri.getLastPathSegment());
+                break;
+            case ALL_MOVIE:
+                vBuilder.setTables(MovieTableHelper.TABLE_NAME);
+                break;
+        }
+
+        Cursor vCursor = vBuilder.query(vDb, strings, s, strings1, null, null, s1);
+        vCursor.setNotificationUri(getContext().getContentResolver(), uri);
+        return vCursor;
     }
 
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
+        switch (uriMatcher.match(uri)) {
+            case SINGLE_MOVIE:
+                return MIME_TYPE_MOVIE;
+
+            case ALL_MOVIE:
+                return MIME_TYPE_MOVIES;
+
+        }
+
         return null;
     }
 
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues contentValues) {
+        if (uriMatcher.match(uri) == ALL_MOVIE) {
+            SQLiteDatabase vDb = dBHelper.getWritableDatabase();
+            long vResult = vDb.insert(MovieTableHelper.TABLE_NAME, null, contentValues);
+            String vResultString = ContentResolver.SCHEME_CONTENT + "://" + BASE_PATH_MOVIES + "/" + vResult;
+            getContext().getContentResolver().notifyChange(uri, null);
+            return Uri.parse(vResultString);
+        }
         return null;
     }
 
