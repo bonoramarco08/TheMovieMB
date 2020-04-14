@@ -31,12 +31,13 @@ public class FavoriteFragment extends Fragment {
     private RecyclerView.Adapter adapterFavorite;
     private RecyclerView.LayoutManager layoutManagerFavorite;
     private WebService webService;
-    private TextView textView;
     private IWebServer webServerListener = new IWebServer() {
         @Override
         public void onMoviesFetched(boolean success, Result result, int errorCode, String errorMessage) {
             Log.d("TAGGGGG", result.getResult().get(1).getTitle());
+            layoutManagerFavorite=new GridLayoutManager(getContext(),2);
             adapterFavorite=new MoviesAdapter(result.getResult());
+            rvFavorite.setLayoutManager(layoutManagerFavorite);
             rvFavorite.setAdapter(adapterFavorite);
         }
     };
@@ -48,11 +49,11 @@ public class FavoriteFragment extends Fragment {
         View root = inflater.inflate(R.layout.fragment_favorite, container, false);
         webService = WebService.getInstance();
         rvFavorite=root.findViewById(R.id.rvMovies);
-        layoutManagerFavorite=new GridLayoutManager(getContext(),2);
-        loadTodos();
+
+        loadMovies();
         return root;
     }
-    private void loadTodos() {
+    private void loadMovies() {
         webService.getMovies(webServerListener);
     }
 }

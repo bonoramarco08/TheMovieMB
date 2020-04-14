@@ -1,6 +1,7 @@
 package com.example.themoviemb.ui.home;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,34 +18,50 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.themoviemb.R;
 import com.example.themoviemb.adapters.MoviesAdapter;
+import com.example.themoviemb.data.models.Result;
+import com.example.themoviemb.interface_movie.IWebServer;
+import com.example.themoviemb.networks.WebService;
 
 public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
-    private GridView gridViewHome;
     private RecyclerView rvHome;
     private RecyclerView.Adapter adapterHome;
     private RecyclerView.LayoutManager layoutManagerHome;
+    private WebService webService;
+    private IWebServer webServerListener = new IWebServer() {
+        @Override
+        public void onMoviesFetched(boolean success, Result result, int errorCode, String errorMessage) {
+            Log.d("TAGGGGG", result.getResult().get(1).getTitle());
+            layoutManagerHome=new GridLayoutManager(getContext(),2);
+            adapterHome=new MoviesAdapter(result.getResult());
+            rvHome.setLayoutManager(layoutManagerHome);
+            rvHome.setAdapter(adapterHome);
+        }
+    };
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
-        //gridViewHome=root.findViewById(R.id.rvMovies);
-        /*
-        final TextView textView = root.findViewById(R.id.text_home);
+
         homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
-                textView.setText(s);
+
             }
         });
-        */
         rvHome=root.findViewById(R.id.rvMovies);
-        layoutManagerHome=new GridLayoutManager(getContext(),2);
-        //adapterHome=new MoviesAdapter(this, fetchedData);
-        //rvHome.setAdapter(adapterHome);
+
+        //loadMovies();
         return root;
     }
+
+    /*
+    private void loadMovies() {
+        webService.getMovies(webServerListener);
+    }
+
+     */
 }
