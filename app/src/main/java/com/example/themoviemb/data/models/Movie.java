@@ -36,7 +36,7 @@ public class Movie {
     public String getBackdropPath() {
         if (backdropPath != null && !backdropPath.isEmpty()) {
             if (!backdropPath.toLowerCase().contains("http://")) {
-                return "http://image.tmdb.org/t/p/original" + backdropPath;
+                return "https://image.tmdb.org/t/p/original" + backdropPath;
             } else {
                 return backdropPath;
             }
@@ -61,7 +61,7 @@ public class Movie {
         if (posterPath != null && !posterPath.isEmpty()) {
 
             if (!posterPath.toLowerCase().contains("http://")) {
-                return "http://image.tmdb.org/t/p/w342" + posterPath;
+                return "https://image.tmdb.org/t/p/w342" + posterPath;
             } else {
                 return posterPath;
             }

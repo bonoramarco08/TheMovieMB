@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.themoviemb.R;
 import com.example.themoviemb.data.models.Movie;
 
@@ -44,11 +45,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         View view = inflater.inflate(R.layout.cell_layout, parent, false);
         final Context context = view.getContext();
 
-        int gridColsNumber = context.getResources()
-                .getInteger(new Integer(2));
 
-        view.getLayoutParams().height = (int) (parent.getWidth() / gridColsNumber *
-                POSTER_ASPECT_RATIO);
+
 
 
         MovieViewHolder viewHolder = new MovieViewHolder(view);
@@ -63,11 +61,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         final Context context = holder.view.getContext();
 
         holder.movie = movie;
-
-
         Glide   .with(context)
                 .load(movie.getPosterPath())
                 .into(holder.imageView);
+
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
