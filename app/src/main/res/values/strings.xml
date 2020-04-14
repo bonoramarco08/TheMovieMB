@@ -3,4 +3,5 @@
     <string name="title_activity_home">HomeActivity</string>
     <string name="title_home">Home</string>
     <string name="title_favorite">Favorite</string>
+    <string name="description_image_copertina">Immagine di copertina</string>
 </resources>
