@@ -13,19 +13,25 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.themoviemb.R;
+import com.example.themoviemb.adapters.MoviesAdapter;
 import com.example.themoviemb.data.models.Result;
 import com.example.themoviemb.interface_movie.IWebServer;
 import com.example.themoviemb.networks.WebService;
 
 import java.util.List;
 
-public class FavoriteFragment extends Fragment {
+public class FavoriteFragment extends Fragment implements MyRecyclerViewAdapter.ItemClickListener {
 
     private FavoriteViewModel dashboardViewModel;
+    private RecyclerView rvFavorite;
+    private RecyclerView.Adapter adapterFavorite;
+    private RecyclerView.LayoutManager layoutManagerFavorite;
     private WebService webService;
-    TextView textView;
+    private TextView textView;
     private IWebServer webServerListener = new IWebServer() {
         @Override
         public void onMoviesFetched(boolean success, Result result, int errorCode, String errorMessage) {
@@ -39,8 +45,14 @@ public class FavoriteFragment extends Fragment {
                 ViewModelProviders.of(this).get(FavoriteViewModel.class);
         View root = inflater.inflate(R.layout.fragment_favorite, container, false);
         webService = WebService.getInstance();
-        textView = container.findViewById(R.id.textView);
+
       loadTodos();
+
+        rvFavorite=root.findViewById(R.id.rvMovies);
+        layoutManagerFavorite=new GridLayoutManager(getContext(),2);
+        adapterFavorite=new MoviesAdapter(fetchedData);
+        rvFavorite.setAdapter(adapterFavorite);
+
         return root;
     }
     private void loadTodos() {
