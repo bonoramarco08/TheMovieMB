@@ -24,7 +24,7 @@ import com.example.themoviemb.networks.WebService;
 
 import java.util.List;
 
-public class FavoriteFragment extends Fragment implements MyRecyclerViewAdapter.ItemClickListener {
+public class FavoriteFragment extends Fragment {
 
     private FavoriteViewModel dashboardViewModel;
     private RecyclerView rvFavorite;
@@ -36,6 +36,8 @@ public class FavoriteFragment extends Fragment implements MyRecyclerViewAdapter.
         @Override
         public void onMoviesFetched(boolean success, Result result, int errorCode, String errorMessage) {
             Log.d("TAGGGGG", result.getResult().get(1).getTitle());
+            adapterFavorite=new MoviesAdapter(result.getResult());
+            rvFavorite.setAdapter(adapterFavorite);
         }
     };
 
@@ -45,14 +47,9 @@ public class FavoriteFragment extends Fragment implements MyRecyclerViewAdapter.
                 ViewModelProviders.of(this).get(FavoriteViewModel.class);
         View root = inflater.inflate(R.layout.fragment_favorite, container, false);
         webService = WebService.getInstance();
-
-      loadTodos();
-
         rvFavorite=root.findViewById(R.id.rvMovies);
         layoutManagerFavorite=new GridLayoutManager(getContext(),2);
-        adapterFavorite=new MoviesAdapter(fetchedData);
-        rvFavorite.setAdapter(adapterFavorite);
-
+        loadTodos();
         return root;
     }
     private void loadTodos() {

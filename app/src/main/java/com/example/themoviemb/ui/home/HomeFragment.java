@@ -31,7 +31,7 @@ public class HomeFragment extends Fragment {
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
-        gridViewHome=root.findViewById(R.id.gvHome);
+        //gridViewHome=root.findViewById(R.id.rvMovies);
         /*
         final TextView textView = root.findViewById(R.id.text_home);
         homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
@@ -43,8 +43,8 @@ public class HomeFragment extends Fragment {
         */
         rvHome=root.findViewById(R.id.rvMovies);
         layoutManagerHome=new GridLayoutManager(getContext(),2);
-        adapterHome=new MoviesAdapter(this, fetchedData);
-        rvHome.setAdapter(adapterHome);
+        //adapterHome=new MoviesAdapter(this, fetchedData);
+        //rvHome.setAdapter(adapterHome);
         return root;
     }
 }
