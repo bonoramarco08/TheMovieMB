@@ -44,7 +44,6 @@ public class FavoriteFragment extends Fragment {
         return root;
     }
     private void loadTodos() {
-
         webService.getMovies(webServerListener);
     }
 }
