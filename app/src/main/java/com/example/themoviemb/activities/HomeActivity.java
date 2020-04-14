@@ -10,8 +10,13 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+import androidx.recyclerview.widget.RecyclerView;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements MyRecyclerViewAdapter.ItemClickListener {
+
+    RecyclerView rvHome;
+    RecyclerView.Adapter adapterHome;
+    RecyclerView.LayoutManager layoutManagerHome;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
