@@ -12,13 +12,19 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.themoviemb.R;
+import com.example.themoviemb.adapters.MoviesAdapter;
 
 public class HomeFragment extends Fragment {
 
     private HomeViewModel homeViewModel;
     private GridView gridViewHome;
+    private RecyclerView rvHome;
+    private RecyclerView.Adapter adapterHome;
+    private RecyclerView.LayoutManager layoutManagerHome;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -35,6 +41,10 @@ public class HomeFragment extends Fragment {
             }
         });
         */
+        rvHome=root.findViewById(R.id.rvMovies);
+        layoutManagerHome=new GridLayoutManager(getContext(),2);
+        adapterHome=new MoviesAdapter(this, fetchedData);
+        rvHome.setAdapter(adapterHome);
         return root;
     }
 }
