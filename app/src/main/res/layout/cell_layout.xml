@@ -20,8 +20,10 @@
             android:id="@+id/ivCell"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:scaleType="centerCrop"
             android:contentDescription="@string/description_image_copertina"
-            app:srcCompat="@android:drawable/ic_dialog_alert" />
+            app:srcCompat="@android:drawable/ic_dialog_alert"
+            />
     </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
