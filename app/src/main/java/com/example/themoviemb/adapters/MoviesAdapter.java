@@ -61,6 +61,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         final Context context = holder.view.getContext();
 
         holder.movie = movie;
+        holder.setIsRecyclable(false);
         Glide   .with(context)
                 .load(movie.getPosterPath())
                 .into(holder.imageView);
