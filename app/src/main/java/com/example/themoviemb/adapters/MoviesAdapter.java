@@ -17,8 +17,6 @@ import com.example.themoviemb.R;
 import com.example.themoviemb.data.MovieTableHelper;
 import com.example.themoviemb.data.models.Movie;
 
-import org.w3c.dom.Text;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
@@ -78,6 +76,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
                     try {
                         onItemClickListener.sendDetails(Integer.parseInt(holder.textViewId.getText().toString()) ,onItemClickListener);
                     }catch ( Exception e){
+
                     }
                 }
             });

@@ -8,8 +8,10 @@ import android.os.Bundle;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.themoviemb.R;
 import com.example.themoviemb.data.MovieProvider;
+import com.example.themoviemb.data.MovieTableHelper;
 
 public class DescriptionActivity extends AppCompatActivity {
 
@@ -28,8 +30,11 @@ public class DescriptionActivity extends AppCompatActivity {
         if(idMovie!=-1){
             Cursor movie = getContentResolver().query(Uri.parse(MovieProvider.MOVIES_URI+"/"+idMovie),null,null,null,null);
             movie.moveToNext();
-
-
+            title.setText(movie.getString(movie.getColumnIndex(MovieTableHelper.TITLE)));
+            description.setText(movie.getString(movie.getColumnIndexOrThrow(MovieTableHelper.DESCRIPTION)));
+            Glide.with(getApplicationContext())
+                    .load(movie.getString(movie.getColumnIndex(MovieTableHelper.DESCRIPTION_PHOTO)))
+                    .into(descriptionImage);
         }
     }
 }
