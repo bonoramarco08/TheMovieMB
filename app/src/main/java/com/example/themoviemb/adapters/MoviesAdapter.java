@@ -29,7 +29,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     private OnItemClickListener onItemClickListener;
 
     public interface OnItemClickListener {
-        void send_details(Movie movie, int position);
+        void sendDetails(int position);
     }
 
     public MoviesAdapter(Cursor cursor) {
