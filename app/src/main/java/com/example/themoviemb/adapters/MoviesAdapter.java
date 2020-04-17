@@ -32,11 +32,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     private OnItemClickListener onItemClickListener;
 
     public interface OnItemClickListener {
-        void sendDetails(int id ,OnItemClickListener onItemClickListener);
+        void sendDetails(int position, OnItemClickListener onItemClickListener);
     }
 
-    public MoviesAdapter(Cursor cursor , OnItemClickListener onItemClickListener) {
-        this.onItemClickListener = onItemClickListener;
+    public MoviesAdapter(Cursor cursor) {
         this.cursor = cursor;
     }
 
@@ -68,7 +67,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     public void onBindViewHolder(@NonNull final MovieViewHolder holder, int position) {
         final Context context = holder.view.getContext();
         if (cursor.moveToPosition(position)) {
-            holder.textViewId.setText(cursor.getString(cursor.getColumnIndex(MovieTableHelper._ID)));
+            Toast.makeText(context, cursor.getString(cursor.getColumnIndex(MovieTableHelper.COVER_PHOTO)), Toast.LENGTH_SHORT);
             Glide.with(context)
                     .load(cursor.getString(cursor.getColumnIndex(MovieTableHelper.COVER_PHOTO)))
                     .into(holder.imageView);
@@ -91,6 +90,12 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     }
 
 
+    @Override
+    public void onViewRecycled(MovieViewHolder holder) {
+        super.onViewRecycled(holder);
+    }
+
+    //Inner Class
     public class MovieViewHolder extends RecyclerView.ViewHolder {
         public final View view;
 
