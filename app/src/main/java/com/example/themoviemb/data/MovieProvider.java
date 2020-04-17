@@ -8,6 +8,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -52,7 +53,11 @@ public class MovieProvider extends ContentProvider {
         }
 
         Cursor vCursor = vBuilder.query(vDb, strings, s, strings1, null, null, s1);
-        vCursor.setNotificationUri(getContext().getContentResolver(), uri);
+        try {
+            vCursor.setNotificationUri(getContext().getContentResolver(), uri);
+        }catch (NullPointerException e){
+            Log.d("Error", e.getMessage());
+        }
         return vCursor;
     }
 
@@ -78,7 +83,11 @@ public class MovieProvider extends ContentProvider {
             SQLiteDatabase vDb = dBHelper.getWritableDatabase();
             long vResult = vDb.insert(MovieTableHelper.TABLE_NAME, null, contentValues);
             String vResultString = ContentResolver.SCHEME_CONTENT + "://" + BASE_PATH_MOVIES + "/" + vResult;
-            getContext().getContentResolver().notifyChange(uri, null);
+            try {
+                getContext().getContentResolver().notifyChange(uri, null);
+            }catch (NullPointerException e){
+                Log.d("Error", e.getMessage());
+            }
             return Uri.parse(vResultString);
         }
         return null;
@@ -104,7 +113,11 @@ public class MovieProvider extends ContentProvider {
                 break;
         }
         int vDeleteRows = vDb.delete(vTableName, vQuery, strings);
-        getContext().getContentResolver().notifyChange(uri, null);
+        try {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }catch (NullPointerException e){
+            Log.d("Error", e.getMessage());
+        }
         return vDeleteRows;
     }
 
@@ -127,7 +140,11 @@ public class MovieProvider extends ContentProvider {
                 break;
         }
         int vUpdateRows = vDb.update(vTableName, contentValues, vQuery, strings);
-        getContext().getContentResolver().notifyChange(uri, null);
+        try {
+            getContext().getContentResolver().notifyChange(uri, null);
+        }catch (NullPointerException e){
+            Log.d("Error", e.getMessage());
+        }
         return vUpdateRows;
     }
 }

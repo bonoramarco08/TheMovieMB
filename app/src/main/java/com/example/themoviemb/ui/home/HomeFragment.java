@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,8 +44,13 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         rvHome = root.findViewById(R.id.rvMovies);
         layoutManagerHome = new GridLayoutManager(getContext(), 2);
-        DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
-        rvHome.addItemDecoration(new SpacesItemDecoration(displayMetrics.widthPixels / 20));
+        try {
+            DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
+            rvHome.addItemDecoration(new SpacesItemDecoration(displayMetrics.widthPixels / 20));
+        } catch (NullPointerException e) {
+            Log.d("Error", e.getMessage());
+
+        }
         rvHome.setLayoutManager(layoutManagerHome);
         adapterHome = new MoviesAdapter(null, this);
         rvHome.setAdapter(adapterHome);
@@ -89,16 +95,21 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
 
     @Override
     public void longClick(int id, String titolo, MoviesAdapter.OnItemClickListener onItemClickListener) {
-        Cursor cursor = getActivity().getContentResolver().query(MovieProvider.MOVIES_URI, null, MovieTableHelper._ID + " = " + id, null, null);
-        if (cursor.moveToNext()) {
-            if (cursor.getInt(cursor.getColumnIndex(MovieTableHelper.IS_FAVORITE)) == 0) {
-                DialogFavorite vDialog = new DialogFavorite("Aggiunta", "Vuoi aggiungere " + titolo + " dai tuoi film preferiti?", id, false);
-                vDialog.show(getChildFragmentManager(), null);
-            } else {
-                DialogFavorite vDialog = new DialogFavorite("Rimozione", "Vuoi rimuovere " + titolo + " dai tuoi film preferiti?", id, true);
-                vDialog.show(getChildFragmentManager(), null);
+        try {
+            Cursor cursor = getActivity().getContentResolver().query(MovieProvider.MOVIES_URI, null, MovieTableHelper._ID + " = " + id, null, null);
+            if (cursor.moveToNext()) {
+                if (cursor.getInt(cursor.getColumnIndex(MovieTableHelper.IS_FAVORITE)) == 0) {
+                    DialogFavorite vDialog = new DialogFavorite("Aggiunta", "Vuoi aggiungere " + titolo + " dai tuoi film preferiti?", id, false);
+                    vDialog.show(getChildFragmentManager(), null);
+                } else {
+                    DialogFavorite vDialog = new DialogFavorite("Rimozione", "Vuoi rimuovere " + titolo + " dai tuoi film preferiti?", id, true);
+                    vDialog.show(getChildFragmentManager(), null);
+                }
             }
+        }catch (NullPointerException e){
+            Log.d("Error", e.getMessage());
         }
+
 
     }
 

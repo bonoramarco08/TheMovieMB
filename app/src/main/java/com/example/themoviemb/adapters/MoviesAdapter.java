@@ -2,6 +2,7 @@ package com.example.themoviemb.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,12 +15,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.themoviemb.R;
 import com.example.themoviemb.data.MovieTableHelper;
-import com.example.themoviemb.data.models.Movie;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewHolder>{
+public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewHolder> {
 
     private final static String LOG_TAG = MoviesAdapter.class.getSimpleName();
     private static final float POSTER_ASPECT_RATIO = 1.5f;
@@ -29,10 +29,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
     public interface OnItemClickListener {
         void sendDetails(int position, OnItemClickListener onItemClickListener);
+
         void longClick(int position, String titolo, OnItemClickListener onItemClickListener);
     }
 
-    public MoviesAdapter(Cursor cursor , OnItemClickListener onItemClickListener) {
+    public MoviesAdapter(Cursor cursor, OnItemClickListener onItemClickListener) {
         this.cursor = cursor;
         this.onItemClickListener = onItemClickListener;
     }
@@ -44,9 +45,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         Context parentContext = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(parentContext);
         View view = inflater.inflate(R.layout.cell_layout, parent, false);
-        final Context context = view.getContext();
-        MovieViewHolder viewHolder = new MovieViewHolder(view);
-        return viewHolder;
+        return new MovieViewHolder(view);
     }
 
     public Cursor changeCursor(Cursor dataCursor) {
@@ -73,16 +72,16 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
                 @Override
                 public void onClick(View v) {
                     try {
-                        onItemClickListener.sendDetails(Integer.parseInt(holder.textViewId.getText().toString()) ,onItemClickListener);
-                    }catch ( Exception e){
-
+                        onItemClickListener.sendDetails(Integer.parseInt(holder.textViewId.getText().toString()), onItemClickListener);
+                    } catch (Exception e) {
+                        Log.d("Error", e.getMessage());
                     }
                 }
             });
             holder.view.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    onItemClickListener.longClick(Integer.parseInt(holder.textViewId.getText().toString()),"Film" ,onItemClickListener);
+                    onItemClickListener.longClick(Integer.parseInt(holder.textViewId.getText().toString()), "Film", onItemClickListener);
                     return true;
                 }
             });
@@ -97,21 +96,20 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
 
     @Override
-    public void onViewRecycled(MovieViewHolder holder) {
+    public void onViewRecycled(@NonNull MovieViewHolder holder) {
         super.onViewRecycled(holder);
     }
 
-    //Inner Class
-    public class MovieViewHolder extends RecyclerView.ViewHolder {
-        public final View view;
 
-        public Movie movie;
+    public class MovieViewHolder extends RecyclerView.ViewHolder {
+        private final View view;
 
         @BindView(R.id.ivCell)
         ImageView imageView;
         @BindView(R.id.textViewId)
         TextView textViewId;
-        public MovieViewHolder(View view) {
+
+        private MovieViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
             this.view = view;

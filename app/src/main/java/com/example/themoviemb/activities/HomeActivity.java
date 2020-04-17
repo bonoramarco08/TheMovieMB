@@ -59,9 +59,15 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
     }
 
     private void loadMovies() {
-        if (new CursorLoader(getApplicationContext(), MovieProvider.MOVIES_URI, null, null, null, null).loadInBackground().getCount() == 0)
-            webService.getMovies(webServerListener);
+        try {
+            if (new CursorLoader(getApplicationContext(), MovieProvider.MOVIES_URI, null, null, null, null).loadInBackground().getCount() == 0)
+                webService.getMovies(webServerListener);
+        } catch (NullPointerException e) {
+            Log.d("Error", e.getMessage());
+        }
+
     }
+
 
     @Override
     public void onResponse(boolean aResponse, long aId, Boolean isRemoved) {
