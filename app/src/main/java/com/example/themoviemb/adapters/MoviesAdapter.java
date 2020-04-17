@@ -1,20 +1,20 @@
 package com.example.themoviemb.adapters;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.RequestOptions;
 import com.example.themoviemb.R;
+import com.example.themoviemb.data.MovieTableHelper;
 import com.example.themoviemb.data.models.Movie;
-
-import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,7 +24,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     private final static String LOG_TAG = MoviesAdapter.class.getSimpleName();
     private static final float POSTER_ASPECT_RATIO = 1.5f;
 
-    private final List<Movie> movies;
+    private Cursor cursor;
 
     private OnItemClickListener onItemClickListener;
 
@@ -32,8 +32,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         void send_details(Movie movie, int position);
     }
 
-    public MoviesAdapter(List<Movie> movies) {
-        this.movies = movies;
+    public MoviesAdapter(Cursor cursor) {
+        this.cursor = cursor;
     }
 
 
@@ -44,46 +44,49 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         LayoutInflater inflater = LayoutInflater.from(parentContext);
         View view = inflater.inflate(R.layout.cell_layout, parent, false);
         final Context context = view.getContext();
-
-
-
-
-
         MovieViewHolder viewHolder = new MovieViewHolder(view);
         return viewHolder;
     }
 
-
+    public Cursor changeCursor(Cursor dataCursor) {
+        if (cursor == dataCursor) {
+            return null;
+        }
+        Cursor oldCursor = cursor;
+        cursor = dataCursor;
+        if (dataCursor != null) {
+            this.notifyDataSetChanged();
+        }
+        return oldCursor;
+    }
 
     @Override
     public void onBindViewHolder(@NonNull final MovieViewHolder holder, int position) {
-        final Movie movie = movies.get(position);
         final Context context = holder.view.getContext();
-
-        holder.movie = movie;
-        holder.setIsRecyclable(false);
-        Glide   .with(context)
-                .load(movie.getPosterPath())
-                .into(holder.imageView);
-
-        holder.view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onItemClickListener.send_details(movie,holder.getAdapterPosition());
-            }
-        });
+        if (cursor.moveToPosition(position)) {
+            Toast.makeText(context, cursor.getString(cursor.getColumnIndex(MovieTableHelper.COVER_PHOTO)), Toast.LENGTH_SHORT);
+            Glide.with(context)
+                    .load(cursor.getString(cursor.getColumnIndex(MovieTableHelper.COVER_PHOTO)))
+                    .into(holder.imageView);
+            holder.view.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    //onItemClickListener.send_details(movie,holder.getAdapterPosition());
+                }
+            });
+        }
     }
 
 
     @Override
     public int getItemCount() {
-        return movies.size();
+        return (cursor == null) ? 0 : cursor.getCount();
     }
+
 
     @Override
     public void onViewRecycled(MovieViewHolder holder) {
         super.onViewRecycled(holder);
-        holder.cleanUp();
     }
 
     //Inner Class
@@ -94,24 +97,20 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
         @BindView(R.id.ivCell)
         ImageView imageView;
+
         public MovieViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
             this.view = view;
 
         }
-        //Other methods
+
         public void cleanUp() {
             final Context context = view.getContext();
             imageView.setImageBitmap(null);
             imageView.setVisibility(View.INVISIBLE);
         }
 
-    }
-    public void add(List<Movie> movies) {
-        this.movies.clear();
-        this.movies.addAll(movies);
-        notifyDataSetChanged();
     }
 
 }

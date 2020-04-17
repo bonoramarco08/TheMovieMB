@@ -31,7 +31,9 @@ public class MovieProvider extends ContentProvider {
 
     @Override
     public boolean onCreate() {
+        dBHelper = new MovieDatabaseHelper(getContext());
         return false;
+
     }
 
     @Nullable
