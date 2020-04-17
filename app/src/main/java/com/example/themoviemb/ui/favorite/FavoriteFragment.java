@@ -95,6 +95,11 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
+    public void longClick(int position, String titolo, MoviesAdapter.OnItemClickListener onItemClickListener) {
+
+    }
+
+    @Override
     public void setVisibleText(String message) {
         error.setText(message);
         error.setVisibility(View.VISIBLE);

@@ -10,6 +10,7 @@ import com.example.themoviemb.data.MovieProvider;
 import com.example.themoviemb.data.MovieTableHelper;
 import com.example.themoviemb.data.models.Movie;
 import com.example.themoviemb.data.models.Result;
+import com.example.themoviemb.interface_movie.DialogFavorite;
 import com.example.themoviemb.interface_movie.IWebServer;
 import com.example.themoviemb.networks.WebService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -21,7 +22,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-public class HomeActivity extends AppCompatActivity  {
+public class HomeActivity extends AppCompatActivity implements DialogFavorite.IFavoritDialog {
 
 private MovieProvider provider;
     private WebService webService;
@@ -61,5 +62,12 @@ private MovieProvider provider;
         webService.getMovies(webServerListener);
     }
 
-
+    @Override
+    public void onResponse(boolean aResponse, long aId) {
+        if (aResponse) {
+            ContentValues cv = new ContentValues();
+            cv.put(MovieTableHelper.IS_FAVORITE, 1);
+            int i= getContentResolver().update(MovieProvider.MOVIES_URI, cv, MovieTableHelper._ID + " = " + aId, null);
+        }
+    }
 }

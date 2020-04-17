@@ -1,9 +1,13 @@
 package com.example.themoviemb.ui.home;
 
+import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Movie;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,8 +28,13 @@ import com.example.themoviemb.activities.DescriptionActivity;
 import com.example.themoviemb.adapters.MoviesAdapter;
 import com.example.themoviemb.adapters.SpacesItemDecoration;
 import com.example.themoviemb.data.MovieProvider;
+import com.example.themoviemb.data.MovieTableHelper;
+import com.example.themoviemb.interface_movie.DialogFavorite;
+import android.app.ListFragment;
+import android.widget.Toast;
 
-public class HomeFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> , MoviesAdapter.OnItemClickListener {
+
+public class HomeFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, MoviesAdapter.OnItemClickListener {
 
     private static final int LOADER_ID = 1;
     private HomeViewModel homeViewModel;
@@ -43,7 +52,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
         rvHome.addItemDecoration(new SpacesItemDecoration(displayMetrics.widthPixels / 20));
         rvHome.setLayoutManager(layoutManagerHome);
-        adapterHome = new MoviesAdapter(null,this);
+        adapterHome = new MoviesAdapter(null, this);
         rvHome.setAdapter(adapterHome);
         homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
@@ -79,8 +88,15 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
 
     @Override
     public void sendDetails(int id, MoviesAdapter.OnItemClickListener onItemClickListener) {
-        Intent intent=new Intent(getActivity(), DescriptionActivity.class);
-        intent.putExtra("ID_MOVIE",id);
+        Intent intent = new Intent(getActivity(), DescriptionActivity.class);
+        intent.putExtra("ID_MOVIE", id);
         startActivity(intent);
     }
+
+    @Override
+    public void longClick(int id, String titolo, MoviesAdapter.OnItemClickListener onItemClickListener) {
+        DialogFavorite vDialog = new DialogFavorite("Aggiunta?", "Vuoi aggiungere " + titolo + " ai tuoi film preferiti?", id);
+        vDialog.show(getChildFragmentManager(), null);
+    }
+
 }
