@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -15,6 +16,8 @@ import com.bumptech.glide.Glide;
 import com.example.themoviemb.R;
 import com.example.themoviemb.data.MovieTableHelper;
 import com.example.themoviemb.data.models.Movie;
+
+import org.w3c.dom.Text;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -29,10 +32,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     private OnItemClickListener onItemClickListener;
 
     public interface OnItemClickListener {
-        void sendDetails(int position);
+        void sendDetails(int id ,OnItemClickListener onItemClickListener);
     }
 
-    public MoviesAdapter(Cursor cursor) {
+    public MoviesAdapter(Cursor cursor , OnItemClickListener onItemClickListener) {
+        this.onItemClickListener = onItemClickListener;
         this.cursor = cursor;
     }
 
@@ -64,14 +68,17 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     public void onBindViewHolder(@NonNull final MovieViewHolder holder, int position) {
         final Context context = holder.view.getContext();
         if (cursor.moveToPosition(position)) {
-            Toast.makeText(context, cursor.getString(cursor.getColumnIndex(MovieTableHelper.COVER_PHOTO)), Toast.LENGTH_SHORT);
+            holder.textViewId.setText(cursor.getString(cursor.getColumnIndex(MovieTableHelper._ID)));
             Glide.with(context)
                     .load(cursor.getString(cursor.getColumnIndex(MovieTableHelper.COVER_PHOTO)))
                     .into(holder.imageView);
             holder.view.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    //onItemClickListener.send_details(movie,holder.getAdapterPosition());
+                    try {
+                        onItemClickListener.sendDetails(Integer.parseInt(holder.textViewId.getText().toString()) ,onItemClickListener);
+                    }catch ( Exception e){
+                    }
                 }
             });
         }
@@ -84,12 +91,6 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     }
 
 
-    @Override
-    public void onViewRecycled(MovieViewHolder holder) {
-        super.onViewRecycled(holder);
-    }
-
-    //Inner Class
     public class MovieViewHolder extends RecyclerView.ViewHolder {
         public final View view;
 
@@ -97,7 +98,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
         @BindView(R.id.ivCell)
         ImageView imageView;
-
+        @BindView(R.id.textViewId)
+        TextView textViewId;
         public MovieViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);

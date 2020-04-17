@@ -44,8 +44,9 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
         layoutManagerFavorite = new GridLayoutManager(getContext(), 2);
         DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
         rvFavorite.addItemDecoration(new SpacesItemDecoration(displayMetrics.widthPixels / 20));
+        rvFavorite.setHasFixedSize(true);
         rvFavorite.setLayoutManager(layoutManagerFavorite);
-        adapterFavorite = new MoviesAdapter(null);
+        adapterFavorite = new MoviesAdapter(null,this);
         rvFavorite.setAdapter(adapterFavorite);
         dashboardViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
@@ -80,9 +81,9 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
-    public void sendDetails(int position) {
+    public void sendDetails(int id, MoviesAdapter.OnItemClickListener onItemClickListener) {
         Intent intent=new Intent(getActivity(), DescriptionActivity.class);
-        intent.putExtra("ID_MOVIE",position);
+        intent.putExtra("ID_MOVIE",id);
         startActivity(intent);
     }
 }
