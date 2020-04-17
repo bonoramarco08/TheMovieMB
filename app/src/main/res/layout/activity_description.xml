@@ -10,7 +10,7 @@
         android:id="@+id/imgDescription"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:src="@drawable/ErrorImage"
+        android:src="@drawable/error_image"
         app:layout_constraintHeight_percent="0.4"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

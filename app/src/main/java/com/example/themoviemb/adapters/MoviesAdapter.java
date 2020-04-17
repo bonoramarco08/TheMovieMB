@@ -68,7 +68,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     public void onBindViewHolder(@NonNull final MovieViewHolder holder, int position) {
         final Context context = holder.view.getContext();
         if (cursor.moveToPosition(position)) {
-            Toast.makeText(context, cursor.getString(cursor.getColumnIndex(MovieTableHelper.COVER_PHOTO)), Toast.LENGTH_SHORT);
+            holder.textViewId.setText(cursor.getString(cursor.getColumnIndex(MovieTableHelper._ID)));
             Glide.with(context)
                     .load(cursor.getString(cursor.getColumnIndex(MovieTableHelper.COVER_PHOTO)))
                     .into(holder.imageView);
