@@ -3,7 +3,13 @@ package com.example.themoviemb.activities;
 import android.content.ContentValues;
 import android.os.Bundle;
 import android.util.Log;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.loader.content.CursorLoader;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
 import com.example.themoviemb.R;
 import com.example.themoviemb.data.MovieProvider;
@@ -15,23 +21,16 @@ import com.example.themoviemb.interface_movie.IWebServer;
 import com.example.themoviemb.networks.WebService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.loader.content.CursorLoader;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
 public class HomeActivity extends AppCompatActivity implements DialogFavorite.IFavoritDialog {
 
-private MovieProvider provider;
+    private MovieProvider provider;
     private WebService webService;
     private IWebServer webServerListener = new IWebServer() {
         @Override
         public void onMoviesFetched(boolean success, Result result, int errorCode, String errorMessage) {
             Log.d("TAGGGGG", result.getResult().get(1).getTitle());
-            for ( Movie movie : result.getResult()) {
-                ContentValues contentValues = new ContentValues() ;
+            for (Movie movie : result.getResult()) {
+                ContentValues contentValues = new ContentValues();
                 contentValues.put(MovieTableHelper.TITLE, movie.getTitle());
                 contentValues.put(MovieTableHelper.COVER_PHOTO, movie.getPosterPath());
                 contentValues.put(MovieTableHelper.DESCRIPTION, movie.getOverview());
@@ -40,6 +39,7 @@ private MovieProvider provider;
             }
         }
     };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,17 +57,24 @@ private MovieProvider provider;
 
 
     }
+
     private void loadMovies() {
-        if(new CursorLoader(getApplicationContext(), MovieProvider.MOVIES_URI, null, null, null, null).loadInBackground().getCount() == 0)
-        webService.getMovies(webServerListener);
+        if (new CursorLoader(getApplicationContext(), MovieProvider.MOVIES_URI, null, null, null, null).loadInBackground().getCount() == 0)
+            webService.getMovies(webServerListener);
     }
 
     @Override
-    public void onResponse(boolean aResponse, long aId) {
+    public void onResponse(boolean aResponse, long aId, Boolean isRemoved) {
         if (aResponse) {
-            ContentValues cv = new ContentValues();
-            cv.put(MovieTableHelper.IS_FAVORITE, 1);
-            int i= getContentResolver().update(MovieProvider.MOVIES_URI, cv, MovieTableHelper._ID + " = " + aId, null);
+            if (!isRemoved) {
+                ContentValues cv = new ContentValues();
+                cv.put(MovieTableHelper.IS_FAVORITE, 1);
+                int i = getContentResolver().update(MovieProvider.MOVIES_URI, cv, MovieTableHelper._ID + " = " + aId, null);
+            } else {
+                ContentValues cv = new ContentValues();
+                cv.put(MovieTableHelper.IS_FAVORITE, 0);
+                int i = getContentResolver().update(MovieProvider.MOVIES_URI, cv, MovieTableHelper._ID + " = " + aId, null);
+            }
         }
     }
 }

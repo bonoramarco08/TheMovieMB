@@ -27,6 +27,7 @@ import com.example.themoviemb.adapters.SpacesItemDecoration;
 import com.example.themoviemb.data.MovieProvider;
 import com.example.themoviemb.data.MovieTableHelper;
 import com.example.themoviemb.data.models.Movie;
+import com.example.themoviemb.interface_movie.DialogFavorite;
 import com.example.themoviemb.interface_movie.ErrorZeroItem;
 
 public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,MoviesAdapter.OnItemClickListener, ErrorZeroItem {
@@ -95,7 +96,17 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
-    public void longClick(int position, String titolo, MoviesAdapter.OnItemClickListener onItemClickListener) {
+    public void longClick(int id, String titolo, MoviesAdapter.OnItemClickListener onItemClickListener) {
+        Cursor cursor = getActivity().getContentResolver().query(MovieProvider.MOVIES_URI, null, MovieTableHelper._ID + " = " + id, null, null);
+        if (cursor.moveToNext()) {
+            if (cursor.getInt(cursor.getColumnIndex(MovieTableHelper.IS_FAVORITE)) == 0) {
+                DialogFavorite vDialog = new DialogFavorite("Aggiunta", "Vuoi aggiungere " + titolo + " dai tuoi film preferiti?", id, false);
+                vDialog.show(getChildFragmentManager(), null);
+            } else {
+                DialogFavorite vDialog = new DialogFavorite("Rimozione", "Vuoi rimuovere " + titolo + " dai tuoi film preferiti?", id, true);
+                vDialog.show(getChildFragmentManager(), null);
+            }
+        }
 
     }
 

@@ -1,13 +1,9 @@
 package com.example.themoviemb.ui.home;
 
-import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Movie;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,8 +26,6 @@ import com.example.themoviemb.adapters.SpacesItemDecoration;
 import com.example.themoviemb.data.MovieProvider;
 import com.example.themoviemb.data.MovieTableHelper;
 import com.example.themoviemb.interface_movie.DialogFavorite;
-import android.app.ListFragment;
-import android.widget.Toast;
 
 
 public class HomeFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, MoviesAdapter.OnItemClickListener {
@@ -95,8 +89,17 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
 
     @Override
     public void longClick(int id, String titolo, MoviesAdapter.OnItemClickListener onItemClickListener) {
-        DialogFavorite vDialog = new DialogFavorite("Aggiunta?", "Vuoi aggiungere " + titolo + " ai tuoi film preferiti?", id);
-        vDialog.show(getChildFragmentManager(), null);
+        Cursor cursor = getActivity().getContentResolver().query(MovieProvider.MOVIES_URI, null, MovieTableHelper._ID + " = " + id, null, null);
+        if (cursor.moveToNext()) {
+            if (cursor.getInt(cursor.getColumnIndex(MovieTableHelper.IS_FAVORITE)) == 0) {
+                DialogFavorite vDialog = new DialogFavorite("Aggiunta", "Vuoi aggiungere " + titolo + " dai tuoi film preferiti?", id, false);
+                vDialog.show(getChildFragmentManager(), null);
+            } else {
+                DialogFavorite vDialog = new DialogFavorite("Rimozione", "Vuoi rimuovere " + titolo + " dai tuoi film preferiti?", id, true);
+                vDialog.show(getChildFragmentManager(), null);
+            }
+        }
+
     }
 
 }

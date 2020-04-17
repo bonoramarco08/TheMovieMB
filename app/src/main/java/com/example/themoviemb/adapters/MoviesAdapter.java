@@ -1,27 +1,20 @@
 package com.example.themoviemb.adapters;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.themoviemb.R;
-import com.example.themoviemb.data.MovieProvider;
 import com.example.themoviemb.data.MovieTableHelper;
 import com.example.themoviemb.data.models.Movie;
-import com.example.themoviemb.interface_movie.DialogFavorite;
-
-import android.app.ListFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -89,11 +82,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
             holder.view.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-
                     onItemClickListener.longClick(Integer.parseInt(holder.textViewId.getText().toString()),"Film" ,onItemClickListener);
                     return true;
                 }
-
             });
         }
     }
