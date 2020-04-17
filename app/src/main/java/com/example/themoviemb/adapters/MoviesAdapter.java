@@ -35,8 +35,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         void sendDetails(int position, OnItemClickListener onItemClickListener);
     }
 
-    public MoviesAdapter(Cursor cursor) {
+    public MoviesAdapter(Cursor cursor , OnItemClickListener onItemClickListener) {
         this.cursor = cursor;
+        this.onItemClickListener = onItemClickListener;
     }
 
 
