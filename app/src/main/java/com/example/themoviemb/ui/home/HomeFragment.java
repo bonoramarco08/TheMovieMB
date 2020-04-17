@@ -46,7 +46,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         layoutManagerHome = new GridLayoutManager(getContext(), 2);
         try {
             DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
-            rvHome.addItemDecoration(new SpacesItemDecoration(displayMetrics.widthPixels / 20));
+            //rvHome.addItemDecoration(new SpacesItemDecoration(displayMetrics.widthPixels / 20));
         } catch (NullPointerException e) {
             Log.d("Error", e.getMessage());
 

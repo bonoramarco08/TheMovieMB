@@ -45,6 +45,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         Context parentContext = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(parentContext);
         View view = inflater.inflate(R.layout.cell_layout, parent, false);
+        view.getLayoutParams().height = (int) (parent.getWidth() / 2 *
+                POSTER_ASPECT_RATIO);
         return new MovieViewHolder(view);
     }
 
@@ -63,6 +65,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     @Override
     public void onBindViewHolder(@NonNull final MovieViewHolder holder, int position) {
         final Context context = holder.view.getContext();
+
         if (cursor.moveToPosition(position)) {
             holder.textViewId.setText(cursor.getString(cursor.getColumnIndex(MovieTableHelper._ID)));
             Glide.with(context)
