@@ -21,11 +21,14 @@ public class DescriptionActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_description);
 
+        descriptionImage=findViewById(R.id.imgDescription);
+        title=findViewById(R.id.txtTitle);
+        description=findViewById(R.id.txtDescription);
         idMovie=getIntent().getIntExtra("ID_MOVIE",-1);
         if(idMovie!=-1){
             Cursor movie = getContentResolver().query(Uri.parse(MovieProvider.MOVIES_URI+"/"+idMovie),null,null,null,null);
             movie.moveToNext();
-            descriptionImage=findViewById(R.id.imgDescription);
+
 
         }
     }
