@@ -77,8 +77,6 @@ public class DescriptionActivity extends AppCompatActivity {
                 item.setIcon(getDrawable(R.drawable.unfavorite));
                 Toast.makeText(this, "Rimosso dai preferiti", Toast.LENGTH_LONG).show();
             }
-
-
         }
     }
 }
