@@ -9,7 +9,6 @@
         android:id="@+id/cdMovie"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:cardElevation="500dp"
         app:cardCornerRadius="8dp"
         app:layout_constraintHeight_percent="0.88"
         app:layout_constraintWidth_percent="0.88"
