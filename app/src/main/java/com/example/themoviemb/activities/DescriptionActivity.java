@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.example.themoviemb.R;
 import com.example.themoviemb.data.MovieProvider;

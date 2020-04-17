@@ -7,6 +7,7 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -26,14 +27,16 @@ import com.example.themoviemb.adapters.SpacesItemDecoration;
 import com.example.themoviemb.data.MovieProvider;
 import com.example.themoviemb.data.MovieTableHelper;
 import com.example.themoviemb.data.models.Movie;
+import com.example.themoviemb.interface_movie.ErrorZeroItem;
 
-public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,MoviesAdapter.OnItemClickListener {
+public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>,MoviesAdapter.OnItemClickListener, ErrorZeroItem {
 
     private static final int LOADER_ID = 1;
     private FavoriteViewModel dashboardViewModel;
     private RecyclerView rvFavorite;
     private MoviesAdapter adapterFavorite;
     private RecyclerView.LayoutManager layoutManagerFavorite;
+    private TextView error;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -41,6 +44,7 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
                 ViewModelProviders.of(this).get(FavoriteViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         rvFavorite = root.findViewById(R.id.rvMovies);
+        error = root.findViewById(R.id.errorTextView);
         layoutManagerFavorite = new GridLayoutManager(getContext(), 2);
         DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
         rvFavorite.addItemDecoration(new SpacesItemDecoration(displayMetrics.widthPixels / 20));
@@ -73,6 +77,9 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         adapterFavorite.changeCursor(data);
+        if (data.getCount() == 0){
+            setVisibleText("Non hai nessun film tra i preferiti");
+        }
     }
 
     @Override
@@ -85,6 +92,12 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
         Intent intent=new Intent(getActivity(), DescriptionActivity.class);
         intent.putExtra("ID_MOVIE",id);
         startActivity(intent);
+    }
+
+    @Override
+    public void setVisibleText(String message) {
+        error.setText(message);
+        error.setVisibility(View.VISIBLE);
     }
 }
 

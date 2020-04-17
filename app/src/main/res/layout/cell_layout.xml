@@ -9,7 +9,7 @@
         android:id="@+id/cdMovie"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:cardElevation="5dp"
+        app:cardElevation="500dp"
         app:cardCornerRadius="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -29,7 +29,7 @@
             android:id="@+id/textViewId"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            android:text=""
             android:visibility="gone" />
     </androidx.cardview.widget.CardView>
 
