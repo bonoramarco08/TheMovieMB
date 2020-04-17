@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -15,6 +16,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.themoviemb.R;
 import com.example.themoviemb.data.MovieTableHelper;
+import com.example.themoviemb.data.models.Movie;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -103,6 +108,26 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         super.onViewRecycled(holder);
     }
 
+    ///////////FUNZIONE RICERCA VIA FILTRO SEARCHVIEW////////////////
+/*
+    public Filter getFilter(){
+        return movieFilter;
+    }
+
+
+    private Filter movieFilter=new Filter() {
+        @Override
+        protected FilterResults performFiltering(CharSequence givenString) {
+
+        }
+
+        @Override
+        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
+
+        }
+    }
+
+     */
 
     public class MovieViewHolder extends RecyclerView.ViewHolder {
         private final View view;

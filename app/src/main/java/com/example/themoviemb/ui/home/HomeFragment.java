@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toolbar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,7 +37,6 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     private RecyclerView rvHome;
     private MoviesAdapter adapterHome;
     private RecyclerView.LayoutManager layoutManagerHome;
-
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         homeViewModel =
@@ -44,13 +44,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         rvHome = root.findViewById(R.id.rvMovies);
         layoutManagerHome = new GridLayoutManager(getContext(), 2);
-        try {
-            DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
-            //rvHome.addItemDecoration(new SpacesItemDecoration(displayMetrics.widthPixels / 20));
-        } catch (NullPointerException e) {
-            Log.d("Error", e.getMessage());
 
-        }
         rvHome.setLayoutManager(layoutManagerHome);
         adapterHome = new MoviesAdapter(null, this);
         rvHome.setAdapter(adapterHome);
@@ -60,6 +54,8 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
 
             }
         });
+
+
         rvHome = root.findViewById(R.id.rvMovies);
         return root;
     }

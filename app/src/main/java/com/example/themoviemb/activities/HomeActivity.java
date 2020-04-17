@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.loader.content.CursorLoader;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -25,6 +26,7 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
 
     private MovieProvider provider;
     private WebService webService;
+    private Toolbar toolbar;
     private IWebServer webServerListener = new IWebServer() {
         @Override
         public void onMoviesFetched(boolean success, Result result, int errorCode, String errorMessage) {
@@ -45,6 +47,8 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        toolbar=findViewById(R.id.toolbarHome);
+        setSupportActionBar(toolbar);
         BottomNavigationView navView = findViewById(R.id.nav_view);
         webService = WebService.getInstance();
         loadMovies();
