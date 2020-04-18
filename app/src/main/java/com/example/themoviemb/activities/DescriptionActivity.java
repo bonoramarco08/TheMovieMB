@@ -46,16 +46,7 @@ public class DescriptionActivity extends AppCompatActivity {
     private Bitmap resourceImageDescription;
     private int isFavorite;
     private long vibranceHeart;
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        if(isFavorite==1){
-            actionBarItem.setIcon(getDrawable(R.drawable.favorite));
-        }else{
-            actionBarItem.setIcon(getDrawable(R.drawable.unfavorite));
-        }
-        return true;
-    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -130,7 +121,7 @@ public class DescriptionActivity extends AppCompatActivity {
                             if(resourceImageDescription!=null) {
                                 if(lengthBtnBack!=0) {
                                     long vibrance=sumVibranceImageDescription(resourceImageDescription,btnBack)/lengthBtnBack;
-                                    setColorImage(true,vibrance,true);
+                                    setColorImage(true,vibrance,false);
 
                                 }
                                 if (lengthBtnHeart != 0) {
