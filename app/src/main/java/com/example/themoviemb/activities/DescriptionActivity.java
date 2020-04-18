@@ -42,13 +42,13 @@ public class DescriptionActivity extends AppCompatActivity {
     private TextView title, description;
     private MenuItem actionBarItem;
     private ImageButton btnBack;
+    private ImageButton btnHeart;
     private Bitmap resourceImageDescription;
     private int isFavorite;
+    private long vibranceHeart;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.action_bar_descr, menu);
-        actionBarItem = menu.findItem(R.id.action_cart);
         if(isFavorite==1){
             actionBarItem.setIcon(getDrawable(R.drawable.favorite));
         }else{
@@ -66,7 +66,7 @@ public class DescriptionActivity extends AppCompatActivity {
         title=findViewById(R.id.txtTitle);
         description=findViewById(R.id.txtDescription);
         btnBack=findViewById(R.id.btnBack);
-
+        btnHeart=findViewById(R.id.btnHeart);
 
         idMovie=getIntent().getIntExtra("ID_MOVIE",-1);
         if(idMovie!=-1){
@@ -85,9 +85,18 @@ public class DescriptionActivity extends AppCompatActivity {
                             //quindi se succede questo, ho creato un viewTreeObserver sotto che si prende le risorse Bitmap dell'immagine
                             resourceImageDescription=resource;
                             int lengthArrow = btnBack.getWidth()*btnBack.getHeight();
+                            int lengthHeart=btnHeart.getWidth()*btnHeart.getHeight();
                             //se è 0, richiamerà il metodo con il viewTreeObserver
                             if(lengthArrow!=0) {
-                                setBtnBackColor(sumVibranceImageDescription(resourceImageDescription), lengthArrow);
+                                long vibrance=sumVibranceImageDescription(resourceImageDescription,btnBack)/lengthArrow;
+                                setColorImage(true,vibrance,false);
+
+                            }
+                            if (lengthHeart != 0) {
+                                long vibrance=sumVibranceImageDescription(resourceImageDescription,btnHeart)/lengthHeart;
+                                vibranceHeart=vibrance;
+                                setColorImage(false,vibrance,false);
+
                             }
                         }
 
@@ -105,14 +114,30 @@ public class DescriptionActivity extends AppCompatActivity {
                 }
             });
 
+            btnHeart.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    setColorImage(false,vibranceHeart,true);
+                }
+            });
+
             descriptionImage.getViewTreeObserver().addOnGlobalLayoutListener(
                     new ViewTreeObserver.OnGlobalLayoutListener() {
                         @Override
                         public void onGlobalLayout() {
-                            int lengthBackBtn = btnBack.getWidth()*btnBack.getHeight();
-                            int lengthHeart=0;
+                            int lengthBtnBack = btnBack.getWidth()*btnBack.getHeight();
+                            int lengthBtnHeart = btnHeart.getWidth()*btnHeart.getHeight();
                             if(resourceImageDescription!=null) {
-                                setBtnBackColor(sumVibranceImageDescription(resourceImageDescription), lengthBackBtn);
+                                if(lengthBtnBack!=0) {
+                                    long vibrance=sumVibranceImageDescription(resourceImageDescription,btnBack)/lengthBtnBack;
+                                    setColorImage(true,vibrance,true);
+
+                                }
+                                if (lengthBtnHeart != 0) {
+                                    long vibrance=sumVibranceImageDescription(resourceImageDescription,btnHeart)/lengthBtnHeart;
+                                    setColorImage(false,vibrance,false);
+
+                                }
                             }
                             //obbligatorio rimuovere il listener
                             descriptionImage.getViewTreeObserver().removeOnGlobalLayoutListener(this);
@@ -121,7 +146,40 @@ public class DescriptionActivity extends AppCompatActivity {
         }
     }
 
-    public void onFavoriteChange(MenuItem item){
+    private void setColorImage(boolean response,long vibrance, boolean isChange){
+        if(response)
+            if(vibrance>=50)
+                btnBack.setImageResource(R.drawable.left_arrow_black);
+            else
+                btnBack.setImageResource(R.drawable.left_arrow_white);
+        else
+            if(vibrance>=75)
+                if(!isChange)
+                    onHeartAppear(R.drawable.favorite,R.drawable.unfavorite);
+                else
+                    onHeartChange(R.drawable.favorite,R.drawable.unfavorite);
+            else
+                if(!isChange)
+                    onHeartAppear(R.drawable.favorite_white,R.drawable.unfavorite_white);
+                else
+                    onHeartChange(R.drawable.favorite_white,R.drawable.unfavorite_white);
+
+    }
+
+
+
+    public void onHeartAppear(int resIdFav, int resIdNotFav){
+        if(idMovie!=-1) {
+            Cursor movie = getContentResolver().query(Uri.parse(MovieProvider.MOVIES_URI + "/" + idMovie), null, null, null, null);
+            movie.moveToNext();
+            if(movie.getInt(movie.getColumnIndex(MovieTableHelper.IS_FAVORITE))==0)
+                btnHeart.setImageResource(resIdNotFav);
+            else
+                btnHeart.setImageResource(resIdFav);
+        }
+    }
+
+    public void onHeartChange(int resIdFav, int resIdNotFav){
         if(idMovie!=-1) {
             Cursor movie = getContentResolver().query(Uri.parse(MovieProvider.MOVIES_URI + "/" + idMovie), null, null, null, null);
             movie.moveToNext();
@@ -130,35 +188,28 @@ public class DescriptionActivity extends AppCompatActivity {
             if(movie.getInt(movie.getColumnIndex(MovieTableHelper.IS_FAVORITE))==0){
                 contentValues.put(MovieTableHelper.IS_FAVORITE,1);
                 getContentResolver().update(Uri.parse(MovieProvider.MOVIES_URI+"/"+idMovie),contentValues,null,null);
-                item.setIcon(getDrawable(R.drawable.favorite));
-                Toast.makeText(this, "Aggiunto ai preferiti", Toast.LENGTH_LONG).show();
+
+                btnHeart.setImageResource(resIdFav);
+                Toast.makeText(this, "Aggiunto ai preferiti", Toast.LENGTH_SHORT).show();
             }
             else{
                 contentValues.put(MovieTableHelper.IS_FAVORITE,0);
                 getContentResolver().update(Uri.parse(MovieProvider.MOVIES_URI+"/"+idMovie),contentValues,null,null);
-                item.setIcon(getDrawable(R.drawable.unfavorite));
-                Toast.makeText(this, "Rimosso dai preferiti", Toast.LENGTH_LONG).show();
+                btnHeart.setImageResource(resIdNotFav);
+                Toast.makeText(this, "Rimosso dai preferiti", Toast.LENGTH_SHORT).show();
             }
         }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
     }
 
     //mi prendo la proprietà vibrance di ogni pixel dell'immagine, i pixel solo dove si trova il bottone BACK
-    private long sumVibranceImageDescription(Bitmap resource){
+    private long sumVibranceImageDescription(Bitmap resource,ImageButton btn){
 
 
-        ArrayList<Integer>pixels = new ArrayList();
+        ArrayList<Integer>pixels;
         long sumV=0;
         //aggiungo all'arraylist tutti i pixel
-        for(int i=0; i<btnBack.getWidth();i++){
-            for(int j=0; j<btnBack.getHeight();j++){
-                pixels.add(resource.getPixel((int)btnBack.getX()+i,(int)btnBack.getY()+j));
-            }
-        }
+        pixels=addPixels(resource,btn.getWidth(),btn.getHeight(),btn.getX(),btn.getY());
+
         //per ogni pixel aggiungo la percentuale di vibrance di ogni pixel
         for (int p:pixels) {
             float[] hsv = new float[3];
@@ -168,22 +219,16 @@ public class DescriptionActivity extends AppCompatActivity {
             Color.RGBToHSV(r,g,b,hsv);
             sumV+=hsv[2]*100;
         }
-
-
         return sumV;
     }
-
-    private void setBtnBackColor(long vibrance,int length){
-        if(vibrance/length>=50){
-            btnBack.setImageResource(R.drawable.left_arrow_black);
-        }else{
-            btnBack.setImageResource(R.drawable.left_arrow_white);
+    private ArrayList<Integer> addPixels(Bitmap resource,int width, int height, float x, float y){
+        ArrayList<Integer>pixels=new ArrayList<>();
+        for(int i=0; i<width;i++){
+            for(int j=0; j<height;j++){
+                pixels.add(resource.getPixel((int)x+i,(int)y+j));
+            }
         }
+        return pixels;
     }
-
-    private void setBtnHeartColor(){
-
-    }
-
 
 }
