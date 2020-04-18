@@ -126,6 +126,7 @@ public class DescriptionActivity extends AppCompatActivity {
                                 }
                                 if (lengthBtnHeart != 0) {
                                     long vibrance=sumVibranceImageDescription(resourceImageDescription,btnHeart)/lengthBtnHeart;
+                                    vibranceHeart=vibrance;
                                     setColorImage(false,vibrance,false);
 
                                 }
