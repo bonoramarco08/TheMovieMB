@@ -79,11 +79,11 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
             if (!isRemoved) {
                 ContentValues cv = new ContentValues();
                 cv.put(MovieTableHelper.IS_FAVORITE, 1);
-                int i = getContentResolver().update(MovieProvider.MOVIES_URI, cv, MovieTableHelper._ID + " = " + aId, null);
+                getContentResolver().update(MovieProvider.MOVIES_URI, cv, MovieTableHelper._ID + " = " + aId, null);
             } else {
                 ContentValues cv = new ContentValues();
                 cv.put(MovieTableHelper.IS_FAVORITE, 0);
-                int i = getContentResolver().update(MovieProvider.MOVIES_URI, cv, MovieTableHelper._ID + " = " + aId, null);
+                getContentResolver().update(MovieProvider.MOVIES_URI, cv, MovieTableHelper._ID + " = " + aId, null);
             }
         }
     }

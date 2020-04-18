@@ -24,7 +24,6 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.themoviemb.R;
 import com.example.themoviemb.activities.DescriptionActivity;
 import com.example.themoviemb.adapters.MoviesAdapter;
-import com.example.themoviemb.adapters.SpacesItemDecoration;
 import com.example.themoviemb.data.MovieProvider;
 import com.example.themoviemb.data.MovieTableHelper;
 import com.example.themoviemb.interface_movie.DialogFavorite;
@@ -47,12 +46,6 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
         rvFavorite = root.findViewById(R.id.rvMovies);
         error = root.findViewById(R.id.errorTextView);
         layoutManagerFavorite = new GridLayoutManager(getContext(), 2);
-        try {
-            DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
-            rvFavorite.addItemDecoration(new SpacesItemDecoration(displayMetrics.widthPixels / 20));
-        } catch (NullPointerException e) {
-            Log.d("Error", e.getMessage());
-        }
         rvFavorite.setHasFixedSize(true);
         rvFavorite.setLayoutManager(layoutManagerFavorite);
         adapterFavorite = new MoviesAdapter(null, this);
