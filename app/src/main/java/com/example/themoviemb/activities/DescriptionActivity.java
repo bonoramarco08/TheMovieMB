@@ -42,6 +42,7 @@ public class DescriptionActivity extends AppCompatActivity {
     private TextView title, description;
     private MenuItem actionBarItem;
     private ImageButton btnBack;
+    private Bitmap resourceImageDescription;
     private int isFavorite;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -65,7 +66,6 @@ public class DescriptionActivity extends AppCompatActivity {
         title=findViewById(R.id.txtTitle);
         description=findViewById(R.id.txtDescription);
         btnBack=findViewById(R.id.btnBack);
-        setPropertiesImage();
 
 
         idMovie=getIntent().getIntExtra("ID_MOVIE",-1);
@@ -81,8 +81,14 @@ public class DescriptionActivity extends AppCompatActivity {
                         @Override
                         public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                             descriptionImage.setImageBitmap(resource);
+                            //al primo giro funziona, ma se riapro la stessa descrizione la seconda volta non mi ritorna i pixel del btnBack
+                            //quindi se succede questo, ho creato un viewTreeObserver sotto che si prende le risorse Bitmap dell'immagine
+                            resourceImageDescription=resource;
                             int lengthArrow = btnBack.getWidth()*btnBack.getHeight();
-                            setBtnBackColor(sumVibranceImageDescription(resource),lengthArrow);
+                            //se è 0, richiamerà il metodo con il viewTreeObserver
+                            if(lengthArrow!=0) {
+                                setBtnBackColor(sumVibranceImageDescription(resourceImageDescription), lengthArrow);
+                            }
                         }
 
                         @Override
@@ -98,6 +104,20 @@ public class DescriptionActivity extends AppCompatActivity {
                     finish();
                 }
             });
+
+            descriptionImage.getViewTreeObserver().addOnGlobalLayoutListener(
+                    new ViewTreeObserver.OnGlobalLayoutListener() {
+                        @Override
+                        public void onGlobalLayout() {
+                            int lengthBackBtn = btnBack.getWidth()*btnBack.getHeight();
+                            int lengthHeart=0;
+                            if(resourceImageDescription!=null) {
+                                setBtnBackColor(sumVibranceImageDescription(resourceImageDescription), lengthBackBtn);
+                            }
+                            //obbligatorio rimuovere il listener
+                            descriptionImage.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                        }
+                    });
         }
     }
 
@@ -126,12 +146,6 @@ public class DescriptionActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
     }
-
-    private void setPropertiesImage(){
-        descriptionImage.setDrawingCacheEnabled(true);
-        descriptionImage.buildDrawingCache(true);
-    }
-
 
     //mi prendo la proprietà vibrance di ogni pixel dell'immagine, i pixel solo dove si trova il bottone BACK
     private long sumVibranceImageDescription(Bitmap resource){
