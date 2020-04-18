@@ -3,8 +3,13 @@ package com.example.themoviemb.activities;
 import android.content.ContentValues;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
+import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.loader.content.CursorLoader;
 import androidx.navigation.NavController;
@@ -12,6 +17,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.example.themoviemb.InitApplication;
 import com.example.themoviemb.R;
 import com.example.themoviemb.data.MovieProvider;
 import com.example.themoviemb.data.MovieTableHelper;
@@ -27,6 +33,7 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
     private MovieProvider provider;
     private WebService webService;
     private Toolbar toolbar;
+    private MenuItem actionBarItem;
     private IWebServer webServerListener = new IWebServer() {
         @Override
         public void onMoviesFetched(boolean success, Result result, int errorCode, String errorMessage) {
@@ -46,9 +53,14 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        if (InitApplication.getInstance().isNightModeEnabled()) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+        }
+       toolbar = findViewById(R.id.toolbarHome);
+       setSupportActionBar(toolbar);
 
-        toolbar=findViewById(R.id.toolbarHome);
-        setSupportActionBar(toolbar);
         BottomNavigationView navView = findViewById(R.id.nav_view);
         webService = WebService.getInstance();
         loadMovies();

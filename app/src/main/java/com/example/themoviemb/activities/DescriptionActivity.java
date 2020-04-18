@@ -1,6 +1,8 @@
 package com.example.themoviemb.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -9,11 +11,13 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.themoviemb.InitApplication;
 import com.example.themoviemb.R;
 import com.example.themoviemb.data.MovieProvider;
 import com.example.themoviemb.data.MovieTableHelper;
@@ -24,6 +28,7 @@ public class DescriptionActivity extends AppCompatActivity {
     private ImageView descriptionImage;
     private TextView title, description;
     private MenuItem actionBarItem;
+    private Toolbar toolbar;
     private int isFavorite;
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -42,7 +47,8 @@ public class DescriptionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_description);
-
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(myToolbar);
         descriptionImage=findViewById(R.id.imgDescription);
         title=findViewById(R.id.txtTitle);
         description=findViewById(R.id.txtDescription);
