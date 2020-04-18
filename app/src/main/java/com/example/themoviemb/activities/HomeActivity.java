@@ -1,10 +1,18 @@
 package com.example.themoviemb.activities;
 
 import android.content.ContentValues;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 
+import android.content.Intent;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.loader.content.CursorLoader;
 import androidx.navigation.NavController;
@@ -12,6 +20,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.example.themoviemb.InitApplication;
 import com.example.themoviemb.R;
 import com.example.themoviemb.data.MovieProvider;
 import com.example.themoviemb.data.MovieTableHelper;
@@ -27,6 +36,7 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
     private MovieProvider provider;
     private WebService webService;
     private Toolbar toolbar;
+    private MenuItem actionBarItem;
     private IWebServer webServerListener = new IWebServer() {
         @Override
         public void onMoviesFetched(boolean success, Result result, int errorCode, String errorMessage) {
@@ -46,9 +56,9 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+       toolbar = findViewById(R.id.toolbarHome);
+       setSupportActionBar(toolbar);
 
-        toolbar=findViewById(R.id.toolbarHome);
-        setSupportActionBar(toolbar);
         BottomNavigationView navView = findViewById(R.id.nav_view);
         webService = WebService.getInstance();
         loadMovies();
@@ -85,6 +95,22 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
                 cv.put(MovieTableHelper.IS_FAVORITE, 0);
                 getContentResolver().update(MovieProvider.MOVIES_URI, cv, MovieTableHelper._ID + " = " + aId, null);
             }
+        }
+    }
+
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        int currentNightMode = newConfig.uiMode & Configuration.UI_MODE_NIGHT_MASK;
+        switch (currentNightMode) {
+            case Configuration.UI_MODE_NIGHT_NO:
+                // Night mode is not active, we're using the light theme
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+                break;
+            case Configuration.UI_MODE_NIGHT_YES:
+                // Night mode is active, we're using dark theme
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
+                break;
         }
     }
 }
