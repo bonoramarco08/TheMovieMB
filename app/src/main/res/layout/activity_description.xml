@@ -10,12 +10,11 @@
         android:id="@+id/imgDescription"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="2dp"
         android:src="@drawable/error_image"
         android:textColor="@color/black"
         app:layout_constraintHeight_percent="0.4"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
+        app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/error_image" />
 
     <TextView
