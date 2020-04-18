@@ -31,6 +31,8 @@ import com.example.themoviemb.data.MovieProvider;
 import com.example.themoviemb.data.MovieTableHelper;
 
 import java.io.File;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.BitSet;
 
 public class DescriptionActivity extends AppCompatActivity {
@@ -79,7 +81,8 @@ public class DescriptionActivity extends AppCompatActivity {
                         @Override
                         public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                             descriptionImage.setImageBitmap(resource);
-                            setBtnBackColor(sumRgbImageDescription(resource));
+                            int lengthArrow = btnBack.getWidth()*btnBack.getHeight();
+                            setBtnBackColor(sumVibranceImageDescription(resource),lengthArrow);
                         }
 
                         @Override
@@ -129,24 +132,43 @@ public class DescriptionActivity extends AppCompatActivity {
         descriptionImage.buildDrawingCache(true);
     }
 
-    private int sumRgbImageDescription(Bitmap resource){
-        float centreX=btnBack.getX()+btnBack.getWidth()/2;
-        float centreY=btnBack.getY()+btnBack.getHeight()/2;
-        int pixel = resource.getPixel((int)centreX, (int)centreY);
 
-        int r = Color.red(pixel);
-        int g = Color.green(pixel);
-        int b = Color.blue(pixel);
+    //mi prendo la proprietà vibrance di ogni pixel dell'immagine, i pixel solo dove si trova il bottone BACK
+    private long sumVibranceImageDescription(Bitmap resource){
 
-        return r+g+b;
+
+        ArrayList<Integer>pixels = new ArrayList();
+        long sumV=0;
+        //aggiungo all'arraylist tutti i pixel
+        for(int i=0; i<btnBack.getWidth();i++){
+            for(int j=0; j<btnBack.getHeight();j++){
+                pixels.add(resource.getPixel((int)btnBack.getX()+i,(int)btnBack.getY()+j));
+            }
+        }
+        //per ogni pixel aggiungo la percentuale di vibrance di ogni pixel
+        for (int p:pixels) {
+            float[] hsv = new float[3];
+            int r=Color.red(p);
+            int g=Color.green(p);
+            int b=Color.blue(p);
+            Color.RGBToHSV(r,g,b,hsv);
+            sumV+=hsv[2]*100;
+        }
+
+
+        return sumV;
     }
 
-    private void setBtnBackColor(int rgb){
-        if(rgb>400){
+    private void setBtnBackColor(long vibrance,int length){
+        if(vibrance/length>=50){
             btnBack.setImageResource(R.drawable.left_arrow_black);
         }else{
             btnBack.setImageResource(R.drawable.left_arrow_white);
         }
+    }
+
+    private void setBtnHeartColor(){
+
     }
 
 
