@@ -80,7 +80,7 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
         try {
             Cursor cursor = new CursorLoader(getApplicationContext(), MovieProvider.MOVIES_URI, null, null, null, null).loadInBackground();
             if (cursor.getCount() == 0)
-                webService.getMoviesPage(webServerListener,1, MovieService.SortBy.RELEASE_DATE_DESCENDING);
+                webService.getMovies(webServerListener);
             else
             {
                 cursor.moveToPosition(cursor.getCount() - 1);
