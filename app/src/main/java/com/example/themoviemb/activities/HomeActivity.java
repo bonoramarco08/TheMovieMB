@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -19,16 +19,15 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-
-
-import com.example.themoviemb.InitApplication;
 import com.example.themoviemb.R;
+import com.example.themoviemb.data.MovieDatabaseHelper;
 import com.example.themoviemb.data.MovieProvider;
 import com.example.themoviemb.data.MovieTableHelper;
 import com.example.themoviemb.data.models.Movie;
 import com.example.themoviemb.data.models.Result;
 import com.example.themoviemb.interface_movie.DialogFavorite;
 import com.example.themoviemb.interface_movie.IWebServer;
+import com.example.themoviemb.interface_movie.MovieService;
 import com.example.themoviemb.networks.WebService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -38,6 +37,8 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
 
 
     private WebService webService;
+    private Toolbar toolbar;
+    private MenuItem actionBarItem;
     private IWebServer webServerListener = new IWebServer() {
         @Override
         public void onMoviesFetched(boolean success, Result result, int errorCode, String errorMessage) {
@@ -57,11 +58,17 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+       toolbar = findViewById(R.id.toolbarHome);
+       setSupportActionBar(toolbar);
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         webService = WebService.getInstance();
         loadMovies();
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.navigation_home, R.id.navigation_favorite)
+                .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        //NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
 
@@ -71,8 +78,15 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
 
     private void loadMovies() {
         try {
-            if (new CursorLoader(getApplicationContext(), MovieProvider.MOVIES_URI, null, null, null, null).loadInBackground().getCount() == 0)
-                webService.getMovies(webServerListener);
+            Cursor cursor = new CursorLoader(getApplicationContext(), MovieProvider.MOVIES_URI, null, null, null, null).loadInBackground();
+            if (cursor.getCount() == 0)
+                webService.getMoviesPage(webServerListener,1, MovieService.SortBy.RELEASE_DATE_DESCENDING);
+            else
+            {
+                cursor.moveToPosition(cursor.getCount() - 1);
+                Toast.makeText(getBaseContext(), cursor.getInt(cursor.getColumnIndex(MovieTableHelper.PAGE))  +"", Toast.LENGTH_SHORT).show();
+             //   webService.getMoviesPage(webServerListener, cursor.getInt(cursor.getColumnIndex(MovieTableHelper.PAGE)) , MovieService.SortBy.RELEASE_DATE_DESCENDING);
+            }
         } catch (NullPointerException e) {
             Log.d("Error", e.getMessage());
         }
