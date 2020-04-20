@@ -2,23 +2,24 @@ package com.example.themoviemb.activities;
 
 import android.content.ContentValues;
 import android.content.res.Configuration;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 
-import android.content.Intent;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.loader.content.CursorLoader;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+
 
 import com.example.themoviemb.InitApplication;
 import com.example.themoviemb.R;
@@ -31,12 +32,12 @@ import com.example.themoviemb.interface_movie.IWebServer;
 import com.example.themoviemb.networks.WebService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import java.util.ArrayList;
+
 public class HomeActivity extends AppCompatActivity implements DialogFavorite.IFavoritDialog {
 
-    private MovieProvider provider;
+
     private WebService webService;
-    private Toolbar toolbar;
-    private MenuItem actionBarItem;
     private IWebServer webServerListener = new IWebServer() {
         @Override
         public void onMoviesFetched(boolean success, Result result, int errorCode, String errorMessage) {
@@ -56,21 +57,17 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-       toolbar = findViewById(R.id.toolbarHome);
-       setSupportActionBar(toolbar);
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         webService = WebService.getInstance();
         loadMovies();
-        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_favorite)
-                .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
 
     }
+
+
 
     private void loadMovies() {
         try {
@@ -81,6 +78,7 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
         }
 
     }
+
 
 
     @Override
