@@ -249,13 +249,15 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
 
         @Override
         protected String doInBackground(Void... arg0) {
-            insertScroll(i);
-            i++;
-            while (insert < 2) {
-                insertScroll(i);
-                i++;
+            try {
+                while(insert < 2) {
+                    insertScroll(i);
+                    Thread.sleep(500);
+                    i++;
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-            insert = 0;
             return "Lavoro Terminato!";
         }
 

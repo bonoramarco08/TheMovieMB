@@ -4,11 +4,8 @@ import android.content.ContentValues;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -16,9 +13,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.ViewModel;
-import androidx.lifecycle.ViewModelProviders;
-import androidx.core.view.MenuItemCompat;
 import androidx.loader.content.CursorLoader;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -32,10 +26,8 @@ import com.example.themoviemb.data.models.Movie;
 import com.example.themoviemb.data.models.Result;
 import com.example.themoviemb.interface_movie.DialogFavorite;
 import com.example.themoviemb.interface_movie.IWebServer;
-import com.example.themoviemb.interface_movie.MovieService;
 import com.example.themoviemb.networks.WebService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationView;
 
 public class HomeActivity extends AppCompatActivity implements DialogFavorite.IFavoritDialog {
 
@@ -47,25 +39,27 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
     private IWebServer webServerListener = new IWebServer() {
         @Override
         public void onMoviesFetched(boolean success, Result result, int errorCode, String errorMessage) {
-            for (Movie movie : result.getResult()) {
-                ContentValues contentValues = new ContentValues();
-                contentValues.put(MovieTableHelper.TITLE, movie.getTitle());
-                contentValues.put(MovieTableHelper.COVER_PHOTO, movie.getPosterPath());
-                contentValues.put(MovieTableHelper.DESCRIPTION, movie.getOverview());
-                contentValues.put(MovieTableHelper.DESCRIPTION_PHOTO, movie.getBackdropPath());
-                getContentResolver().insert(MovieProvider.MOVIES_URI, contentValues);
+            if (result != null) {
+                for (Movie movie : result.getResult()) {
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put(MovieTableHelper.TITLE, movie.getTitle());
+                    contentValues.put(MovieTableHelper.COVER_PHOTO, movie.getPosterPath());
+                    contentValues.put(MovieTableHelper.DESCRIPTION, movie.getOverview());
+                    contentValues.put(MovieTableHelper.DESCRIPTION_PHOTO, movie.getBackdropPath());
+                    getContentResolver().insert(MovieProvider.MOVIES_URI, contentValues);
+                }
             }
         }
-        };
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-       toolbar = findViewById(R.id.toolbarHome);
-       setSupportActionBar(toolbar);
-       navHome=findViewById(R.id.navigation_home);
-       navHeart=findViewById(R.id.navigation_favorite);
+        toolbar = findViewById(R.id.toolbarHome);
+        setSupportActionBar(toolbar);
+        navHome = findViewById(R.id.navigation_home);
+        navHeart = findViewById(R.id.navigation_favorite);
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         webService = WebService.getInstance();
@@ -93,15 +87,14 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
         });
 
 
-
     }
 
-    private Toast createToast(String textToShow){
-        if ( toast!= null) {
+    private Toast createToast(String textToShow) {
+        if (toast != null) {
             toast.cancel();
         }
-        toast=Toast.makeText(HomeActivity.this,textToShow,Toast.LENGTH_SHORT);
-        toast.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL,0,0);
+        toast = Toast.makeText(HomeActivity.this, textToShow, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
         return toast;
     }
 
