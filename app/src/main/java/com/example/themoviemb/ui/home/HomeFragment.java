@@ -1,9 +1,11 @@
 package com.example.themoviemb.ui.home;
 
 import android.app.SearchManager;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,6 +14,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -27,33 +31,80 @@ import androidx.loader.content.Loader;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-
+import com.example.themoviemb.EndlessRecyclerViewScrollListener;
 import com.example.themoviemb.R;
 import com.example.themoviemb.activities.DescriptionActivity;
 import com.example.themoviemb.adapters.MoviesAdapter;
 import com.example.themoviemb.data.MovieProvider;
 import com.example.themoviemb.data.MovieTableHelper;
+import com.example.themoviemb.data.models.Movie;
+import com.example.themoviemb.data.models.Result;
 import com.example.themoviemb.interface_movie.DialogFavorite;
+import com.example.themoviemb.interface_movie.IWebServer;
+import com.example.themoviemb.networks.WebService;
 
 
 public class HomeFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, MoviesAdapter.OnItemClickListener {
 
     private static final int LOADER_ID = 1;
+    private int insert;
+    int i = 1;
+    private WebService webService;
     private HomeViewModel homeViewModel;
     private RecyclerView rvHome;
     private MoviesAdapter adapterHome;
     private RecyclerView.LayoutManager layoutManagerHome;
     private SearchView searchView = null;
     private SearchView.OnQueryTextListener queryTextListener;
+    private boolean loading = true;
+    ProgressBar pbHome;
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
+    // codice scrool
+    private IWebServer webServerListener = new IWebServer() {
+        @Override
+        public void onMoviesFetched(boolean success, Result result, int errorCode, String errorMessage) {
+            insert = 0;
+            if (result != null) {
+                try {
+                    boolean b = true;
+                    Cursor cursor = new CursorLoader(getActivity().getApplicationContext(), MovieProvider.MOVIES_URI, null, null, null, null).loadInBackground();
+                    for (Movie movie : result.getResult()) {
+                        b = true;
+                        for (int y = 0; y < cursor.getCount(); y++) {
+                            cursor.moveToPosition(y);
+                            if (cursor.getString(cursor.getColumnIndex(MovieTableHelper.TITLE)).equals(movie.getTitle())) {
+                                {
+                                    b = false;
+                                    y  = cursor.getCount();
+                                }
+                            }
+                        }
+                        if (b){
+                            ContentValues contentValues = new ContentValues();
+                            contentValues.put(MovieTableHelper.TITLE, movie.getTitle());
+                            contentValues.put(MovieTableHelper.COVER_PHOTO, movie.getPosterPath());
+                            contentValues.put(MovieTableHelper.DESCRIPTION, movie.getOverview());
+                            contentValues.put(MovieTableHelper.DESCRIPTION_PHOTO, movie.getBackdropPath());
+                            getActivity().getContentResolver().insert(MovieProvider.MOVIES_URI, contentValues);
+                            insert++;
+                        }
+                    }
+                } catch (Exception e) {
+                }
+            }
+
+        }
+    };
+
+
+    public View onCreateView(@NonNull final LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         rvHome = root.findViewById(R.id.rvMovies);
         layoutManagerHome = new GridLayoutManager(getContext(), 2);
-
+        pbHome = root.findViewById(R.id.pbHome);
         rvHome.setLayoutManager(layoutManagerHome);
         adapterHome = new MoviesAdapter(null, this);
         rvHome.setAdapter(adapterHome);
@@ -66,10 +117,23 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         });
 
         Toolbar toolbar = root.findViewById(R.id.toolbarHome);
-        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         rvHome = root.findViewById(R.id.rvMovies);
+        webService = WebService.getInstance();
+
+
+        // codice scrool
+        rvHome.setOnScrollListener(new EndlessRecyclerViewScrollListener((GridLayoutManager) layoutManagerHome) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                Toast.makeText(getContext(), "sfdfdsf", Toast.LENGTH_SHORT).show();
+                new BackgroundTask().execute();
+            }
+        });
+
         return root;
     }
+
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -91,10 +155,11 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
             queryTextListener = new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextChange(String newText) {
-                    Cursor cursor = (getActivity()).getContentResolver().query(MovieProvider.MOVIES_URI, null, MovieTableHelper.TITLE + " LIKE '%" + newText+"%'", null, null);
+                    Cursor cursor = (getActivity()).getContentResolver().query(MovieProvider.MOVIES_URI, null, null, null, null);
                     adapterHome.changeCursor(cursor);
                     return true;
                 }
+
                 @Override
                 public boolean onQueryTextSubmit(String query) {
 
@@ -110,7 +175,6 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_search:
-                // Not implemented here
                 return false;
             default:
                 break;
@@ -118,6 +182,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         searchView.setOnQueryTextListener(queryTextListener);
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -133,6 +198,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         adapterHome.changeCursor(data);
+        pbHome.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -160,7 +226,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
                     vDialog.show(getChildFragmentManager(), null);
                 }
             }
-        }catch (NullPointerException e){
+        } catch (NullPointerException e) {
             Log.d("Error", e.getMessage());
         }
 
@@ -168,5 +234,43 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     }
 
 
+    // codice scrool
 
+    public void insertScroll(int page) {
+        webService.getMoviesPage(webServerListener, page);
+    }
+
+    private class BackgroundTask extends AsyncTask<Void, Integer, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            pbHome.setVisibility(View.VISIBLE);
+        }
+
+        @Override
+        protected String doInBackground(Void... arg0) {
+            insertScroll(i);
+            i++;
+            while (insert < 2) {
+                insertScroll(i);
+                i++;
+            }
+            insert = 0;
+            return "Lavoro Terminato!";
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            adapterHome.changeCursor(new CursorLoader(getContext(), MovieProvider.MOVIES_URI, null, null, null, null).loadInBackground());
+            adapterHome.notifyDataSetChanged();
+            pbHome.setVisibility(View.INVISIBLE);
+            super.onPostExecute(result);
+
+        }
+    }
 }
