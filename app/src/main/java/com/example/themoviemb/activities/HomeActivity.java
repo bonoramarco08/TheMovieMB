@@ -4,9 +4,12 @@ import android.content.ContentValues;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -14,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.MenuItemCompat;
 import androidx.loader.content.CursorLoader;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
@@ -30,6 +34,7 @@ import com.example.themoviemb.interface_movie.IWebServer;
 import com.example.themoviemb.interface_movie.MovieService;
 import com.example.themoviemb.networks.WebService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationView;
 
 import java.util.ArrayList;
 
@@ -38,7 +43,7 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
 
     private WebService webService;
     private Toolbar toolbar;
-    private MenuItem actionBarItem;
+    private View navHome, navHeart;
     private IWebServer webServerListener = new IWebServer() {
         @Override
         public void onMoviesFetched(boolean success, Result result, int errorCode, String errorMessage) {
@@ -60,6 +65,8 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
         setContentView(R.layout.activity_home);
        toolbar = findViewById(R.id.toolbarHome);
        setSupportActionBar(toolbar);
+       navHome=findViewById(R.id.navigation_home);
+       navHeart=findViewById(R.id.navigation_favorite);
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         webService = WebService.getInstance();
@@ -71,11 +78,59 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
         //NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
+        navHome.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                createToast("Menu").show();
+                return true;
+            }
+        });
+        navHeart.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                createToast("Favorite").show();
+                return true;
+            }
+        });
+
+
 
     }
 
+    private Toast createToast(String textToShow){
+        Toast toast=Toast.makeText(HomeActivity.this,textToShow,Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL,0,0);
+        return toast;
+    }
 
+    /*
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.bottom_nav_menu, menu);
 
+        new Handler().post(new Runnable() {
+            @Override
+            public void run() {
+                final View view = findViewById(R.id.add_item);
+
+                if (view != null) {
+                    view.setOnLongClickListener(new View.OnLongClickListener() {
+                        @Override
+                        public boolean onLongClick(View v) {
+
+                            // Do something...
+
+                            Toast.makeText(getApplicationContext(), "Long pressed", Toast.LENGTH_SHORT).show();
+                            return true;
+                        }
+                    });
+                }
+            }
+        });
+
+        return super.onCreateOptionsMenu(menu);
+    }
+*/
     private void loadMovies() {
         try {
             Cursor cursor = new CursorLoader(getApplicationContext(), MovieProvider.MOVIES_URI, null, null, null, null).loadInBackground();
@@ -84,7 +139,6 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
             else
             {
                 cursor.moveToPosition(cursor.getCount() - 1);
-                Toast.makeText(getBaseContext(), cursor.getInt(cursor.getColumnIndex(MovieTableHelper.PAGE))  +"", Toast.LENGTH_SHORT).show();
              //   webService.getMoviesPage(webServerListener, cursor.getInt(cursor.getColumnIndex(MovieTableHelper.PAGE)) , MovieService.SortBy.RELEASE_DATE_DESCENDING);
             }
         } catch (NullPointerException e) {

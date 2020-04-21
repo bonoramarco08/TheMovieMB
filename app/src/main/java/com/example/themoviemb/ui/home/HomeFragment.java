@@ -82,7 +82,6 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         inflater.inflate(R.menu.search_view, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-
         if (searchItem != null) {
             searchView = (SearchView) searchItem.getActionView();
         }
