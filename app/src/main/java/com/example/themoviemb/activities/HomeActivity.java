@@ -15,16 +15,17 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.core.view.MenuItemCompat;
 import androidx.loader.content.CursorLoader;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+
 import com.example.themoviemb.R;
-import com.example.themoviemb.data.MovieDatabaseHelper;
 import com.example.themoviemb.data.MovieProvider;
 import com.example.themoviemb.data.MovieTableHelper;
 import com.example.themoviemb.data.models.Movie;
@@ -36,8 +37,6 @@ import com.example.themoviemb.networks.WebService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.navigation.NavigationView;
 
-import java.util.ArrayList;
-
 public class HomeActivity extends AppCompatActivity implements DialogFavorite.IFavoritDialog {
 
 
@@ -48,7 +47,6 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
     private IWebServer webServerListener = new IWebServer() {
         @Override
         public void onMoviesFetched(boolean success, Result result, int errorCode, String errorMessage) {
-            Log.d("TAGGGGG", result.getResult().get(1).getTitle());
             for (Movie movie : result.getResult()) {
                 ContentValues contentValues = new ContentValues();
                 contentValues.put(MovieTableHelper.TITLE, movie.getTitle());
@@ -58,7 +56,7 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
                 getContentResolver().insert(MovieProvider.MOVIES_URI, contentValues);
             }
         }
-    };
+        };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -139,18 +137,12 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
         try {
             Cursor cursor = new CursorLoader(getApplicationContext(), MovieProvider.MOVIES_URI, null, null, null, null).loadInBackground();
             if (cursor.getCount() == 0)
-                webService.getMovies(webServerListener);
-            else
-            {
-                cursor.moveToPosition(cursor.getCount() - 1);
-             //   webService.getMoviesPage(webServerListener, cursor.getInt(cursor.getColumnIndex(MovieTableHelper.PAGE)) , MovieService.SortBy.RELEASE_DATE_DESCENDING);
-            }
+                webService.getMoviesPage(webServerListener, 1);
         } catch (NullPointerException e) {
             Log.d("Error", e.getMessage());
         }
 
     }
-
 
 
     @Override
