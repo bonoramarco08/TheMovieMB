@@ -44,6 +44,7 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
     private WebService webService;
     private Toolbar toolbar;
     private View navHome, navHeart;
+    private Toast toast;
     private IWebServer webServerListener = new IWebServer() {
         @Override
         public void onMoviesFetched(boolean success, Result result, int errorCode, String errorMessage) {
@@ -98,7 +99,10 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
     }
 
     private Toast createToast(String textToShow){
-        Toast toast=Toast.makeText(HomeActivity.this,textToShow,Toast.LENGTH_SHORT);
+        if ( toast!= null) {
+            toast.cancel();
+        }
+        toast=Toast.makeText(HomeActivity.this,textToShow,Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER_HORIZONTAL|Gravity.CENTER_VERTICAL,0,0);
         return toast;
     }
