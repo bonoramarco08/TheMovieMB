@@ -155,7 +155,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
             queryTextListener = new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextChange(String newText) {
-                    Cursor cursor = (getActivity()).getContentResolver().query(MovieProvider.MOVIES_URI, null, null, null, null);
+                    Cursor cursor = (getActivity()).getContentResolver().query(MovieProvider.MOVIES_URI, null, MovieTableHelper.TITLE+" LIKE '%"+newText+"%'", null, null);
                     adapterHome.changeCursor(cursor);
                     return true;
                 }

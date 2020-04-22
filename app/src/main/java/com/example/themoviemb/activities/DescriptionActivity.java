@@ -145,7 +145,7 @@ public class DescriptionActivity extends AppCompatActivity {
             else
                 btnBack.setImageResource(R.drawable.left_arrow_white);
         else
-            if(vibrance>=75)
+            if(vibrance>=85)
                 if(!isChange)
                     onHeartAppear(R.drawable.favorite,R.drawable.unfavorite);
                 else
