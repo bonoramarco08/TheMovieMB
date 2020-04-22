@@ -213,15 +213,15 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     }
 
     @Override
-    public void longClick(int id, String titolo, MoviesAdapter.OnItemClickListener onItemClickListener) {
+    public void longClick(int id, MoviesAdapter.OnItemClickListener onItemClickListener) {
         try {
             Cursor cursor = getActivity().getContentResolver().query(MovieProvider.MOVIES_URI, null, MovieTableHelper._ID + " = " + id, null, null);
             if (cursor.moveToNext()) {
                 if (cursor.getInt(cursor.getColumnIndex(MovieTableHelper.IS_FAVORITE)) == 0) {
-                    DialogFavorite vDialog = new DialogFavorite(getString(R.string.dialogtitleinsert), getString(R.string.dilagotextinsert) + titolo + getString(R.string.dilagotextcomum), id, false);
+                    DialogFavorite vDialog = new DialogFavorite(getString(R.string.dialogtitleinsert), getString(R.string.dilagotextinsert) +" \"" +  cursor.getString(cursor.getColumnIndex(MovieTableHelper.TITLE)) +" \"" + getString(R.string.dilagotextcomum), id, false);
                     vDialog.show(getChildFragmentManager(), null);
                 } else {
-                    DialogFavorite vDialog = new DialogFavorite(getString(R.string.dialogtitleiremove), getString(R.string.dilagotextremove) + titolo + getString(R.string.dilagotextcomum), id, false);
+                    DialogFavorite vDialog = new DialogFavorite(getString(R.string.dialogtitleiremove), getString(R.string.dilagotextremove) +" \"" +  cursor.getString(cursor.getColumnIndex(MovieTableHelper.TITLE)) +"\" " + getString(R.string.dilagotextcomum), id, true);
                     vDialog.show(getChildFragmentManager(), null);
                 }
             }

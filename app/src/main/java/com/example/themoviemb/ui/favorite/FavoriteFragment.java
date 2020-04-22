@@ -71,7 +71,8 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
         });
 
         Toolbar toolbar = root.findViewById(R.id.toolbarHome);
-        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+        toolbar.setTitle(getString(R.string.title_favorite));
         rvFavorite = root.findViewById(R.id.rvMovies);
         return root;
     }
@@ -97,10 +98,11 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
             queryTextListener = new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextChange(String newText) {
-                    Cursor cursor = (getActivity()).getContentResolver().query(MovieProvider.MOVIES_URI, null, MovieTableHelper.TITLE + " LIKE '%" + newText+"%' and "+MovieTableHelper.IS_FAVORITE+" = 1", null, null);
+                    Cursor cursor = (getActivity()).getContentResolver().query(MovieProvider.MOVIES_URI, null, MovieTableHelper.TITLE + " LIKE '%" + newText + "%' and " + MovieTableHelper.IS_FAVORITE + " = 1", null, null);
                     adapterFavorite.changeCursor(cursor);
                     return true;
                 }
+
                 @Override
                 public boolean onQueryTextSubmit(String query) {
 
@@ -124,6 +126,7 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
         searchView.setOnQueryTextListener(queryTextListener);
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -133,7 +136,7 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
-       return new CursorLoader(getContext(), MovieProvider.MOVIES_URI, null, MovieTableHelper.IS_FAVORITE+" = 1", null, null);
+        return new CursorLoader(getContext(), MovieProvider.MOVIES_URI, null, MovieTableHelper.IS_FAVORITE + " = 1", null, null);
 
     }
 
@@ -160,16 +163,19 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
-    public void longClick(int id, String titolo, MoviesAdapter.OnItemClickListener onItemClickListener) {
+    public void longClick(int id, MoviesAdapter.OnItemClickListener onItemClickListener) {
         try {
             Cursor cursor = getActivity().getContentResolver().query(MovieProvider.MOVIES_URI, null, MovieTableHelper._ID + " = " + id, null, null);
-            DialogFavorite vDialog = new DialogFavorite(getString(R.string.dialogtitleiremove), getString(R.string.dilagotextremove) + titolo + getString(R.string.dilagotextcomum), id, false);
-            vDialog.show(getChildFragmentManager(), null);
-        }catch (NullPointerException e){
+            if(cursor.moveToNext()) {
+                DialogFavorite vDialog = new DialogFavorite(getString(R.string.dialogtitleiremove), getString(R.string.dilagotextremove) + " \"" + cursor.getString(cursor.getColumnIndex(MovieTableHelper.TITLE)) + "\" " + getString(R.string.dilagotextcomum), id, true);
+                vDialog.show(getChildFragmentManager(), null);
+            }
+        } catch (NullPointerException e) {
             Log.d("Error", e.getMessage());
         }
 
     }
+
     @Override
     public void setVisibleText(String message) {
         error.setText(message);

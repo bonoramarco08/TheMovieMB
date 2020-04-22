@@ -74,14 +74,14 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
         navHome.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                createToast("Menu").show();
+                createToast(getString(R.string.title_home)).show();
                 return true;
             }
         });
         navHeart.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
-                createToast("Favorite").show();
+                createToast(getString(R.string.title_favorite)).show();
                 return true;
             }
         });
