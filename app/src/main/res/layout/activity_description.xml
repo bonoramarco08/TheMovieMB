@@ -7,19 +7,31 @@
     tools:context=".activities.DescriptionActivity">
 
 
+
+    <com.airbnb.lottie.LottieAnimationView
+        android:id="@+id/imageProgress"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:scaleType="centerCrop"
+        app:lottie_rawRes="@raw/image_loading"
+        app:lottie_loop="true"
+        app:lottie_autoPlay="true"
+        app:layout_constraintHeight_percent="0.4"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
     <ImageView
         android:id="@+id/imgDescription"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:scaleType="fitXY"
-        android:src="@drawable/error_image"
         android:textColor="@color/black"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:scaleType="fitXY"
         app:layout_constraintHeight_percent="0.4"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/error_image" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageButton
         android:id="@+id/btnBack"
