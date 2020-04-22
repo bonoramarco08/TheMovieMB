@@ -64,6 +64,7 @@ public class DescriptionActivity extends AppCompatActivity {
             movie.moveToNext();
             title.setText(movie.getString(movie.getColumnIndex(MovieTableHelper.TITLE)));
             description.setText(movie.getString(movie.getColumnIndexOrThrow(MovieTableHelper.DESCRIPTION)));
+            onHeartAppear();
             Glide.with(getApplicationContext())
                     .asBitmap()
                     .load(movie.getString(movie.getColumnIndex(MovieTableHelper.DESCRIPTION_PHOTO)))
@@ -79,16 +80,11 @@ public class DescriptionActivity extends AppCompatActivity {
                             //se è 0, richiamerà il metodo con il viewTreeObserver
                             if(lengthArrow!=0) {
                                 long vibrance=sumVibranceImageDescription(resourceImageDescription,btnBack)/lengthArrow;
-                                setColorImage(true,vibrance,false);
-
-                            }
-                            if (lengthHeart != 0) {
-                                long vibrance=sumVibranceImageDescription(resourceImageDescription,btnHeart)/lengthHeart;
-                                vibranceHeart=vibrance;
-                                setColorImage(false,vibrance,false);
+                                setColorImage(vibrance);
 
                             }
                         }
+
                         @Override
                         public void onLoadCleared(@Nullable Drawable placeholder) {
                             descriptionImage.setImageResource(R.drawable.error_image);
@@ -98,24 +94,17 @@ public class DescriptionActivity extends AppCompatActivity {
 
             btnBack.setOnClickListener(view -> finish());
 
-            btnHeart.setOnClickListener(view -> setColorImage(false,vibranceHeart,true));
 
             descriptionImage.getViewTreeObserver().addOnGlobalLayoutListener(
                     new ViewTreeObserver.OnGlobalLayoutListener() {
                         @Override
                         public void onGlobalLayout() {
                             int lengthBtnBack = btnBack.getWidth()*btnBack.getHeight();
-                            int lengthBtnHeart = btnHeart.getWidth()*btnHeart.getHeight();
+
                             if(resourceImageDescription!=null) {
                                 if(lengthBtnBack!=0) {
                                     long vibrance=sumVibranceImageDescription(resourceImageDescription,btnBack)/lengthBtnBack;
-                                    setColorImage(true,vibrance,false);
-
-                                }
-                                if (lengthBtnHeart != 0) {
-                                    long vibrance=sumVibranceImageDescription(resourceImageDescription,btnHeart)/lengthBtnHeart;
-                                    vibranceHeart=vibrance;
-                                    setColorImage(false,vibrance,false);
+                                    setColorImage(vibrance);
 
                                 }
                             }
@@ -124,42 +113,33 @@ public class DescriptionActivity extends AppCompatActivity {
                         }
                     });
         }
+        btnHeart.setOnClickListener(view -> {
+            onHeartChange();
+        });
     }
 
-    private void setColorImage(boolean response,long vibrance, boolean isChange){
-        if(response)
-            if(vibrance>=50)
-                btnBack.setImageResource(R.drawable.left_arrow_black);
-            else
-                btnBack.setImageResource(R.drawable.left_arrow_white);
+    private void setColorImage(long vibrance){
+        if(vibrance>=50)
+            btnBack.setImageResource(R.drawable.left_arrow_black);
         else
-            if(vibrance>=85)
-                if(!isChange)
-                    onHeartAppear(R.drawable.favorite,R.drawable.unfavorite);
-                else
-                    onHeartChange(R.drawable.favorite,R.drawable.unfavorite);
-            else
-                if(!isChange)
-                    onHeartAppear(R.drawable.favorite_white,R.drawable.unfavorite_white);
-                else
-                    onHeartChange(R.drawable.favorite_white,R.drawable.unfavorite_white);
+            btnBack.setImageResource(R.drawable.left_arrow_white);
 
     }
 
 
 
-    public void onHeartAppear(int resIdFav, int resIdNotFav){
+    public void onHeartAppear(){
         if(idMovie!=-1) {
             Cursor movie = getContentResolver().query(MovieProvider.JOIN_URI, null, FavoriteTableHelper.ID_MOVIE+" = " + idMovie, null, null);
             movie.moveToNext();
             if(movie.getInt(movie.getColumnIndex(FavoriteTableHelper.IS_FAVORITE))==0)
-                btnHeart.setImageResource(resIdNotFav);
+                btnHeart.setImageResource(R.drawable.unfavorite);
             else
-                btnHeart.setImageResource(resIdFav);
+                btnHeart.setImageResource(R.drawable.favorite);
         }
     }
 
-    public void onHeartChange(int resIdFav, int resIdNotFav){
+    public void onHeartChange(){
         if(idMovie!=-1) {
             Cursor movie = getContentResolver().query(MovieProvider.JOIN_URI, null, FavoriteTableHelper.ID_MOVIE+" = " + idMovie, null, null);
             movie.moveToNext();
@@ -169,13 +149,13 @@ public class DescriptionActivity extends AppCompatActivity {
                 contentValues.put(FavoriteTableHelper.IS_FAVORITE,1);
                 getContentResolver().update(Uri.parse(MovieProvider.FAVORITE_URI+"/"+idMovie),contentValues,FavoriteTableHelper.ID_MOVIE+" = " + idMovie,null);
 
-                btnHeart.setImageResource(resIdFav);
+                btnHeart.setImageResource(R.drawable.favorite);
                 Toast.makeText(this, "Aggiunto ai preferiti", Toast.LENGTH_SHORT).show();
             }
             else{
                 contentValues.put(FavoriteTableHelper.IS_FAVORITE,0);
                 getContentResolver().update(MovieProvider.FAVORITE_URI,contentValues,FavoriteTableHelper.ID_MOVIE+" = " + idMovie,null);
-                btnHeart.setImageResource(resIdNotFav);
+                btnHeart.setImageResource(R.drawable.unfavorite);
                 Toast.makeText(this, "Rimosso dai preferiti", Toast.LENGTH_SHORT).show();
             }
         }
