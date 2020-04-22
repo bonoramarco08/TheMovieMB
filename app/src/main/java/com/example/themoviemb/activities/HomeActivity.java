@@ -20,6 +20,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.themoviemb.R;
 import com.example.themoviemb.data.FavoriteTableHelper;
 import com.example.themoviemb.data.MovieProvider;
@@ -38,6 +39,7 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
     private Toolbar toolbar;
     private View navHome, navHeart;
     private Toast toast;
+    private LottieAnimationView lottieAnimationView;
     private IWebServer webServerListener = new IWebServer() {
         @Override
         public void onMoviesFetched(boolean success, Result result, int errorCode, String errorMessage) {
@@ -78,19 +80,13 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
         //NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
-        navHome.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                createToast(getString(R.string.title_home)).show();
-                return true;
-            }
+        navHome.setOnLongClickListener(view -> {
+            createToast(getString(R.string.title_home)).show();
+            return true;
         });
-        navHeart.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                createToast(getString(R.string.title_favorite)).show();
-                return true;
-            }
+        navHeart.setOnLongClickListener(view -> {
+            createToast(getString(R.string.title_favorite)).show();
+            return true;
         });
 
 
@@ -104,6 +100,7 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
         toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
         return toast;
     }
+
     private void loadMovies() {
         try {
             Cursor cursor = new CursorLoader(getApplicationContext(), MovieProvider.MOVIES_URI, null, null, null, null).loadInBackground();
@@ -145,5 +142,15 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                 break;
         }
+    }
+
+    private void startAnimation(){
+        lottieAnimationView.playAnimation();
+        lottieAnimationView.setSpeed(2.0F); // How fast does the animation play
+        lottieAnimationView.setProgress(0F); // Starts the animation from 50% of the beginning
+    }
+
+    private void stopAnimation(){
+        lottieAnimationView.cancelAnimation(); // Cancels the animation
     }
 }

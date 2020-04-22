@@ -4,28 +4,23 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.view.ViewTreeObserver;
-import android.view.animation.Animation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.airbnb.lottie.LottieAnimationView;
-import com.airbnb.lottie.LottieDrawable;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.request.target.CustomTarget;
@@ -35,17 +30,13 @@ import com.example.themoviemb.data.FavoriteTableHelper;
 import com.example.themoviemb.data.MovieProvider;
 import com.example.themoviemb.data.MovieTableHelper;
 
-import java.io.File;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.BitSet;
 
 public class DescriptionActivity extends AppCompatActivity {
 
     private static int idMovie=-1;
     private ImageView descriptionImage;
     private TextView title, description;
-    private MenuItem actionBarItem;
     private ImageButton btnBack;
     private ImageButton btnHeart;
     private Bitmap resourceImageDescription;
@@ -223,7 +214,6 @@ public class DescriptionActivity extends AppCompatActivity {
     private void startAnimation(){
         lottieAnimationView.setSpeed(2.0F); // How fast does the animation play
         lottieAnimationView.setProgress(50F); // Starts the animation from 50% of the beginning
-
     }
 
     private void stopAnimation(){
