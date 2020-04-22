@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -46,12 +47,14 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
     private SearchView searchView = null;
     private SearchView.OnQueryTextListener queryTextListener;
     private TextView error;
+    ProgressBar pbFavorite2;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         favoriteViewModel =
                 ViewModelProviders.of(this).get(FavoriteViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_home, container, false);
+        View root = inflater.inflate(R.layout.fragment_favorite, container, false);
+        pbFavorite2 = root.findViewById(R.id.pbFavorite2);
         rvFavorite = root.findViewById(R.id.rvMovies);
         error = root.findViewById(R.id.errorTextView);
         layoutManagerFavorite = new GridLayoutManager(getContext(), 2);
@@ -68,8 +71,8 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
         });
 
         Toolbar toolbar = root.findViewById(R.id.toolbarHome);
-        toolbar.setTitle("Favorite Movie");
-        ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
+        ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
+        toolbar.setTitle(getString(R.string.title_favorite));
         rvFavorite = root.findViewById(R.id.rvMovies);
         return root;
     }
@@ -95,10 +98,11 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
             queryTextListener = new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextChange(String newText) {
-                    Cursor cursor = (getActivity()).getContentResolver().query(MovieProvider.MOVIES_URI, null, MovieTableHelper.TITLE + " LIKE '%" + newText+"%' and "+MovieTableHelper.IS_FAVORITE+" = 1", null, null);
+                    Cursor cursor = (getActivity()).getContentResolver().query(MovieProvider.MOVIES_URI, null, MovieTableHelper.TITLE + " LIKE '%" + newText + "%' and " + MovieTableHelper.IS_FAVORITE + " = 1", null, null);
                     adapterFavorite.changeCursor(cursor);
                     return true;
                 }
+
                 @Override
                 public boolean onQueryTextSubmit(String query) {
 
@@ -122,6 +126,7 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
         searchView.setOnQueryTextListener(queryTextListener);
         return super.onOptionsItemSelected(item);
     }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -131,16 +136,18 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
-       return new CursorLoader(getContext(), MovieProvider.MOVIES_URI, null, MovieTableHelper.IS_FAVORITE+" = 1", null, null);
+        return new CursorLoader(getContext(), MovieProvider.MOVIES_URI, null, MovieTableHelper.IS_FAVORITE + " = 1", null, null);
 
     }
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         adapterFavorite.changeCursor(data);
+        pbFavorite2.setVisibility(View.INVISIBLE);
         if (data.getCount() == 0) {
-            setVisibleText("Non hai nessun film tra i preferiti");
+            setVisibleText(getString(R.string.no_film_favorite));
         }
+
     }
 
     @Override
@@ -156,16 +163,19 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
-    public void longClick(int id, String titolo, MoviesAdapter.OnItemClickListener onItemClickListener) {
+    public void longClick(int id, MoviesAdapter.OnItemClickListener onItemClickListener) {
         try {
             Cursor cursor = getActivity().getContentResolver().query(MovieProvider.MOVIES_URI, null, MovieTableHelper._ID + " = " + id, null, null);
-                    DialogFavorite vDialog = new DialogFavorite("Rimozione", "Vuoi rimuovere " + titolo + " dai tuoi film preferiti?", id, true);
-                    vDialog.show(getChildFragmentManager(), null);
-        }catch (NullPointerException e){
+            if(cursor.moveToNext()) {
+                DialogFavorite vDialog = new DialogFavorite(getString(R.string.dialogtitleiremove), getString(R.string.dilagotextremove) + " \"" + cursor.getString(cursor.getColumnIndex(MovieTableHelper.TITLE)) + "\" " + getString(R.string.dilagotextcomum), id, true);
+                vDialog.show(getChildFragmentManager(), null);
+            }
+        } catch (NullPointerException e) {
             Log.d("Error", e.getMessage());
         }
 
     }
+
     @Override
     public void setVisibleText(String message) {
         error.setText(message);

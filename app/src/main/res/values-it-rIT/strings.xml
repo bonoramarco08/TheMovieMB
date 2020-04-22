@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TheMovieMB</string>
+    <string name="title_activity_home">HomeActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_favorite">Preferiti</string>
+    <string name="description_image_copertina">Immagine di copertina</string>
+    <string name="search_hint">Cerca...</string>
+    <string name="no_film_favorite">Non ha nessun film tra i preferiti</string>
+    <string name="dialogtitleinsert">Aggiungi</string>
+    <string name="dialogtitleiremove">Rimuovi</string>
+    <string name="dilagotextinsert">Vuoi aggiungere </string>
+    <string name="dilagotextremove">Vuoi rimuovere </string>
+    <string name="dilagotextcomum"> ai tuoi film preferiti?</string>
+    <string name="dialogbuttonannulla">Annulla</string>
+    <string name="dialogbuttonpositive">Si</string>
+    <string name="dialogbuttonnegative">No</string>
+    <string name="erroImage">Errore nel caricamento dell\'immagine</string>
+</resources>

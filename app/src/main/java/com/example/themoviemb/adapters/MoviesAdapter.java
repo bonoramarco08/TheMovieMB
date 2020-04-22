@@ -28,9 +28,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     private OnItemClickListener onItemClickListener;
 
     public interface OnItemClickListener {
-        void sendDetails(int position, OnItemClickListener onItemClickListener);
+        void sendDetails(int id, OnItemClickListener onItemClickListener);
 
-        void longClick(int position, String titolo, OnItemClickListener onItemClickListener);
+        void longClick(int id, OnItemClickListener onItemClickListener);
     }
 
     public MoviesAdapter(Cursor cursor, OnItemClickListener onItemClickListener) {
@@ -84,7 +84,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
             holder.view.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    onItemClickListener.longClick(Integer.parseInt(holder.textViewId.getText().toString()), "Film", onItemClickListener);
+                    onItemClickListener.longClick(Integer.parseInt(holder.textViewId.getText().toString()), onItemClickListener);
                     return true;
                 }
             });

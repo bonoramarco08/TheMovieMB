@@ -62,7 +62,6 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
         setSupportActionBar(toolbar);
         navHome = findViewById(R.id.navigation_home);
         navHeart = findViewById(R.id.navigation_favorite);
-        lottieAnimationView=findViewById(R.id.heartAppear);
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         webService = WebService.getInstance();
@@ -75,11 +74,11 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
         NavigationUI.setupWithNavController(navView, navController);
 
         navHome.setOnLongClickListener(view -> {
-            createToast("Menu").show();
+            createToast(getString(R.string.title_home)).show();
             return true;
         });
         navHeart.setOnLongClickListener(view -> {
-            createToast("Favorite").show();
+            createToast(getString(R.string.title_favorite)).show();
             return true;
         });
 
@@ -95,34 +94,6 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
         return toast;
     }
 
-    /*
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.bottom_nav_menu, menu);
-
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                final View view = findViewById(R.id.add_item);
-
-                if (view != null) {
-                    view.setOnLongClickListener(new View.OnLongClickListener() {
-                        @Override
-                        public boolean onLongClick(View v) {
-
-                            // Do something...
-
-                            Toast.makeText(getApplicationContext(), "Long pressed", Toast.LENGTH_SHORT).show();
-                            return true;
-                        }
-                    });
-                }
-            }
-        });
-
-        return super.onCreateOptionsMenu(menu);
-    }
-*/
     private void loadMovies() {
         try {
             Cursor cursor = new CursorLoader(getApplicationContext(), MovieProvider.MOVIES_URI, null, null, null, null).loadInBackground();

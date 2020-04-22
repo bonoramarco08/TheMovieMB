@@ -126,7 +126,6 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         rvHome.setOnScrollListener(new EndlessRecyclerViewScrollListener((GridLayoutManager) layoutManagerHome) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                Toast.makeText(getContext(), "sfdfdsf", Toast.LENGTH_SHORT).show();
                 new BackgroundTask().execute();
             }
         });
@@ -214,15 +213,15 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     }
 
     @Override
-    public void longClick(int id, String titolo, MoviesAdapter.OnItemClickListener onItemClickListener) {
+    public void longClick(int id, MoviesAdapter.OnItemClickListener onItemClickListener) {
         try {
             Cursor cursor = getActivity().getContentResolver().query(MovieProvider.MOVIES_URI, null, MovieTableHelper._ID + " = " + id, null, null);
             if (cursor.moveToNext()) {
                 if (cursor.getInt(cursor.getColumnIndex(MovieTableHelper.IS_FAVORITE)) == 0) {
-                    DialogFavorite vDialog = new DialogFavorite("Aggiunta", "Vuoi aggiungere " + titolo + " dai tuoi film preferiti?", id, false);
+                    DialogFavorite vDialog = new DialogFavorite(getString(R.string.dialogtitleinsert), getString(R.string.dilagotextinsert) +" \"" +  cursor.getString(cursor.getColumnIndex(MovieTableHelper.TITLE)) +" \"" + getString(R.string.dilagotextcomum), id, false);
                     vDialog.show(getChildFragmentManager(), null);
                 } else {
-                    DialogFavorite vDialog = new DialogFavorite("Rimozione", "Vuoi rimuovere " + titolo + " dai tuoi film preferiti?", id, true);
+                    DialogFavorite vDialog = new DialogFavorite(getString(R.string.dialogtitleiremove), getString(R.string.dilagotextremove) +" \"" +  cursor.getString(cursor.getColumnIndex(MovieTableHelper.TITLE)) +"\" " + getString(R.string.dilagotextcomum), id, true);
                     vDialog.show(getChildFragmentManager(), null);
                 }
             }
@@ -236,8 +235,9 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
 
     // codice scrool
 
-    public void insertScroll(int page) {
+    public int insertScroll(int page) {
         webService.getMoviesPage(webServerListener, page);
+        return  insert;
     }
 
     private class BackgroundTask extends AsyncTask<Void, Integer, String> {
@@ -255,6 +255,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
                     Thread.sleep(500);
                     i++;
                 }
+                insert = 0;
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -270,7 +271,6 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         protected void onPostExecute(String result) {
             adapterHome.changeCursor(new CursorLoader(getContext(), MovieProvider.MOVIES_URI, null, null, null, null).loadInBackground());
             adapterHome.notifyDataSetChanged();
-            pbHome.setVisibility(View.INVISIBLE);
             super.onPostExecute(result);
 
         }
