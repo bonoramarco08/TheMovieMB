@@ -19,6 +19,7 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.themoviemb.R;
 import com.example.themoviemb.data.MovieProvider;
 import com.example.themoviemb.data.MovieTableHelper;
@@ -36,6 +37,7 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
     private Toolbar toolbar;
     private View navHome, navHeart;
     private Toast toast;
+    private LottieAnimationView lottieAnimationView;
     private IWebServer webServerListener = new IWebServer() {
         @Override
         public void onMoviesFetched(boolean success, Result result, int errorCode, String errorMessage) {
@@ -60,6 +62,7 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
         setSupportActionBar(toolbar);
         navHome = findViewById(R.id.navigation_home);
         navHeart = findViewById(R.id.navigation_favorite);
+        lottieAnimationView=findViewById(R.id.heartAppear);
 
         BottomNavigationView navView = findViewById(R.id.nav_view);
         webService = WebService.getInstance();
@@ -71,19 +74,13 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
         //NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(navView, navController);
 
-        navHome.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                createToast("Menu").show();
-                return true;
-            }
+        navHome.setOnLongClickListener(view -> {
+            createToast("Menu").show();
+            return true;
         });
-        navHeart.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                createToast("Favorite").show();
-                return true;
-            }
+        navHeart.setOnLongClickListener(view -> {
+            createToast("Favorite").show();
+            return true;
         });
 
 
@@ -145,6 +142,7 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
                 ContentValues cv = new ContentValues();
                 cv.put(MovieTableHelper.IS_FAVORITE, 1);
                 getContentResolver().update(MovieProvider.MOVIES_URI, cv, MovieTableHelper._ID + " = " + aId, null);
+                startAnimation();
             } else {
                 ContentValues cv = new ContentValues();
                 cv.put(MovieTableHelper.IS_FAVORITE, 0);
@@ -167,5 +165,15 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
                 break;
         }
+    }
+
+    private void startAnimation(){
+        lottieAnimationView.playAnimation();
+        lottieAnimationView.setSpeed(2.0F); // How fast does the animation play
+        lottieAnimationView.setProgress(0F); // Starts the animation from 50% of the beginning
+    }
+
+    private void stopAnimation(){
+        lottieAnimationView.cancelAnimation(); // Cancels the animation
     }
 }
