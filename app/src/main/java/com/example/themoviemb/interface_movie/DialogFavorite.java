@@ -11,6 +11,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
+import com.example.themoviemb.R;
+
 public class DialogFavorite extends DialogFragment {
     public interface IFavoritDialog {
         void onResponse(boolean aResponse, long aId, Boolean isRemoved);
@@ -40,19 +42,24 @@ public class DialogFavorite extends DialogFragment {
         AlertDialog.Builder vBuilder = new AlertDialog.Builder(getActivity());
         vBuilder.setTitle(mTitle);
         vBuilder.setMessage(mMessage);
-        vBuilder.setPositiveButton("SI", new DialogInterface.OnClickListener() {
+        vBuilder.setPositiveButton(getString(R.string.dialogbuttonpositive), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 mListener.onResponse(true, mId, isRemoved);
             }
         });
-        vBuilder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+        vBuilder.setNegativeButton(getString(R.string.dialogbuttonnegative), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 mListener.onResponse(false, mId, isRemoved);
             }
         });
-
+        vBuilder.setNeutralButton(getString(R.string.dialogbuttonannulla), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                mListener.onResponse(false, mId, isRemoved);
+            }
+        });
         return vBuilder.create();
     }
 

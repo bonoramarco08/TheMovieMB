@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -46,12 +47,14 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
     private SearchView searchView = null;
     private SearchView.OnQueryTextListener queryTextListener;
     private TextView error;
+    ProgressBar pbFavorite2;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         favoriteViewModel =
                 ViewModelProviders.of(this).get(FavoriteViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_home, container, false);
+        View root = inflater.inflate(R.layout.fragment_favorite, container, false);
+        pbFavorite2 = root.findViewById(R.id.pbFavorite2);
         rvFavorite = root.findViewById(R.id.rvMovies);
         error = root.findViewById(R.id.errorTextView);
         layoutManagerFavorite = new GridLayoutManager(getContext(), 2);
@@ -68,7 +71,6 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
         });
 
         Toolbar toolbar = root.findViewById(R.id.toolbarHome);
-        toolbar.setTitle("Favorite Movie");
         ((AppCompatActivity)getActivity()).setSupportActionBar(toolbar);
         rvFavorite = root.findViewById(R.id.rvMovies);
         return root;
@@ -138,9 +140,11 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         adapterFavorite.changeCursor(data);
+        pbFavorite2.setVisibility(View.INVISIBLE);
         if (data.getCount() == 0) {
-            setVisibleText("Non hai nessun film tra i preferiti");
+            setVisibleText(getString(R.string.no_film_favorite));
         }
+
     }
 
     @Override
@@ -159,8 +163,8 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
     public void longClick(int id, String titolo, MoviesAdapter.OnItemClickListener onItemClickListener) {
         try {
             Cursor cursor = getActivity().getContentResolver().query(MovieProvider.MOVIES_URI, null, MovieTableHelper._ID + " = " + id, null, null);
-                    DialogFavorite vDialog = new DialogFavorite("Rimozione", "Vuoi rimuovere " + titolo + " dai tuoi film preferiti?", id, true);
-                    vDialog.show(getChildFragmentManager(), null);
+            DialogFavorite vDialog = new DialogFavorite(getString(R.string.dialogtitleiremove), getString(R.string.dilagotextremove) + titolo + getString(R.string.dilagotextcomum), id, false);
+            vDialog.show(getChildFragmentManager(), null);
         }catch (NullPointerException e){
             Log.d("Error", e.getMessage());
         }

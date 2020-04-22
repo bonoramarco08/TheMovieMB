@@ -7,19 +7,18 @@
     tools:context=".activities.DescriptionActivity">
 
 
-
-
     <ImageView
         android:id="@+id/imgDescription"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:scaleType="fitXY"
         android:src="@drawable/error_image"
         android:textColor="@color/black"
-        android:scaleType="fitXY"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.4"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:srcCompat="@drawable/error_image" />
 
     <ImageButton
@@ -76,6 +75,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtTitle"
         app:layout_constraintWidth_percent="0.9" />
+
+    <ProgressBar
+        android:id="@+id/pbDescription"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="@+id/imgDescription"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/imgDescription"
+        app:layout_constraintVertical_bias="0.497" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
