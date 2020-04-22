@@ -18,11 +18,14 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
+import android.view.animation.Animation;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.airbnb.lottie.LottieAnimationView;
+import com.airbnb.lottie.LottieDrawable;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
@@ -46,6 +49,7 @@ public class DescriptionActivity extends AppCompatActivity {
     private Bitmap resourceImageDescription;
     private int isFavorite;
     private long vibranceHeart;
+    private LottieAnimationView lottieAnimationView;
 
 
     @Override
@@ -58,6 +62,8 @@ public class DescriptionActivity extends AppCompatActivity {
         description=findViewById(R.id.txtDescription);
         btnBack=findViewById(R.id.btnBack);
         btnHeart=findViewById(R.id.btnHeart);
+        lottieAnimationView=findViewById(R.id.imageProgress);
+        startAnimation();
 
         idMovie=getIntent().getIntExtra("ID_MOVIE",-1);
         if(idMovie!=-1){
@@ -98,19 +104,9 @@ public class DescriptionActivity extends AppCompatActivity {
                     });
             isFavorite=movie.getInt(movie.getColumnIndex(MovieTableHelper.IS_FAVORITE));
 
-            btnBack.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    finish();
-                }
-            });
+            btnBack.setOnClickListener(view -> finish());
 
-            btnHeart.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    setColorImage(false,vibranceHeart,true);
-                }
-            });
+            btnHeart.setOnClickListener(view -> setColorImage(false,vibranceHeart,true));
 
             descriptionImage.getViewTreeObserver().addOnGlobalLayoutListener(
                     new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -221,6 +217,16 @@ public class DescriptionActivity extends AppCompatActivity {
             }
         }
         return pixels;
+    }
+
+    private void startAnimation(){
+        lottieAnimationView.setSpeed(2.0F); // How fast does the animation play
+        lottieAnimationView.setProgress(50F); // Starts the animation from 50% of the beginning
+
+    }
+
+    private void stopAnimation(){
+        lottieAnimationView.cancelAnimation(); // Cancels the animation
     }
 
 }
