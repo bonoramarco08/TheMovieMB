@@ -32,6 +32,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.themoviemb.R;
 import com.example.themoviemb.activities.DescriptionActivity;
 import com.example.themoviemb.adapters.MoviesAdapter;
+import com.example.themoviemb.data.FavoriteTableHelper;
 import com.example.themoviemb.data.MovieProvider;
 import com.example.themoviemb.data.MovieTableHelper;
 import com.example.themoviemb.interface_movie.DialogFavorite;
@@ -98,7 +99,7 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
             queryTextListener = new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextChange(String newText) {
-                    Cursor cursor = (getActivity()).getContentResolver().query(MovieProvider.MOVIES_URI, null, MovieTableHelper.TITLE + " LIKE '%" + newText + "%' and " + MovieTableHelper.IS_FAVORITE + " = 1", null, null);
+                    Cursor cursor = (getActivity()).getContentResolver().query(MovieProvider.JOIN_URI, null, MovieTableHelper.TITLE + " LIKE '%" + newText + "%' and " + FavoriteTableHelper.IS_FAVORITE + " = 1", null, null);
                     adapterFavorite.changeCursor(cursor);
                     return true;
                 }
@@ -136,7 +137,7 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
-        return new CursorLoader(getContext(), MovieProvider.MOVIES_URI, null, MovieTableHelper.IS_FAVORITE + " = 1", null, null);
+        return new CursorLoader(getContext(), MovieProvider.JOIN_URI, null, FavoriteTableHelper.IS_FAVORITE + " = 1", null, null);
 
     }
 
@@ -166,14 +167,13 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
     public void longClick(int id, MoviesAdapter.OnItemClickListener onItemClickListener) {
         try {
             Cursor cursor = getActivity().getContentResolver().query(MovieProvider.MOVIES_URI, null, MovieTableHelper._ID + " = " + id, null, null);
-            if(cursor.moveToNext()) {
+            if (cursor.moveToNext()) {
                 DialogFavorite vDialog = new DialogFavorite(getString(R.string.dialogtitleiremove), getString(R.string.dilagotextremove) + " \"" + cursor.getString(cursor.getColumnIndex(MovieTableHelper.TITLE)) + "\" " + getString(R.string.dilagotextcomum), id, true);
                 vDialog.show(getChildFragmentManager(), null);
             }
         } catch (NullPointerException e) {
             Log.d("Error", e.getMessage());
         }
-
     }
 
     @Override

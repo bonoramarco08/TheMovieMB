@@ -3,6 +3,7 @@ package com.example.themoviemb.activities;
 import android.content.ContentValues;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -20,6 +21,7 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.example.themoviemb.R;
+import com.example.themoviemb.data.FavoriteTableHelper;
 import com.example.themoviemb.data.MovieProvider;
 import com.example.themoviemb.data.MovieTableHelper;
 import com.example.themoviemb.data.models.Movie;
@@ -46,7 +48,12 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
                     contentValues.put(MovieTableHelper.COVER_PHOTO, movie.getPosterPath());
                     contentValues.put(MovieTableHelper.DESCRIPTION, movie.getOverview());
                     contentValues.put(MovieTableHelper.DESCRIPTION_PHOTO, movie.getBackdropPath());
-                    getContentResolver().insert(MovieProvider.MOVIES_URI, contentValues);
+                    Uri r=getContentResolver().insert(MovieProvider.MOVIES_URI, contentValues);
+                    long id = Long.parseLong(r.getLastPathSegment());
+                    ContentValues contentValuesFavorite = new ContentValues();
+                    contentValuesFavorite.put(FavoriteTableHelper.ID_MOVIE,id);
+                    contentValuesFavorite.put(FavoriteTableHelper.IS_FAVORITE, 0);
+                    getContentResolver().insert(MovieProvider.FAVORITE_URI, contentValuesFavorite);
                 }
             }
         }
@@ -97,35 +104,6 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
         toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
         return toast;
     }
-
-    /*
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.bottom_nav_menu, menu);
-
-        new Handler().post(new Runnable() {
-            @Override
-            public void run() {
-                final View view = findViewById(R.id.add_item);
-
-                if (view != null) {
-                    view.setOnLongClickListener(new View.OnLongClickListener() {
-                        @Override
-                        public boolean onLongClick(View v) {
-
-                            // Do something...
-
-                            Toast.makeText(getApplicationContext(), "Long pressed", Toast.LENGTH_SHORT).show();
-                            return true;
-                        }
-                    });
-                }
-            }
-        });
-
-        return super.onCreateOptionsMenu(menu);
-    }
-*/
     private void loadMovies() {
         try {
             Cursor cursor = new CursorLoader(getApplicationContext(), MovieProvider.MOVIES_URI, null, null, null, null).loadInBackground();
@@ -143,12 +121,12 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
         if (aResponse) {
             if (!isRemoved) {
                 ContentValues cv = new ContentValues();
-                cv.put(MovieTableHelper.IS_FAVORITE, 1);
-                getContentResolver().update(MovieProvider.MOVIES_URI, cv, MovieTableHelper._ID + " = " + aId, null);
+                cv.put(FavoriteTableHelper.IS_FAVORITE, 1);
+                getContentResolver().update(MovieProvider.FAVORITE_URI, cv, FavoriteTableHelper.ID_MOVIE + " = " + aId, null);
             } else {
                 ContentValues cv = new ContentValues();
-                cv.put(MovieTableHelper.IS_FAVORITE, 0);
-                getContentResolver().update(MovieProvider.MOVIES_URI, cv, MovieTableHelper._ID + " = " + aId, null);
+                cv.put(FavoriteTableHelper.IS_FAVORITE, 0);
+                getContentResolver().update(MovieProvider.FAVORITE_URI, cv, FavoriteTableHelper.ID_MOVIE + " = " + aId, null);
             }
         }
     }

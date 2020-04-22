@@ -27,9 +27,11 @@ import android.widget.Toast;
 import com.airbnb.lottie.LottieAnimationView;
 import com.airbnb.lottie.LottieDrawable;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.themoviemb.R;
+import com.example.themoviemb.data.FavoriteTableHelper;
 import com.example.themoviemb.data.MovieProvider;
 import com.example.themoviemb.data.MovieTableHelper;
 
@@ -67,7 +69,7 @@ public class DescriptionActivity extends AppCompatActivity {
 
         idMovie=getIntent().getIntExtra("ID_MOVIE",-1);
         if(idMovie!=-1){
-            Cursor movie = getContentResolver().query(Uri.parse(MovieProvider.MOVIES_URI+"/"+idMovie),null,null,null,null);
+            Cursor movie = getContentResolver().query(MovieProvider.JOIN_URI,null,FavoriteTableHelper.ID_MOVIE+" = " + idMovie,null,null);
             movie.moveToNext();
             title.setText(movie.getString(movie.getColumnIndex(MovieTableHelper.TITLE)));
             description.setText(movie.getString(movie.getColumnIndexOrThrow(MovieTableHelper.DESCRIPTION)));
@@ -96,13 +98,12 @@ public class DescriptionActivity extends AppCompatActivity {
 
                             }
                         }
-
                         @Override
                         public void onLoadCleared(@Nullable Drawable placeholder) {
-
+                            descriptionImage.setImageResource(R.drawable.error_image);
                         }
                     });
-            isFavorite=movie.getInt(movie.getColumnIndex(MovieTableHelper.IS_FAVORITE));
+            isFavorite=movie.getInt(movie.getColumnIndex(FavoriteTableHelper.IS_FAVORITE));
 
             btnBack.setOnClickListener(view -> finish());
 
@@ -158,9 +159,9 @@ public class DescriptionActivity extends AppCompatActivity {
 
     public void onHeartAppear(int resIdFav, int resIdNotFav){
         if(idMovie!=-1) {
-            Cursor movie = getContentResolver().query(Uri.parse(MovieProvider.MOVIES_URI + "/" + idMovie), null, null, null, null);
+            Cursor movie = getContentResolver().query(MovieProvider.JOIN_URI, null, FavoriteTableHelper.ID_MOVIE+" = " + idMovie, null, null);
             movie.moveToNext();
-            if(movie.getInt(movie.getColumnIndex(MovieTableHelper.IS_FAVORITE))==0)
+            if(movie.getInt(movie.getColumnIndex(FavoriteTableHelper.IS_FAVORITE))==0)
                 btnHeart.setImageResource(resIdNotFav);
             else
                 btnHeart.setImageResource(resIdFav);
@@ -169,20 +170,20 @@ public class DescriptionActivity extends AppCompatActivity {
 
     public void onHeartChange(int resIdFav, int resIdNotFav){
         if(idMovie!=-1) {
-            Cursor movie = getContentResolver().query(Uri.parse(MovieProvider.MOVIES_URI + "/" + idMovie), null, null, null, null);
+            Cursor movie = getContentResolver().query(MovieProvider.JOIN_URI, null, FavoriteTableHelper.ID_MOVIE+" = " + idMovie, null, null);
             movie.moveToNext();
             ContentValues contentValues=new ContentValues();
 
-            if(movie.getInt(movie.getColumnIndex(MovieTableHelper.IS_FAVORITE))==0){
-                contentValues.put(MovieTableHelper.IS_FAVORITE,1);
-                getContentResolver().update(Uri.parse(MovieProvider.MOVIES_URI+"/"+idMovie),contentValues,null,null);
+            if(movie.getInt(movie.getColumnIndex(FavoriteTableHelper.IS_FAVORITE))==0){
+                contentValues.put(FavoriteTableHelper.IS_FAVORITE,1);
+                getContentResolver().update(Uri.parse(MovieProvider.FAVORITE_URI+"/"+idMovie),contentValues,FavoriteTableHelper.ID_MOVIE+" = " + idMovie,null);
 
                 btnHeart.setImageResource(resIdFav);
                 Toast.makeText(this, "Aggiunto ai preferiti", Toast.LENGTH_SHORT).show();
             }
             else{
-                contentValues.put(MovieTableHelper.IS_FAVORITE,0);
-                getContentResolver().update(Uri.parse(MovieProvider.MOVIES_URI+"/"+idMovie),contentValues,null,null);
+                contentValues.put(FavoriteTableHelper.IS_FAVORITE,0);
+                getContentResolver().update(MovieProvider.FAVORITE_URI,contentValues,FavoriteTableHelper.ID_MOVIE+" = " + idMovie,null);
                 btnHeart.setImageResource(resIdNotFav);
                 Toast.makeText(this, "Rimosso dai preferiti", Toast.LENGTH_SHORT).show();
             }

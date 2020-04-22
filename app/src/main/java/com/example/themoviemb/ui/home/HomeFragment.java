@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -35,6 +36,7 @@ import com.example.themoviemb.EndlessRecyclerViewScrollListener;
 import com.example.themoviemb.R;
 import com.example.themoviemb.activities.DescriptionActivity;
 import com.example.themoviemb.adapters.MoviesAdapter;
+import com.example.themoviemb.data.FavoriteTableHelper;
 import com.example.themoviemb.data.MovieProvider;
 import com.example.themoviemb.data.MovieTableHelper;
 import com.example.themoviemb.data.models.Movie;
@@ -56,7 +58,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     private RecyclerView.LayoutManager layoutManagerHome;
     private SearchView searchView = null;
     private SearchView.OnQueryTextListener queryTextListener;
-    private boolean loading = true;
+    private boolean search = false;
     ProgressBar pbHome;
 
     // codice scrool
@@ -85,7 +87,12 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
                             contentValues.put(MovieTableHelper.COVER_PHOTO, movie.getPosterPath());
                             contentValues.put(MovieTableHelper.DESCRIPTION, movie.getOverview());
                             contentValues.put(MovieTableHelper.DESCRIPTION_PHOTO, movie.getBackdropPath());
-                            getActivity().getContentResolver().insert(MovieProvider.MOVIES_URI, contentValues);
+                            Uri r=  getActivity().getContentResolver().insert(MovieProvider.MOVIES_URI, contentValues);
+                            long id = Long.parseLong(r.getLastPathSegment());
+                            ContentValues contentValuesFavorite = new ContentValues();
+                            contentValuesFavorite.put(FavoriteTableHelper.ID_MOVIE,id);
+                            contentValuesFavorite.put(FavoriteTableHelper.IS_FAVORITE, 0);
+                            getActivity().getContentResolver().insert(MovieProvider.FAVORITE_URI, contentValuesFavorite);
                             insert++;
                         }
                     }
@@ -126,6 +133,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         rvHome.setOnScrollListener(new EndlessRecyclerViewScrollListener((GridLayoutManager) layoutManagerHome) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                if(!search)
                 new BackgroundTask().execute();
             }
         });
@@ -154,14 +162,18 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
             queryTextListener = new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextChange(String newText) {
-                    Cursor cursor = (getActivity()).getContentResolver().query(MovieProvider.MOVIES_URI, null, MovieTableHelper.TITLE+" LIKE '%"+newText+"%'", null, null);
-                    adapterHome.changeCursor(cursor);
+              if(newText.equals("")){
+                  search=false;
+              }
+              else {
+                  search = true;}
+                  Cursor cursor = (getActivity()).getContentResolver().query(MovieProvider.MOVIES_URI, null, MovieTableHelper.TITLE + " LIKE '%" + newText + "%'", null, null);
+                  adapterHome.changeCursor(cursor);
                     return true;
                 }
 
                 @Override
                 public boolean onQueryTextSubmit(String query) {
-
                     return true;
                 }
             };
@@ -215,9 +227,9 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public void longClick(int id, MoviesAdapter.OnItemClickListener onItemClickListener) {
         try {
-            Cursor cursor = getActivity().getContentResolver().query(MovieProvider.MOVIES_URI, null, MovieTableHelper._ID + " = " + id, null, null);
+            Cursor cursor = getActivity().getContentResolver().query(MovieProvider.JOIN_URI, null, MovieTableHelper.TABLE_NAME+"."+MovieTableHelper._ID + " = " + id, null, null);
             if (cursor.moveToNext()) {
-                if (cursor.getInt(cursor.getColumnIndex(MovieTableHelper.IS_FAVORITE)) == 0) {
+                if (cursor.getInt(cursor.getColumnIndex(FavoriteTableHelper.IS_FAVORITE)) == 0) {
                     DialogFavorite vDialog = new DialogFavorite(getString(R.string.dialogtitleinsert), getString(R.string.dilagotextinsert) +" \"" +  cursor.getString(cursor.getColumnIndex(MovieTableHelper.TITLE)) +" \"" + getString(R.string.dilagotextcomum), id, false);
                     vDialog.show(getChildFragmentManager(), null);
                 } else {

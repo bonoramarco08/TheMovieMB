@@ -15,6 +15,7 @@ public class MovieDatabaseHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL(MovieTableHelper.CREATE);
+        sqLiteDatabase.execSQL(FavoriteTableHelper.CREATE);
     }
 
     @Override
