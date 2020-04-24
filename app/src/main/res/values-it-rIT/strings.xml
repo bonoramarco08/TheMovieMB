@@ -16,4 +16,6 @@
     <string name="dialogbuttonpositive">Si</string>
     <string name="dialogbuttonnegative">No</string>
     <string name="erroImage">Errore nel caricamento dell\'immagine</string>
+    <string name="dialog_message">Ci spiace ma per per utilizzare l\'app la prima volta è indispensabile internet</string>
+    <string name="dialog_title">Errore</string>
 </resources>

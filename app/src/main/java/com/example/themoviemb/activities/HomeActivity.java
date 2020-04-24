@@ -1,8 +1,12 @@
 package com.example.themoviemb.activities;
 
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +15,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
@@ -22,6 +27,7 @@ import androidx.navigation.ui.NavigationUI;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.themoviemb.R;
+import com.example.themoviemb.VerificaInternet;
 import com.example.themoviemb.data.FavoriteTableHelper;
 import com.example.themoviemb.data.MovieProvider;
 import com.example.themoviemb.data.MovieTableHelper;
@@ -31,6 +37,8 @@ import com.example.themoviemb.interface_movie.DialogFavorite;
 import com.example.themoviemb.interface_movie.IWebServer;
 import com.example.themoviemb.networks.WebService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import butterknife.OnClick;
 
 public class HomeActivity extends AppCompatActivity implements DialogFavorite.IFavoritDialog {
 
@@ -105,7 +113,21 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
         try {
             Cursor cursor = new CursorLoader(getApplicationContext(), MovieProvider.MOVIES_URI, null, null, null, null).loadInBackground();
             if (cursor.getCount() == 0)
-                webService.getMoviesPage(webServerListener, 1);
+                if (VerificaInternet.getConnectivityStatusString(getBaseContext())) {
+                    webService.getMoviesPage(webServerListener, 1);
+                }else
+                {
+                    Context c = getApplicationContext();
+                    new MaterialAlertDialogBuilder(c)
+                            .setTitle(getString(R.string.dialog_title))
+                            .setMessage(getString(R.string.dialog_message))
+                            .setNeutralButton("OK", new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                }
+                            })
+                            .show();
+                }
+
         } catch (NullPointerException e) {
             Log.d("Error", e.getMessage());
         }
@@ -124,6 +146,7 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
                 ContentValues cv = new ContentValues();
                 cv.put(FavoriteTableHelper.IS_FAVORITE, 0);
                 getContentResolver().update(MovieProvider.FAVORITE_URI, cv, FavoriteTableHelper.ID_MOVIE + " = " + aId, null);
+
             }
         }
     }

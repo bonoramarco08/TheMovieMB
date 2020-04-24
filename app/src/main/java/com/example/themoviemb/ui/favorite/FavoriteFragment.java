@@ -1,6 +1,7 @@
 package com.example.themoviemb.ui.favorite;
 
 import android.app.SearchManager;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -40,7 +41,7 @@ import com.example.themoviemb.data.MovieTableHelper;
 import com.example.themoviemb.interface_movie.DialogFavorite;
 import com.example.themoviemb.interface_movie.ErrorZeroItem;
 
-public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, MoviesAdapter.OnItemClickListener, ErrorZeroItem {
+public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, MoviesAdapter.OnItemClickListener, ErrorZeroItem{
 
     private static final int LOADER_ID = 1;
     private static final String FILM_PER_ROW = "FILM_PER_ROW";
@@ -201,6 +202,8 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
             outState.putInt(FILM_PER_ROW,4);
         }
     }
+
 }
+
 
 

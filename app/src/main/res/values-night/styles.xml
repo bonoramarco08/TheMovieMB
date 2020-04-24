@@ -2,7 +2,7 @@
 
 
     <!-- Base application theme. values-night.xml -->
-    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+    <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -10,5 +10,5 @@
         <item name="android:textColorPrimary">@android:color/white</item>
 
     </style>
-    <style name="MyDialog" parent="Theme.AppCompat.DayNight.Dialog.Alert"/>
+    <style name="MyDialog" parent="Theme.MaterialComponents.Dialog"/>
 </resources>
