@@ -200,4 +200,10 @@ public class DescriptionActivity extends AppCompatActivity {
         lottieAnimationView.cancelAnimation(); // Cancels the animation
     }
 
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        //outState.putString(IMG_DESCRIPTION, descriptionImage.get);
+    }
+
 }

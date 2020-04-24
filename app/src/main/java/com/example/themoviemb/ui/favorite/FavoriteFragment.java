@@ -12,6 +12,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -67,9 +68,9 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
         favoriteViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
-
             }
         });
+
 
         Toolbar toolbar = root.findViewById(R.id.toolbarHome);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
@@ -148,8 +149,8 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
         if (data.getCount() == 0) {
             setVisibleText(getString(R.string.no_film_favorite));
         }
-
     }
+
 
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
