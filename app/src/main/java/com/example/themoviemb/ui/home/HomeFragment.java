@@ -4,6 +4,7 @@ import android.app.SearchManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -51,6 +52,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     private static final int LOADER_ID = 1;
     private int insert;
     int i = 1;
+    private int filmPerRow;
     private WebService webService;
     private HomeViewModel homeViewModel;
     private RecyclerView rvHome;
@@ -104,16 +106,22 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     };
 
 
+
     public View onCreateView(@NonNull final LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+            filmPerRow=4;
+        }else{
+            filmPerRow=2;
+        }
         homeViewModel =
                 ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         rvHome = root.findViewById(R.id.rvMovies);
-        layoutManagerHome = new GridLayoutManager(getContext(), 2);
+        layoutManagerHome = new GridLayoutManager(getContext(), filmPerRow);
         pbHome = root.findViewById(R.id.pbHome);
         rvHome.setLayoutManager(layoutManagerHome);
-        adapterHome = new MoviesAdapter(null, this);
+        adapterHome = new MoviesAdapter(null, this,filmPerRow);
         rvHome.setAdapter(adapterHome);
 
         homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {

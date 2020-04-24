@@ -3,6 +3,7 @@ package com.example.themoviemb.ui.favorite;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
@@ -42,6 +43,9 @@ import com.example.themoviemb.interface_movie.ErrorZeroItem;
 public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, MoviesAdapter.OnItemClickListener, ErrorZeroItem {
 
     private static final int LOADER_ID = 1;
+    private static final String FILM_PER_ROW = "FILM_PER_ROW";
+
+    private static int filmPerRow=0;
     private FavoriteViewModel favoriteViewModel;
     private RecyclerView rvFavorite;
     private MoviesAdapter adapterFavorite;
@@ -53,16 +57,21 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+            filmPerRow=4;
+        }else{
+            filmPerRow=2;
+        }
         favoriteViewModel =
                 ViewModelProviders.of(this).get(FavoriteViewModel.class);
         View root = inflater.inflate(R.layout.fragment_favorite, container, false);
         pbFavorite2 = root.findViewById(R.id.pbFavorite2);
         rvFavorite = root.findViewById(R.id.rvMovies);
         error = root.findViewById(R.id.errorTextView);
-        layoutManagerFavorite = new GridLayoutManager(getContext(), 2);
+        layoutManagerFavorite = new GridLayoutManager(getContext(), filmPerRow);
 
         rvFavorite.setLayoutManager(layoutManagerFavorite);
-        adapterFavorite = new MoviesAdapter(null, this);
+        adapterFavorite = new MoviesAdapter(null, this,filmPerRow);
         rvFavorite.setAdapter(adapterFavorite);
 
         favoriteViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
@@ -181,6 +190,16 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
     public void setVisibleText(String message) {
         error.setText(message);
         error.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
+            outState.putInt(FILM_PER_ROW,2);
+        }else{
+            outState.putInt(FILM_PER_ROW,4);
+        }
     }
 }
 

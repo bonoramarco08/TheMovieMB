@@ -1,6 +1,7 @@
 package com.example.themoviemb.adapters;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,6 +25,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     private final static String LOG_TAG = MoviesAdapter.class.getSimpleName();
     private static final float POSTER_ASPECT_RATIO = 1.5f;
     private Cursor cursor;
+    private int filmPerRow;
 
     private OnItemClickListener onItemClickListener;
 
@@ -33,9 +35,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         void longClick(int id, OnItemClickListener onItemClickListener);
     }
 
-    public MoviesAdapter(Cursor cursor, OnItemClickListener onItemClickListener) {
+    public MoviesAdapter(Cursor cursor, OnItemClickListener onItemClickListener, int filmPerRow) {
         this.cursor = cursor;
         this.onItemClickListener = onItemClickListener;
+        this.filmPerRow=filmPerRow;
     }
 
 
@@ -45,7 +48,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         Context parentContext = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(parentContext);
         View view = inflater.inflate(R.layout.cell_layout, parent, false);
-        view.getLayoutParams().height = (int) (parent.getWidth() / 2 *
+        view.getLayoutParams().height = (int) (parent.getWidth() / filmPerRow *
                 POSTER_ASPECT_RATIO);
         return new MovieViewHolder(view);
     }
