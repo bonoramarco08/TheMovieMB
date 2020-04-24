@@ -229,7 +229,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     public void sendDetails(int id, MoviesAdapter.OnItemClickListener onItemClickListener) {
         Intent intent = new Intent(getActivity(), DescriptionActivity.class);
         intent.putExtra("ID_MOVIE", id);
-        startActivity(intent);
+        startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP));
     }
 
     @Override

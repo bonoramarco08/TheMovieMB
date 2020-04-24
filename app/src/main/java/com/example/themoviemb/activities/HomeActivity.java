@@ -117,15 +117,12 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
                     webService.getMoviesPage(webServerListener, 1);
                 }else
                 {
-                    Context c = getApplicationContext();
-                    new MaterialAlertDialogBuilder(c)
-                            .setTitle(getString(R.string.dialog_title))
-                            .setMessage(getString(R.string.dialog_message))
-                            .setNeutralButton("OK", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                }
-                            })
-                            .show();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(getBaseContext(),R.style.MyDialog);
+
+                    builder.setMessage(R.string.dialog_message)
+                            .setTitle(R.string.dialog_title);
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
                 }
 
         } catch (NullPointerException e) {

@@ -39,7 +39,7 @@ public class DialogFavorite extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
-        AlertDialog.Builder vBuilder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder vBuilder = new AlertDialog.Builder(getActivity() , R.style.MyDialog);
         vBuilder.setTitle(mTitle);
         vBuilder.setMessage(mMessage);
         vBuilder.setPositiveButton(getString(R.string.dialogbuttonpositive), new DialogInterface.OnClickListener() {
