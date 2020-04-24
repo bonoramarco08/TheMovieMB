@@ -17,4 +17,5 @@
     <string name="erroImage">Error loading image </string>
     <string name="dialog_message">Sorry but to use the app the first time is indispensable internet</string>
     <string name="dialog_title">Error</string>
+    <string name="dialog_message_homeInternet">To watch more films, an internet connection is essential</string>
 </resources>

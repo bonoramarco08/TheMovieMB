@@ -1,12 +1,8 @@
 package com.example.themoviemb.activities;
 
 import android.content.ContentValues;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -37,8 +33,6 @@ import com.example.themoviemb.interface_movie.DialogFavorite;
 import com.example.themoviemb.interface_movie.IWebServer;
 import com.example.themoviemb.networks.WebService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.dialog.MaterialAlertDialogBuilder;
-import butterknife.OnClick;
 
 public class HomeActivity extends AppCompatActivity implements DialogFavorite.IFavoritDialog {
 
@@ -58,10 +52,10 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
                     contentValues.put(MovieTableHelper.COVER_PHOTO, movie.getPosterPath());
                     contentValues.put(MovieTableHelper.DESCRIPTION, movie.getOverview());
                     contentValues.put(MovieTableHelper.DESCRIPTION_PHOTO, movie.getBackdropPath());
-                    Uri r=getContentResolver().insert(MovieProvider.MOVIES_URI, contentValues);
+                    Uri r = getContentResolver().insert(MovieProvider.MOVIES_URI, contentValues);
                     long id = Long.parseLong(r.getLastPathSegment());
                     ContentValues contentValuesFavorite = new ContentValues();
-                    contentValuesFavorite.put(FavoriteTableHelper.ID_MOVIE,id);
+                    contentValuesFavorite.put(FavoriteTableHelper.ID_MOVIE, id);
                     contentValuesFavorite.put(FavoriteTableHelper.IS_FAVORITE, 0);
                     getContentResolver().insert(MovieProvider.FAVORITE_URI, contentValuesFavorite);
                 }
@@ -115,12 +109,12 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
             if (cursor.getCount() == 0)
                 if (VerificaInternet.getConnectivityStatusString(getBaseContext())) {
                     webService.getMoviesPage(webServerListener, 1);
-                }else
-                {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getBaseContext(),R.style.MyDialog);
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this, R.style.MyDialog);
 
                     builder.setMessage(R.string.dialog_message)
-                            .setTitle(R.string.dialog_title);
+                            .setTitle(R.string.dialog_title)
+                            .setNeutralButton("OK", null);
                     AlertDialog dialog = builder.create();
                     dialog.show();
                 }
@@ -164,13 +158,13 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
         }
     }
 
-    private void startAnimation(){
+    private void startAnimation() {
         lottieAnimationView.playAnimation();
         lottieAnimationView.setSpeed(2.0F); // How fast does the animation play
         lottieAnimationView.setProgress(0F); // Starts the animation from 50% of the beginning
     }
 
-    private void stopAnimation(){
+    private void stopAnimation() {
         lottieAnimationView.cancelAnimation(); // Cancels the animation
     }
 }

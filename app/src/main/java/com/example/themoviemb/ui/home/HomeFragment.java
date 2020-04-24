@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
@@ -35,7 +36,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.themoviemb.EndlessRecyclerViewScrollListener;
 import com.example.themoviemb.R;
+import com.example.themoviemb.VerificaInternet;
 import com.example.themoviemb.activities.DescriptionActivity;
+import com.example.themoviemb.activities.HomeActivity;
 import com.example.themoviemb.adapters.MoviesAdapter;
 import com.example.themoviemb.data.FavoriteTableHelper;
 import com.example.themoviemb.data.MovieProvider;
@@ -141,8 +144,18 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         rvHome.setOnScrollListener(new EndlessRecyclerViewScrollListener((GridLayoutManager) layoutManagerHome) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                if(!search)
-                new BackgroundTask().execute();
+                if(!search) {
+                    if (!VerificaInternet.getConnectivityStatusString(getContext())) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.MyDialog);
+                    builder.setMessage(R.string.dialog_message_homeInternet)
+                            .setTitle(R.string.dialog_title)
+                            .setNeutralButton("OK", null);
+                    AlertDialog dialog = builder.create();
+                    dialog.show();
+                    }else{
+                    new BackgroundTask().execute();
+                    }
+                }
             }
         });
 
