@@ -6,5 +6,7 @@
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
     <color name="tabbar">#FFFFFF</color>
+    <color name="toolbar">#FFFFFF</color>
+    <color name="toolbarText">#000000</color>
     <color name="tab_indicator_text">#000000</color>
 </resources>
