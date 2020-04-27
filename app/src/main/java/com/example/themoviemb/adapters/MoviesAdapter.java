@@ -78,22 +78,16 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
             Glide.with(context)
                     .load(movie.getPosterPath())
                     .into(holder.imageView);
-            holder.view.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    try {
-                        onItemClickListener.sendDetails(Integer.parseInt(holder.textViewId.getText().toString()), onItemClickListener);
-                    } catch (Exception e) {
-                        Log.d("Error", e.getMessage());
-                    }
+            holder.view.setOnClickListener(v -> {
+                try {
+                    onItemClickListener.sendDetails(Integer.parseInt(holder.textViewId.getText().toString()), onItemClickListener);
+                } catch (Exception e) {
+                    Log.d("Error", e.getMessage());
                 }
             });
-            holder.view.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View view) {
-                    onItemClickListener.longClick(Integer.parseInt(holder.textViewId.getText().toString()), onItemClickListener);
-                    return true;
-                }
+            holder.view.setOnLongClickListener(view -> {
+                onItemClickListener.longClick(Integer.parseInt(holder.textViewId.getText().toString()), onItemClickListener);
+                return true;
             });
         }
     }

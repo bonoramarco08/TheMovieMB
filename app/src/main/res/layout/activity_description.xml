@@ -6,8 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".activities.DescriptionActivity">
 
-
-
     <com.airbnb.lottie.LottieAnimationView
         android:id="@+id/imageProgress"
         android:layout_width="0dp"
@@ -86,11 +84,24 @@
         android:text="Descrizione"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_percent="0.20"
         app:layout_constraintHorizontal_bias="0.650"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtTitle"
         app:layout_constraintWidth_percent="0.89" />
+
+    <Button
+        android:id="@+id/btnWatchTrailer"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:text="WATCH TRAILER"
+        android:textAlignment="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.650"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txtDescription"
+        app:layout_constraintWidth_percent="0.89"
+        app:layout_constraintHeight_percent="0.06"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

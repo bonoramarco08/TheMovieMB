@@ -17,13 +17,11 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
-import androidx.fragment.app.Fragment;
 import androidx.loader.content.CursorLoader;
 import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.themoviemb.VerificaInternet;
@@ -37,6 +35,7 @@ import com.example.themoviemb.interface_movie.DialogFavorite;
 import com.example.themoviemb.interface_movie.IWebServer;
 import com.example.themoviemb.networks.WebService;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
 
 public class HomeActivity extends AppCompatActivity implements DialogFavorite.IFavoritDialog {
 
@@ -90,7 +89,6 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
         //NavigationUI.setupWithNavController(navView, navController);
         navView.setOnNavigationItemSelectedListener(navListener);
 
-
         navHome.setOnLongClickListener(view -> {
             createToast(getString(R.string.title_home)).show();
             return true;
@@ -100,6 +98,7 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
             return true;
         });
 
+        
 
     }
 

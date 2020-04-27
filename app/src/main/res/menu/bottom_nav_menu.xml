@@ -5,11 +5,11 @@
     <item
         android:id="@+id/navigation_home"
         android:icon="@drawable/ic_dashboard_black_24dp"
-        tools:ignore="MenuTitle" />
+        android:title=""/>
 
     <item
         android:id="@+id/navigation_favorite"
         android:icon="@drawable/favorite"
-        tools:ignore="MenuTitle" />
+        android:title="" />
 
 </menu>
