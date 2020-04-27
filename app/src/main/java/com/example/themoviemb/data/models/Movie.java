@@ -13,17 +13,38 @@ public class Movie {
     private String overview;
     @SerializedName("poster_path")
     private String posterPath;
+    @SerializedName("idFIlm")
+    private String idFilm;
+    private String _id;
 
 
     public Movie() {
 
     }
 
-    public Movie(String title, String backdropPath, String overview, String posterPath) {
+    public Movie(String title, String backdropPath, String overview, String posterPath, String _id) {
         this.title = title;
         this.backdropPath = backdropPath;
         this.overview = overview;
         this.posterPath = posterPath;
+        //  this.idFilm = idFilm;
+        this._id = _id;
+    }
+
+    public String getIdFilm() {
+        return idFilm;
+    }
+
+    public void setIdFilm(String idFilm) {
+        this.idFilm = idFilm;
+    }
+
+    public String get_id() {
+        return _id;
+    }
+
+    public void set_id(String _id) {
+        this._id = _id;
     }
 
     public String getTitle() {
@@ -36,12 +57,16 @@ public class Movie {
 
     public String getBackdropPath() {
         if (backdropPath != null && !backdropPath.isEmpty()) {
-            if (!backdropPath.toLowerCase().contains("http://")) {
-                return "https://image.tmdb.org/t/p/original" + backdropPath;
-            } else {
+            if(!backdropPath.toLowerCase().contains("https://")) {
+                if (!backdropPath.toLowerCase().contains("http://")) {
+                    return "https://image.tmdb.org/t/p/original" + backdropPath;
+                } else {
+                    return backdropPath;
+                }
+            }else
+            {
                 return backdropPath;
             }
-
         }
         return null;
     }
@@ -57,16 +82,19 @@ public class Movie {
     public void setOverview(String overview) {
         this.overview = overview;
     }
+
     @Nullable
     public String getPosterPath() {
         if (posterPath != null && !posterPath.isEmpty()) {
-
-            if (!posterPath.toLowerCase().contains("http://")) {
-                return "https://image.tmdb.org/t/p/w342" + posterPath;
+            if (!posterPath.toLowerCase().contains("https://")) {
+                if (!posterPath.toLowerCase().contains("http://")) {
+                    return "https://image.tmdb.org/t/p/w342" + posterPath;
+                } else {
+                    return posterPath;
+                }
             } else {
                 return posterPath;
             }
-
         }
         return null;
     }

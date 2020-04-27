@@ -16,6 +16,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.example.themoviemb.R;
 import com.example.themoviemb.data.MovieTableHelper;
+import com.example.themoviemb.data.models.Movie;
+
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,7 +27,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
     private final static String LOG_TAG = MoviesAdapter.class.getSimpleName();
     private static final float POSTER_ASPECT_RATIO = 1.5f;
-    private Cursor cursor;
+    private List<Movie> movies;
     private int filmPerRow;
 
     private OnItemClickListener onItemClickListener;
@@ -35,8 +38,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         void longClick(int id, OnItemClickListener onItemClickListener);
     }
 
-    public MoviesAdapter(Cursor cursor, OnItemClickListener onItemClickListener, int filmPerRow) {
-        this.cursor = cursor;
+    public MoviesAdapter(List<Movie> movies, OnItemClickListener onItemClickListener, int filmPerRow) {
+        this.movies = movies;
         this.onItemClickListener = onItemClickListener;
         this.filmPerRow=filmPerRow;
     }
@@ -53,13 +56,13 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         return new MovieViewHolder(view);
     }
 
-    public Cursor changeCursor(Cursor dataCursor) {
-        if (cursor == dataCursor) {
+    public List<Movie> changeCursor(List<Movie> moviesChenge) {
+        if (movies == moviesChenge) {
             return null;
         }
-        Cursor oldCursor = cursor;
-        cursor = dataCursor;
-        if (dataCursor != null) {
+        List<Movie> oldCursor = movies;
+        movies = moviesChenge;
+        if (moviesChenge != null) {
             this.notifyDataSetChanged();
         }
         return oldCursor;
@@ -69,10 +72,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     public void onBindViewHolder(@NonNull final MovieViewHolder holder, int position) {
         final Context context = holder.view.getContext();
 
-        if (cursor.moveToPosition(position)) {
-            holder.textViewId.setText(cursor.getString(cursor.getColumnIndex(MovieTableHelper._ID)));
+        if (movies.size() > position) {
+            Movie movie = movies.get(position);
+            holder.textViewId.setText(movie.get_id());
             Glide.with(context)
-                    .load(cursor.getString(cursor.getColumnIndex(MovieTableHelper.COVER_PHOTO)))
+                    .load(movie.getPosterPath())
                     .into(holder.imageView);
             holder.view.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -96,7 +100,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
     @Override
     public int getItemCount() {
-        return (cursor == null) ? 0 : cursor.getCount();
+        return (movies == null) ? 0 : movies.size();
     }
 
 

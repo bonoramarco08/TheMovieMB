@@ -38,8 +38,12 @@ import com.example.themoviemb.adapters.MoviesAdapter;
 import com.example.themoviemb.data.FavoriteTableHelper;
 import com.example.themoviemb.data.MovieProvider;
 import com.example.themoviemb.data.MovieTableHelper;
+import com.example.themoviemb.data.models.Movie;
 import com.example.themoviemb.interface_movie.DialogFavorite;
 import com.example.themoviemb.interface_movie.ErrorZeroItem;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, MoviesAdapter.OnItemClickListener, ErrorZeroItem{
 
@@ -110,8 +114,13 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
             queryTextListener = new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextChange(String newText) {
-                    Cursor cursor = (getActivity()).getContentResolver().query(MovieProvider.JOIN_URI, null, MovieTableHelper.TITLE + " LIKE '%" + newText + "%' and " + FavoriteTableHelper.IS_FAVORITE + " = 1", null, null);
-                    adapterFavorite.changeCursor(cursor);
+                    Cursor data = (getActivity()).getContentResolver().query(MovieProvider.JOIN_URI, null, MovieTableHelper.TITLE + " LIKE '%" + newText + "%' and " + FavoriteTableHelper.IS_FAVORITE + " = 1", null, null);
+                    List<Movie> mArrayList = new ArrayList<>();
+                    for(data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
+                        // The Cursor is now set to the right position
+                        mArrayList.add(new Movie(data.getString(data.getColumnIndex(MovieTableHelper.TITLE)),data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION_PHOTO)),data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION)),data.getString(data.getColumnIndex(MovieTableHelper.COVER_PHOTO)),data.getString(data.getColumnIndex(MovieTableHelper._ID))));
+                    }
+                    adapterFavorite.changeCursor(mArrayList);
                     return true;
                 }
 
@@ -154,7 +163,12 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
-        adapterFavorite.changeCursor(data);
+        List<Movie> mArrayList = new ArrayList<>();
+        for(data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
+            // The Cursor is now set to the right position
+            mArrayList.add(new Movie(data.getString(data.getColumnIndex(MovieTableHelper.TITLE)),data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION_PHOTO)),data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION)),data.getString(data.getColumnIndex(MovieTableHelper.COVER_PHOTO)),data.getString(data.getColumnIndex(MovieTableHelper._ID))));
+        }
+        adapterFavorite.changeCursor(mArrayList);
         pbFavorite2.setVisibility(View.INVISIBLE);
         if (data.getCount() == 0) {
             setVisibleText(getString(R.string.no_film_favorite));
