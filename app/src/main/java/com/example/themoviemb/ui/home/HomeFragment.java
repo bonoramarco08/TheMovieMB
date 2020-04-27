@@ -24,6 +24,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -166,7 +167,6 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
                             mArrayList.add(new Movie(data.getString(data.getColumnIndex(MovieTableHelper.TITLE)),data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION_PHOTO)),data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION)),data.getString(data.getColumnIndex(MovieTableHelper.COVER_PHOTO)),data.getString(data.getColumnIndex(MovieTableHelper._ID))));
                         }
                         adapterHome.changeCursor(mArrayList);
-                        pbHome.setVisibility(View.INVISIBLE);
                     }
                 }
             }
@@ -253,7 +253,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
             mArrayList.add(new Movie(data.getString(data.getColumnIndex(MovieTableHelper.TITLE)),data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION_PHOTO)),data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION)),data.getString(data.getColumnIndex(MovieTableHelper.COVER_PHOTO)),data.getString(data.getColumnIndex(MovieTableHelper._ID))));
         }
         adapterHome.changeCursor(mArrayList);
-        pbHome.setVisibility(View.INVISIBLE);
+        pbHome.setVisibility(View.GONE);
     }
 
     @Override
@@ -292,6 +292,6 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     // codice scrool
 
     public void insertScroll(int page) {
-        webService.getMoviesPage(webServerListener, page);
+        webService.getMoviesPage(webServerListener, page,getString(R.string.lingua));
     }
 }

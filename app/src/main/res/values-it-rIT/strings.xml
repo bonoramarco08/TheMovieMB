@@ -19,4 +19,5 @@
     <string name="dialog_message">Ci spiace ma per per utilizzare l\'app la prima volta è indispensabile internet</string>
     <string name="dialog_title">Errore</string>
     <string name="dialog_message_homeInternet">Per vedere più film è indispensabile una connessione ad internet</string>
+    <string name="lingua">it-IT</string>
 </resources>

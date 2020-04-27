@@ -12,13 +12,25 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
-
+import com.example.themoviemb.R;
+import android.app.Activity;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import android.app.Activity;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
+
+import com.example.themoviemb.R;
 public class WebService {
 
         private String TODO_BASE_URL = "https://api.themoviedb.org/";
@@ -65,8 +77,8 @@ public class WebService {
 
             });
         }
-    public void getMoviesPage(final IWebServer callback , int page) {
-        Call<Result> moviesrequest = movieService.getMoviesPage(page,getReleaseDate());
+    public void getMoviesPage(final IWebServer callback , int page , String lingua) {
+        Call<Result> moviesrequest = movieService.getMoviesPage(page,getReleaseDate(),lingua);
         moviesrequest.enqueue(new Callback<Result>() {
             @Override
             public void onResponse(Call<Result> call, Response<Result> response) {

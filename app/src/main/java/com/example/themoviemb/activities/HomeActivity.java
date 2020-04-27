@@ -108,7 +108,7 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
             Cursor cursor = new CursorLoader(getApplicationContext(), MovieProvider.MOVIES_URI, null, null, null, null).loadInBackground();
             if (cursor.getCount() == 0)
                 if (VerificaInternet.getConnectivityStatusString(getBaseContext())) {
-                    webService.getMoviesPage(webServerListener, 1);
+                    webService.getMoviesPage(webServerListener, 1 , getString(R.string.lingua));
                 } else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this, R.style.MyDialog);
 
