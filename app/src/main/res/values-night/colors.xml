@@ -8,4 +8,5 @@
     <color name="toolbar">#f77000</color>
     <color name="toolbarText">#000000</color>
     <color name="tab_indicator_text">#FFFFFF</color>
+    <color name="notchecked">#FFFFFF</color>
 </resources>
