@@ -7,6 +7,8 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -15,15 +17,17 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
+import androidx.fragment.app.Fragment;
 import androidx.loader.content.CursorLoader;
 import androidx.navigation.NavController;
+import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import com.airbnb.lottie.LottieAnimationView;
-import com.example.themoviemb.R;
 import com.example.themoviemb.VerificaInternet;
+import com.example.themoviemb.R;
 import com.example.themoviemb.data.FavoriteTableHelper;
 import com.example.themoviemb.data.MovieProvider;
 import com.example.themoviemb.data.MovieTableHelper;
@@ -42,6 +46,9 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
     private View navHome, navHeart;
     private Toast toast;
     private LottieAnimationView lottieAnimationView;
+    private BottomNavigationView navView;
+    private NavController navController;
+    private NavOptions navOptions;
     private IWebServer webServerListener = new IWebServer() {
         @Override
         public void onMoviesFetched(boolean success, Result result, int errorCode, String errorMessage) {
@@ -71,16 +78,18 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
         setSupportActionBar(toolbar);
         navHome = findViewById(R.id.navigation_home);
         navHeart = findViewById(R.id.navigation_favorite);
-
-        BottomNavigationView navView = findViewById(R.id.nav_view);
+        navView = findViewById(R.id.nav_view);
         webService = WebService.getInstance();
         loadMovies();
+
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home, R.id.navigation_favorite)
                 .build();
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         //NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        NavigationUI.setupWithNavController(navView, navController);
+        //NavigationUI.setupWithNavController(navView, navController);
+        navView.setOnNavigationItemSelectedListener(navListener);
+
 
         navHome.setOnLongClickListener(view -> {
             createToast(getString(R.string.title_home)).show();
@@ -92,6 +101,45 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
         });
 
 
+    }
+
+    private BottomNavigationView.OnNavigationItemSelectedListener navListener=new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            if (getSelectedItem(navView.getMenu())!=item.getItemId()) {
+                switch (item.getItemId()) {
+                    case R.id.navigation_favorite:
+                        navOptions = new NavOptions.Builder()
+                                .setEnterAnim(R.anim.slide_in_right)
+                                .setExitAnim(R.anim.slide_out_left)
+                                .setPopEnterAnim(R.anim.slide_in_left)
+                                .setPopExitAnim(R.anim.slide_out_right).build();
+                        item.setChecked(false);
+                        navController.navigate(R.id.navigation_favorite, null, navOptions);
+                        break;
+                    case R.id.navigation_home:
+                        navOptions = new NavOptions.Builder()
+                                .setEnterAnim(R.anim.slide_in_left)
+                                .setExitAnim(R.anim.slide_out_right)
+                                .setPopEnterAnim(R.anim.slide_in_right)
+                                .setPopExitAnim(R.anim.slide_out_left).build();
+                        item.setChecked(false);
+                        navController.navigate(R.id.navigation_home, null, navOptions);
+                        break;
+                }
+            }
+                return false;
+        }
+    };
+
+    private int getSelectedItem(Menu menu) {
+        for (int i = 0; i < menu.size(); i++) {
+            MenuItem menuItem = menu.getItem(i);
+            if (menuItem.isChecked()) {
+                return menuItem.getItemId();
+            }
+        }
+        return 0;
     }
 
     private Toast createToast(String textToShow) {
