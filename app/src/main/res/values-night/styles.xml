@@ -9,6 +9,10 @@
         <item name="colorAccent">@color/colorPrimary</item>
         <item name="android:textColorPrimary">@android:color/white</item>
 
+
     </style>
-    <style name="MyDialog" parent="Theme.MaterialComponents.Dialog"/>
+    <style name="MyDialog" parent="Theme.MaterialComponents.Dialog.Alert">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+    </style>
 </resources>
