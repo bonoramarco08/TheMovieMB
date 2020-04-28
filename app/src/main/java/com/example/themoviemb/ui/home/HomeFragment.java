@@ -34,6 +34,7 @@ import androidx.loader.content.Loader;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.themoviemb.EndlessRecyclerViewScrollListener;
 import com.example.themoviemb.R;
 import com.example.themoviemb.R.color;
@@ -69,7 +70,8 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     private SearchView searchView = null;
     private SearchView.OnQueryTextListener queryTextListener;
     private boolean search = false;
-    ProgressBar pbHome , getPbHomeStart;
+    private LottieAnimationView lottieAnimationView;
+    ProgressBar pbHome,getPbHomeStart;
     TextView tvHome;
 
     // codice scrool
@@ -180,6 +182,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
             }
         });
 
+        lottieAnimationView=root.findViewById(R.id.heartAppear);
         return root;
     }
 
@@ -314,12 +317,22 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
                 ContentValues cv = new ContentValues();
                 cv.put(FavoriteTableHelper.IS_FAVORITE, 1);
                 getActivity().getContentResolver().update(MovieProvider.FAVORITE_URI, cv, FavoriteTableHelper.ID_MOVIE + " = " + aId, null);
+                startAnimation();
             } else {
                 ContentValues cv = new ContentValues();
                 cv.put(FavoriteTableHelper.IS_FAVORITE, 0);
                 getActivity().getContentResolver().update(MovieProvider.FAVORITE_URI, cv, FavoriteTableHelper.ID_MOVIE + " = " + aId, null);
             }
         }
+    }
+
+    private void startAnimation() {
+        lottieAnimationView.playAnimation();
+        lottieAnimationView.setSpeed(2.0F); // How fast does the animation play
+        lottieAnimationView.setProgress(0F); // Starts the animation from 50% of the beginning
+    }
+    private void stopAnimation() {
+        lottieAnimationView.cancelAnimation(); // Cancels the animation
     }
 
     @Override

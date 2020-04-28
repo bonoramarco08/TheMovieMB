@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#f77000</color>
-    <color name="colorPrimaryDark">#f77000</color>
-    <color name="black">#121212</color>
+    <color name="colorPrimary">#121212</color>
+    <color name="colorPrimaryDark">#000000</color>
+    <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
     <color name="tabbar">#121212</color>
-    <color name="toolbar">#f77000</color>
-    <color name="toolbarText">#121212</color>
-    <color name="recyclerview">#121212</color>
+    <color name="toolbar">#121212</color>
+    <color name="toolbarText">#FFFFFF</color>
     <color name="tab_indicator_text">#FFFFFF</color>
     <color name="notchecked">#FFFFFF</color>
 

@@ -45,7 +45,7 @@ public class HomeActivity extends AppCompatActivity{
     private Toolbar toolbar;
     private View navHome, navHeart;
     private Toast toast;
-    private LottieAnimationView lottieAnimationView;
+
     private BottomNavigationView navView;
     private NavController navController;
     private NavOptions navOptions;
@@ -190,13 +190,6 @@ public class HomeActivity extends AppCompatActivity{
         }
     }
 
-    private void startAnimation() {
-        lottieAnimationView.playAnimation();
-        lottieAnimationView.setSpeed(2.0F); // How fast does the animation play
-        lottieAnimationView.setProgress(0F); // Starts the animation from 50% of the beginning
-    }
-    private void stopAnimation() {
-        lottieAnimationView.cancelAnimation(); // Cancels the animation
-    }
+
 
 }

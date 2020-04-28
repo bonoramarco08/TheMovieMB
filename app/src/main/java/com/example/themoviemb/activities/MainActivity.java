@@ -6,6 +6,11 @@ import android.os.Bundle;
 
 import com.example.themoviemb.R;
 
+/**
+ * Paging Library
+ * Errore rotazione filtro ricerca
+ * */
+
 public class MainActivity extends AppCompatActivity {
 
     @Override
