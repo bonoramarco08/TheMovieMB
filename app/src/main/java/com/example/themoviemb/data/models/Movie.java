@@ -13,7 +13,7 @@ public class Movie {
     private String overview;
     @SerializedName("poster_path")
     private String posterPath;
-    @SerializedName("idFIlm")
+    @SerializedName("id")
     private String idFilm;
     private String _id;
 
@@ -22,15 +22,22 @@ public class Movie {
 
     }
 
+    public Movie(String title, String backdropPath, String overview, String posterPath, String idFilm, String _id) {
+        this.title = title;
+        this.backdropPath = backdropPath;
+        this.overview = overview;
+        this.posterPath = posterPath;
+        this.idFilm = idFilm;
+        this._id = _id;
+    }
+
     public Movie(String title, String backdropPath, String overview, String posterPath, String _id) {
         this.title = title;
         this.backdropPath = backdropPath;
         this.overview = overview;
         this.posterPath = posterPath;
-        //  this.idFilm = idFilm;
         this._id = _id;
     }
-
     public String getIdFilm() {
         return idFilm;
     }

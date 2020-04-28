@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -24,7 +23,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -75,7 +73,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
             if (result != null) {
                 try {
                     boolean b = true;
-                    Cursor cursor = new CursorLoader(getActivity().getApplicationContext(), MovieProvider.MOVIES_URI, null, null, null, null).loadInBackground();
+                    Cursor cursor = (getActivity()).getContentResolver().query(MovieProvider.MOVIES_URI, null, null, null, null);
                     for (Movie movie : result.getResult()) {
                         b = true;
                         for (int y = 0; y < cursor.getCount(); y++) {
@@ -88,7 +86,8 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
                                     contentValues.put(MovieTableHelper.COVER_PHOTO, movie.getPosterPath());
                                     contentValues.put(MovieTableHelper.DESCRIPTION, movie.getOverview());
                                     contentValues.put(MovieTableHelper.DESCRIPTION_PHOTO, movie.getBackdropPath());
-                                   getActivity().getContentResolver().update(MovieProvider.MOVIES_URI, contentValues, MovieTableHelper.TITLE +" = "+movie.getTitle(), null);
+                                    contentValues.put(MovieTableHelper.ID_FILM, movie.getIdFilm());
+                                    getActivity().getContentResolver().update(MovieProvider.MOVIES_URI, contentValues, MovieTableHelper.TITLE +" = "+movie.getTitle(), null);
                                     y = cursor.getCount();
                                 }
                         }
@@ -98,6 +97,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
                             contentValues.put(MovieTableHelper.COVER_PHOTO, movie.getPosterPath());
                             contentValues.put(MovieTableHelper.DESCRIPTION, movie.getOverview());
                             contentValues.put(MovieTableHelper.DESCRIPTION_PHOTO, movie.getBackdropPath());
+                            contentValues.put(MovieTableHelper.ID_FILM, movie.getIdFilm());
                             Uri r = getActivity().getContentResolver().insert(MovieProvider.MOVIES_URI, contentValues);
                             long id = Long.parseLong(r.getLastPathSegment());
                             ContentValues contentValuesFavorite = new ContentValues();
@@ -131,7 +131,6 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         rvHome.setLayoutManager(layoutManagerHome);
         adapterHome = new MoviesAdapter(null, this, filmPerRow);
         rvHome.setAdapter(adapterHome);
-
         homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
@@ -277,7 +276,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
                     DialogFavorite vDialog = new DialogFavorite(getString(R.string.dialogtitleinsert), getString(R.string.dilagotextinsert) + " \"" + cursor.getString(cursor.getColumnIndex(MovieTableHelper.TITLE)) + " \"" + getString(R.string.dilagotextcomum), id, false);
                     vDialog.show(getChildFragmentManager(), null);
                 } else {
-                    DialogFavorite vDialog = new DialogFavorite(getString(R.string.dialogtitleiremove), getString(R.string.dilagotextremove) + " \"" + cursor.getString(cursor.getColumnIndex(MovieTableHelper.TITLE)) + "\" " + getString(R.string.dilagotextcomum), id, true);
+                    DialogFavorite vDialog = new DialogFavorite(getString(R.string.dialogtitleiremove), getString(R.string.dilagotextremove) + " \"" + cursor.getString(cursor.getColumnIndex(MovieTableHelper.TITLE)) + "\" " + getString(R.string.dilagotextcomumfasle), id, true);
                     vDialog.show(getChildFragmentManager(), null);
                 }
             }
@@ -294,4 +293,5 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     public void insertScroll(int page) {
         webService.getMoviesPage(webServerListener, page,getString(R.string.lingua));
     }
+
 }

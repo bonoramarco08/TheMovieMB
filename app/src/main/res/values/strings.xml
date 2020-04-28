@@ -11,6 +11,7 @@
     <string name="dilagotextinsert">Do you want to add </string>
     <string name="dilagotextremove">Do you want to remove </string>
     <string name="dilagotextcomum"> to your favorite movies?</string>
+    <string name="dilagotextcomumfasle"> from your favorite movies?</string>
     <string name="dialogbuttonannulla">Cancel</string>
     <string name="dialogbuttonpositive">Yes</string>
     <string name="dialogbuttonnegative">No</string>
@@ -19,4 +20,6 @@
     <string name="dialog_title">Error</string>
     <string name="dialog_message_homeInternet">To watch more films, an internet connection is essential</string>
     <string name="lingua">en-US</string>
+    <string name="toastagg">Movie add to favorite</string>
+    <string name="toastrem">Movie removed from favorites</string>
 </resources>

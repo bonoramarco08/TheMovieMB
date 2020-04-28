@@ -22,6 +22,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
+import androidx.viewpager.widget.ViewPager;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.themoviemb.VerificaInternet;
@@ -58,7 +59,9 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
                     contentValues.put(MovieTableHelper.COVER_PHOTO, movie.getPosterPath());
                     contentValues.put(MovieTableHelper.DESCRIPTION, movie.getOverview());
                     contentValues.put(MovieTableHelper.DESCRIPTION_PHOTO, movie.getBackdropPath());
+                    contentValues.put(MovieTableHelper.ID_FILM, movie.getIdFilm());
                     Uri r = getContentResolver().insert(MovieProvider.MOVIES_URI, contentValues);
+
                     long id = Long.parseLong(r.getLastPathSegment());
                     ContentValues contentValuesFavorite = new ContentValues();
                     contentValuesFavorite.put(FavoriteTableHelper.ID_MOVIE, id);
@@ -80,7 +83,6 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
         navView = findViewById(R.id.nav_view);
         webService = WebService.getInstance();
         loadMovies();
-
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home, R.id.navigation_favorite)
                 .build();
@@ -98,7 +100,7 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
             return true;
         });
 
-        
+
 
     }
 

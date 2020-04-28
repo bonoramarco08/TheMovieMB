@@ -1,28 +1,25 @@
 package com.example.themoviemb.activities;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
-
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.content.ContentValues;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.airbnb.lottie.LottieAnimationView;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.RequestBuilder;
 import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.themoviemb.R;
@@ -34,7 +31,7 @@ import java.util.ArrayList;
 
 public class DescriptionActivity extends AppCompatActivity {
 
-    private static int idMovie=-1;
+    private static int idMovie = -1;
     private ImageView descriptionImage;
     private TextView title, description;
     private ImageButton btnBack;
@@ -43,24 +40,36 @@ public class DescriptionActivity extends AppCompatActivity {
     private int isFavorite;
     private long vibranceHeart;
     private LottieAnimationView lottieAnimationView;
+    private boolean isDarkMode;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_description);
+        int nightModeFlags =
+                getBaseContext().getResources().getConfiguration().uiMode &
+                        Configuration.UI_MODE_NIGHT_MASK;
+        switch (nightModeFlags) {
+            case Configuration.UI_MODE_NIGHT_YES:
+        isDarkMode = true;
+                break;
 
-        descriptionImage=findViewById(R.id.imgDescription);
-        title=findViewById(R.id.txtTitle);
-        description=findViewById(R.id.txtDescription);
-        btnBack=findViewById(R.id.btnBack);
-        btnHeart=findViewById(R.id.btnHeart);
-        lottieAnimationView=findViewById(R.id.imageProgress);
+            case Configuration.UI_MODE_NIGHT_NO:
+           isDarkMode = false;
+                break;
+        }
+        descriptionImage = findViewById(R.id.imgDescription);
+        title = findViewById(R.id.txtTitle);
+        description = findViewById(R.id.txtDescription);
+        btnBack = findViewById(R.id.btnBack);
+        btnHeart = findViewById(R.id.btnHeart);
+        lottieAnimationView = findViewById(R.id.imageProgress);
         startAnimation();
 
-        idMovie=getIntent().getIntExtra("ID_MOVIE",-1);
-        if(idMovie!=-1){
-            Cursor movie = getContentResolver().query(MovieProvider.JOIN_URI,null,FavoriteTableHelper.ID_MOVIE+" = " + idMovie,null,null);
+        idMovie = getIntent().getIntExtra("ID_MOVIE", -1);
+        if (idMovie != -1) {
+            Cursor movie = getContentResolver().query(MovieProvider.JOIN_URI, null, FavoriteTableHelper.ID_MOVIE + " = " + idMovie, null, null);
             movie.moveToNext();
             title.setText(movie.getString(movie.getColumnIndex(MovieTableHelper.TITLE)));
             description.setText(movie.getString(movie.getColumnIndexOrThrow(MovieTableHelper.DESCRIPTION)));
@@ -74,12 +83,12 @@ public class DescriptionActivity extends AppCompatActivity {
                             descriptionImage.setImageBitmap(resource);
                             //al primo giro funziona, ma se riapro la stessa descrizione la seconda volta non mi ritorna i pixel del btnBack
                             //quindi se succede questo, ho creato un viewTreeObserver sotto che si prende le risorse Bitmap dell'immagine
-                            resourceImageDescription=resource;
-                            int lengthArrow = btnBack.getWidth()*btnBack.getHeight();
-                            int lengthHeart=btnHeart.getWidth()*btnHeart.getHeight();
+                            resourceImageDescription = resource;
+                            int lengthArrow = btnBack.getWidth() * btnBack.getHeight();
+                            int lengthHeart = btnHeart.getWidth() * btnHeart.getHeight();
                             //se è 0, richiamerà il metodo con il viewTreeObserver
-                            if(lengthArrow!=0) {
-                                long vibrance=sumVibranceImageDescription(resourceImageDescription,btnBack)/lengthArrow;
+                            if (lengthArrow != 0) {
+                                long vibrance = sumVibranceImageDescription(resourceImageDescription, btnBack) / lengthArrow;
                                 setColorImage(vibrance);
 
                             }
@@ -90,7 +99,7 @@ public class DescriptionActivity extends AppCompatActivity {
                             descriptionImage.setImageResource(R.drawable.error_image);
                         }
                     });
-            isFavorite=movie.getInt(movie.getColumnIndex(FavoriteTableHelper.IS_FAVORITE));
+            isFavorite = movie.getInt(movie.getColumnIndex(FavoriteTableHelper.IS_FAVORITE));
 
             btnBack.setOnClickListener(view -> finish());
 
@@ -99,11 +108,11 @@ public class DescriptionActivity extends AppCompatActivity {
                     new ViewTreeObserver.OnGlobalLayoutListener() {
                         @Override
                         public void onGlobalLayout() {
-                            int lengthBtnBack = btnBack.getWidth()*btnBack.getHeight();
+                            int lengthBtnBack = btnBack.getWidth() * btnBack.getHeight();
 
-                            if(resourceImageDescription!=null) {
-                                if(lengthBtnBack!=0) {
-                                    long vibrance=sumVibranceImageDescription(resourceImageDescription,btnBack)/lengthBtnBack;
+                            if (resourceImageDescription != null) {
+                                if (lengthBtnBack != 0) {
+                                    long vibrance = sumVibranceImageDescription(resourceImageDescription, btnBack) / lengthBtnBack;
                                     setColorImage(vibrance);
 
                                 }
@@ -118,8 +127,8 @@ public class DescriptionActivity extends AppCompatActivity {
         });
     }
 
-    private void setColorImage(long vibrance){
-        if(vibrance>=50)
+    private void setColorImage(long vibrance) {
+        if (vibrance >= 50)
             btnBack.setImageResource(R.drawable.left_arrow_black);
         else
             btnBack.setImageResource(R.drawable.left_arrow_white);
@@ -127,76 +136,85 @@ public class DescriptionActivity extends AppCompatActivity {
     }
 
 
-
-    public void onHeartAppear(){
-        if(idMovie!=-1) {
-            Cursor movie = getContentResolver().query(MovieProvider.JOIN_URI, null, FavoriteTableHelper.ID_MOVIE+" = " + idMovie, null, null);
+    public void onHeartAppear() {
+        if (idMovie != -1) {
+            Cursor movie = getContentResolver().query(MovieProvider.JOIN_URI, null, FavoriteTableHelper.ID_MOVIE + " = " + idMovie, null, null);
             movie.moveToNext();
-            if(movie.getInt(movie.getColumnIndex(FavoriteTableHelper.IS_FAVORITE))==0)
-                btnHeart.setImageResource(R.drawable.unfavorite);
-            else
+            if (movie.getInt(movie.getColumnIndex(FavoriteTableHelper.IS_FAVORITE)) == 0)
+                if (!isDarkMode)
+                    btnHeart.setImageResource(R.drawable.unfavorite);
+                else
+                    btnHeart.setImageResource(R.drawable.unfavorite_white);
+            else if (!isDarkMode)
                 btnHeart.setImageResource(R.drawable.favorite);
+            else
+                btnHeart.setImageResource(R.drawable.favorite_white);
         }
     }
 
-    public void onHeartChange(){
-        if(idMovie!=-1) {
-            Cursor movie = getContentResolver().query(MovieProvider.JOIN_URI, null, FavoriteTableHelper.ID_MOVIE+" = " + idMovie, null, null);
+    public void onHeartChange() {
+        if (idMovie != -1) {
+            Cursor movie = getContentResolver().query(MovieProvider.JOIN_URI, null, FavoriteTableHelper.ID_MOVIE + " = " + idMovie, null, null);
             movie.moveToNext();
-            ContentValues contentValues=new ContentValues();
+            ContentValues contentValues = new ContentValues();
 
-            if(movie.getInt(movie.getColumnIndex(FavoriteTableHelper.IS_FAVORITE))==0){
-                contentValues.put(FavoriteTableHelper.IS_FAVORITE,1);
-                getContentResolver().update(Uri.parse(MovieProvider.FAVORITE_URI+"/"+idMovie),contentValues,FavoriteTableHelper.ID_MOVIE+" = " + idMovie,null);
-
-                btnHeart.setImageResource(R.drawable.favorite);
-                Toast.makeText(this, "Aggiunto ai preferiti", Toast.LENGTH_SHORT).show();
-            }
-            else{
-                contentValues.put(FavoriteTableHelper.IS_FAVORITE,0);
-                getContentResolver().update(MovieProvider.FAVORITE_URI,contentValues,FavoriteTableHelper.ID_MOVIE+" = " + idMovie,null);
-                btnHeart.setImageResource(R.drawable.unfavorite);
-                Toast.makeText(this, "Rimosso dai preferiti", Toast.LENGTH_SHORT).show();
+            if (movie.getInt(movie.getColumnIndex(FavoriteTableHelper.IS_FAVORITE)) == 0) {
+                contentValues.put(FavoriteTableHelper.IS_FAVORITE, 1);
+                getContentResolver().update(Uri.parse(MovieProvider.FAVORITE_URI + "/" + idMovie), contentValues, FavoriteTableHelper.ID_MOVIE + " = " + idMovie, null);
+                if (!isDarkMode)
+                    btnHeart.setImageResource(R.drawable.favorite);
+                else
+                    btnHeart.setImageResource(R.drawable.favorite_white);
+                Toast.makeText(this, getString(R.string.toastagg), Toast.LENGTH_SHORT).show();
+            } else {
+                contentValues.put(FavoriteTableHelper.IS_FAVORITE, 0);
+                getContentResolver().update(MovieProvider.FAVORITE_URI, contentValues, FavoriteTableHelper.ID_MOVIE + " = " + idMovie, null);
+                if (!isDarkMode)
+                    btnHeart.setImageResource(R.drawable.unfavorite);
+                else
+                    btnHeart.setImageResource(R.drawable.unfavorite_white);
+                Toast.makeText(this, getString(R.string.toastrem), Toast.LENGTH_SHORT).show();
             }
         }
     }
 
     //mi prendo la proprietà vibrance di ogni pixel dell'immagine, i pixel solo dove si trova il bottone BACK
-    private long sumVibranceImageDescription(Bitmap resource,ImageButton btn){
+    private long sumVibranceImageDescription(Bitmap resource, ImageButton btn) {
 
 
-        ArrayList<Integer>pixels;
-        long sumV=0;
+        ArrayList<Integer> pixels;
+        long sumV = 0;
         //aggiungo all'arraylist tutti i pixel
-        pixels=addPixels(resource,btn.getWidth(),btn.getHeight(),btn.getX(),btn.getY());
+        pixels = addPixels(resource, btn.getWidth(), btn.getHeight(), btn.getX(), btn.getY());
 
         //per ogni pixel aggiungo la percentuale di vibrance di ogni pixel
-        for (int p:pixels) {
+        for (int p : pixels) {
             float[] hsv = new float[3];
-            int r=Color.red(p);
-            int g=Color.green(p);
-            int b=Color.blue(p);
-            Color.RGBToHSV(r,g,b,hsv);
-            sumV+=hsv[2]*100;
+            int r = Color.red(p);
+            int g = Color.green(p);
+            int b = Color.blue(p);
+            Color.RGBToHSV(r, g, b, hsv);
+            sumV += hsv[2] * 100;
         }
         return sumV;
     }
-    private ArrayList<Integer> addPixels(Bitmap resource,int width, int height, float x, float y){
-        ArrayList<Integer>pixels=new ArrayList<>();
-        for(int i=0; i<width;i++){
-            for(int j=0; j<height;j++){
-                pixels.add(resource.getPixel((int)x+i,(int)y+j));
+
+    private ArrayList<Integer> addPixels(Bitmap resource, int width, int height, float x, float y) {
+        ArrayList<Integer> pixels = new ArrayList<>();
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                pixels.add(resource.getPixel((int) x + i, (int) y + j));
             }
         }
         return pixels;
     }
 
-    private void startAnimation(){
+    private void startAnimation() {
         lottieAnimationView.setSpeed(2.0F); // How fast does the animation play
         lottieAnimationView.setProgress(50F); // Starts the animation from 50% of the beginning
     }
 
-    private void stopAnimation(){
+    private void stopAnimation() {
         lottieAnimationView.cancelAnimation(); // Cancels the animation
     }
 
@@ -205,5 +223,4 @@ public class DescriptionActivity extends AppCompatActivity {
         super.onSaveInstanceState(outState);
         //outState.putString(IMG_DESCRIPTION, descriptionImage.get);
     }
-
 }

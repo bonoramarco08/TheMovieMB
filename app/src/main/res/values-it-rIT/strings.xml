@@ -12,6 +12,8 @@
     <string name="dilagotextinsert">Vuoi aggiungere </string>
     <string name="dilagotextremove">Vuoi rimuovere </string>
     <string name="dilagotextcomum"> ai tuoi film preferiti?</string>
+    <string name="dilagotextcomumfasle"> ai tuoi film preferiti?</string>
+
     <string name="dialogbuttonannulla">Annulla</string>
     <string name="dialogbuttonpositive">Si</string>
     <string name="dialogbuttonnegative">No</string>
@@ -20,4 +22,6 @@
     <string name="dialog_title">Errore</string>
     <string name="dialog_message_homeInternet">Per vedere più film è indispensabile una connessione ad internet</string>
     <string name="lingua">it-IT</string>
+    <string name="toastagg">Film aggiunto ai preferiti</string>
+    <string name="toastrem">Film rimosso dai preferiti</string>
 </resources>

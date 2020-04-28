@@ -63,7 +63,6 @@
         android:gravity="start|top"
         android:maxLines="2"
         android:text="Titolo"
-        android:textColor="@color/black"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.05"

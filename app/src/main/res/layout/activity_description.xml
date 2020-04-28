@@ -67,7 +67,6 @@
         android:gravity="start|top"
         android:maxLines="2"
         android:text="Titolo"
-        android:textColor="@color/black"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.05"
@@ -88,20 +87,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/txtTitle"
         app:layout_constraintWidth_percent="0.89" />
-
-    <Button
-        android:id="@+id/btnWatchTrailer"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:text="WATCH TRAILER"
-        android:textAlignment="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.650"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/txtDescription"
-        app:layout_constraintWidth_percent="0.89"
-        app:layout_constraintHeight_percent="0.06"/>
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
