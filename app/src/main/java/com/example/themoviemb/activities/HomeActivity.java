@@ -22,11 +22,10 @@ import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
-import androidx.viewpager.widget.ViewPager;
 
 import com.airbnb.lottie.LottieAnimationView;
-import com.example.themoviemb.VerificaInternet;
 import com.example.themoviemb.R;
+import com.example.themoviemb.VerificaInternet;
 import com.example.themoviemb.data.FavoriteTableHelper;
 import com.example.themoviemb.data.MovieProvider;
 import com.example.themoviemb.data.MovieTableHelper;
@@ -35,10 +34,11 @@ import com.example.themoviemb.data.models.Result;
 import com.example.themoviemb.interface_movie.DialogFavorite;
 import com.example.themoviemb.interface_movie.IWebServer;
 import com.example.themoviemb.networks.WebService;
+import com.example.themoviemb.ui.favorite.FavoriteFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
-public class HomeActivity extends AppCompatActivity implements DialogFavorite.IFavoritDialog {
+public class HomeActivity extends AppCompatActivity{
 
 
     private WebService webService;
@@ -83,6 +83,8 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
         navView = findViewById(R.id.nav_view);
         webService = WebService.getInstance();
         loadMovies();
+
+
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.navigation_home, R.id.navigation_favorite)
                 .build();
@@ -101,13 +103,12 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
         });
 
 
-
     }
 
-    private BottomNavigationView.OnNavigationItemSelectedListener navListener=new BottomNavigationView.OnNavigationItemSelectedListener() {
+    private BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            if (getSelectedItem(navView.getMenu())!=item.getItemId()) {
+            if (getSelectedItem(navView.getMenu()) != item.getItemId()) {
                 switch (item.getItemId()) {
                     case R.id.navigation_favorite:
                         navOptions = new NavOptions.Builder()
@@ -129,7 +130,7 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
                         break;
                 }
             }
-                return false;
+            return false;
         }
     };
 
@@ -157,7 +158,7 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
             Cursor cursor = new CursorLoader(getApplicationContext(), MovieProvider.MOVIES_URI, null, null, null, null).loadInBackground();
             if (cursor.getCount() == 0)
                 if (VerificaInternet.getConnectivityStatusString(getBaseContext())) {
-                    webService.getMoviesPage(webServerListener, 1 , getString(R.string.lingua));
+                    webService.getMoviesPage(webServerListener, 1, getString(R.string.lingua));
                 } else {
                     AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this, R.style.MyDialog);
 
@@ -173,24 +174,6 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
         }
 
     }
-
-
-    @Override
-    public void onResponse(boolean aResponse, long aId, Boolean isRemoved) {
-        if (aResponse) {
-            if (!isRemoved) {
-                ContentValues cv = new ContentValues();
-                cv.put(FavoriteTableHelper.IS_FAVORITE, 1);
-                getContentResolver().update(MovieProvider.FAVORITE_URI, cv, FavoriteTableHelper.ID_MOVIE + " = " + aId, null);
-            } else {
-                ContentValues cv = new ContentValues();
-                cv.put(FavoriteTableHelper.IS_FAVORITE, 0);
-                getContentResolver().update(MovieProvider.FAVORITE_URI, cv, FavoriteTableHelper.ID_MOVIE + " = " + aId, null);
-
-            }
-        }
-    }
-
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -212,8 +195,8 @@ public class HomeActivity extends AppCompatActivity implements DialogFavorite.IF
         lottieAnimationView.setSpeed(2.0F); // How fast does the animation play
         lottieAnimationView.setProgress(0F); // Starts the animation from 50% of the beginning
     }
-
     private void stopAnimation() {
         lottieAnimationView.cancelAnimation(); // Cancels the animation
     }
+
 }
