@@ -38,12 +38,11 @@
         android:layout_marginStart="10dp"
         android:layout_marginTop="10dp"
         android:background="#0000"
-        android:src="@drawable/left_arrow_white"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        android:src="@drawable/left_arrow_black"
         app:layout_constraintHeight_percent="0.05"
-        app:layout_constraintWidth_percent="0.08"
-        ></ImageButton>
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.08"></ImageButton>
 
     <ImageButton
         android:id="@+id/btnHeart"
