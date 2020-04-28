@@ -54,7 +54,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class HomeFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, MoviesAdapter.OnItemClickListener {
+public class HomeFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, MoviesAdapter.OnItemClickListener ,DialogFavorite.IFavoritDialog {
 
     private static final int LOADER_ID = 1;
     private int insert;
@@ -278,6 +278,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
             if (cursor.moveToNext()) {
                 if (cursor.getInt(cursor.getColumnIndex(FavoriteTableHelper.IS_FAVORITE)) == 0) {
                     DialogFavorite vDialog = new DialogFavorite(getString(R.string.dialogtitleinsert), getString(R.string.dilagotextinsert) + " \"" + cursor.getString(cursor.getColumnIndex(MovieTableHelper.TITLE)) + " \"" + getString(R.string.dilagotextcomum), id, false);
+                    vDialog.setmListener(HomeFragment.this);
                     vDialog.show(getChildFragmentManager(), null);
                 } else {
                     DialogFavorite vDialog = new DialogFavorite(getString(R.string.dialogtitleiremove), getString(R.string.dilagotextremove) + " \"" + cursor.getString(cursor.getColumnIndex(MovieTableHelper.TITLE)) + "\" " + getString(R.string.dilagotextcomumfasle), id, true);
@@ -298,4 +299,18 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         webService.getMoviesPage(webServerListener, page,getString(R.string.lingua));
     }
 
+    @Override
+    public void onResponse(boolean aResponse, long aId, Boolean isRemoved) {
+        if (aResponse) {
+            if (!isRemoved) {
+                ContentValues cv = new ContentValues();
+                cv.put(FavoriteTableHelper.IS_FAVORITE, 1);
+                getActivity().getContentResolver().update(MovieProvider.FAVORITE_URI, cv, FavoriteTableHelper.ID_MOVIE + " = " + aId, null);
+            } else {
+                ContentValues cv = new ContentValues();
+                cv.put(FavoriteTableHelper.IS_FAVORITE, 0);
+                getActivity().getContentResolver().update(MovieProvider.FAVORITE_URI, cv, FavoriteTableHelper.ID_MOVIE + " = " + aId, null);
+            }
+        }
+    }
 }

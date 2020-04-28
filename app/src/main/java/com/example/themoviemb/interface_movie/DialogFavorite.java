@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 
 import com.example.themoviemb.R;
 
@@ -62,24 +63,7 @@ public class DialogFavorite extends DialogFragment {
         });
         return vBuilder.create();
     }
-
-    @Override
-    public void onAttach(@NonNull Activity activity) {
-        super.onAttach(activity);
-        if (activity instanceof IFavoritDialog) {
-            mListener = (IFavoritDialog) activity;
-        } else {
-            mListener = null;
-        }
-    }
-
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        if (context instanceof IFavoritDialog) {
-            mListener = (IFavoritDialog) context;
-        } else {
-            mListener = null;
-        }
+    public void setmListener(IFavoritDialog mListener) {
+        this.mListener = mListener;
     }
 }

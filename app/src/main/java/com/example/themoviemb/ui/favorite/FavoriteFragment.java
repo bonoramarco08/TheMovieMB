@@ -1,6 +1,7 @@
 package com.example.themoviemb.ui.favorite;
 
 import android.app.SearchManager;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -43,7 +44,7 @@ import com.example.themoviemb.interface_movie.ErrorZeroItem;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, MoviesAdapter.OnItemClickListener, ErrorZeroItem{
+public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, MoviesAdapter.OnItemClickListener, ErrorZeroItem , DialogFavorite.IFavoritDialog{
 
     private static final int LOADER_ID = 1;
     private static final String FILM_PER_ROW = "FILM_PER_ROW";
@@ -191,6 +192,7 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
             Cursor cursor = getActivity().getContentResolver().query(MovieProvider.MOVIES_URI, null, MovieTableHelper._ID + " = " + id, null, null);
             if (cursor.moveToNext()) {
                 DialogFavorite vDialog = new DialogFavorite(getString(R.string.dialogtitleiremove), getString(R.string.dilagotextremove) + " \"" + cursor.getString(cursor.getColumnIndex(MovieTableHelper.TITLE)) + "\" " + getString(R.string.dilagotextcomumfasle), id, true);
+                vDialog.setmListener(FavoriteFragment.this);
                 vDialog.show(getChildFragmentManager(), null);
             }
         } catch (NullPointerException e) {
@@ -207,13 +209,37 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE){
-            outState.putInt(FILM_PER_ROW,2);
-        }else{
-            outState.putInt(FILM_PER_ROW,4);
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            outState.putInt(FILM_PER_ROW, 2);
+        } else {
+            outState.putInt(FILM_PER_ROW, 4);
         }
     }
-
+    public void aggiornaLista(){
+        Cursor data = (getActivity()).getContentResolver().query(MovieProvider.JOIN_URI, null, FavoriteTableHelper.IS_FAVORITE + " = 1", null, null);
+        List<Movie> mArrayList = new ArrayList<>();
+        for(data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
+            // The Cursor is now set to the right position
+            mArrayList.add(new Movie(data.getString(data.getColumnIndex(MovieTableHelper.TITLE)),data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION_PHOTO)),data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION)),data.getString(data.getColumnIndex(MovieTableHelper.COVER_PHOTO)),data.getString(data.getColumnIndex(MovieTableHelper._ID))));
+        }
+        adapterFavorite.changeCursor(mArrayList);
+        adapterFavorite.notifyDataSetChanged();
+    }
+    @Override
+    public void onResponse(boolean aResponse, long aId, Boolean isRemoved) {
+        if (aResponse) {
+            if (!isRemoved) {
+                ContentValues cv = new ContentValues();
+                cv.put(FavoriteTableHelper.IS_FAVORITE, 1);
+                getActivity().getContentResolver().update(MovieProvider.FAVORITE_URI, cv, FavoriteTableHelper.ID_MOVIE + " = " + aId, null);
+            } else {
+                ContentValues cv = new ContentValues();
+                cv.put(FavoriteTableHelper.IS_FAVORITE, 0);
+                getActivity().getContentResolver().update(MovieProvider.FAVORITE_URI, cv, FavoriteTableHelper.ID_MOVIE + " = " + aId, null);
+                aggiornaLista();
+            }
+        }
+    }
 }
 
 
