@@ -22,4 +22,5 @@
     <string name="lingua">en-US</string>
     <string name="toastagg">Movie add to favorite</string>
     <string name="toastrem">Movie removed from favorites</string>
+    <string name="error_zero_film_home">Active internet and restart app</string>
 </resources>

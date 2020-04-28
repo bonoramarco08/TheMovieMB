@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -47,6 +48,7 @@ import com.example.themoviemb.data.MovieTableHelper;
 import com.example.themoviemb.data.models.Movie;
 import com.example.themoviemb.data.models.Result;
 import com.example.themoviemb.interface_movie.DialogFavorite;
+import com.example.themoviemb.interface_movie.ErrorZeroItem;
 import com.example.themoviemb.interface_movie.IWebServer;
 import com.example.themoviemb.networks.WebService;
 
@@ -54,7 +56,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class HomeFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, MoviesAdapter.OnItemClickListener ,DialogFavorite.IFavoritDialog {
+public class HomeFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, MoviesAdapter.OnItemClickListener ,DialogFavorite.IFavoritDialog , ErrorZeroItem {
 
     private static final int LOADER_ID = 1;
     private int insert;
@@ -67,7 +69,8 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     private SearchView searchView = null;
     private SearchView.OnQueryTextListener queryTextListener;
     private boolean search = false;
-    ProgressBar pbHome;
+    ProgressBar pbHome , getPbHomeStart;
+    TextView tvHome;
 
     // codice scrool
     private IWebServer webServerListener = new IWebServer() {
@@ -130,6 +133,8 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
                 ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         rvHome = root.findViewById(R.id.rvMovies);
+        tvHome = root.findViewById(R.id.errorTextView);
+        getPbHomeStart = root.findViewById(R.id.pbHomeStart);
         layoutManagerHome = new GridLayoutManager(getActivity().getApplicationContext(), filmPerRow);
         pbHome = root.findViewById(R.id.pbHome);
         rvHome.setLayoutManager(layoutManagerHome);
@@ -257,6 +262,8 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         }
         adapterHome.changeCursor(mArrayList);
         pbHome.setVisibility(View.GONE);
+        getPbHomeStart.setVisibility(View.GONE);
+
     }
 
     @Override
@@ -282,6 +289,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
                     vDialog.show(getChildFragmentManager(), null);
                 } else {
                     DialogFavorite vDialog = new DialogFavorite(getString(R.string.dialogtitleiremove), getString(R.string.dilagotextremove) + " \"" + cursor.getString(cursor.getColumnIndex(MovieTableHelper.TITLE)) + "\" " + getString(R.string.dilagotextcomumfasle), id, true);
+                    vDialog.setmListener(HomeFragment.this);
                     vDialog.show(getChildFragmentManager(), null);
                 }
             }
@@ -312,5 +320,10 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
                 getActivity().getContentResolver().update(MovieProvider.FAVORITE_URI, cv, FavoriteTableHelper.ID_MOVIE + " = " + aId, null);
             }
         }
+    }
+
+    @Override
+    public void setVisibleText(String message) {
+        tvHome.setText(getString(R.string.error_zero_film_home));
     }
 }

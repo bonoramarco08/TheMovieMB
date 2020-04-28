@@ -13,7 +13,7 @@
     <string name="dilagotextremove">Vuoi rimuovere </string>
     <string name="dilagotextcomum"> ai tuoi film preferiti?</string>
     <string name="dilagotextcomumfasle"> ai tuoi film preferiti?</string>
-
+    <string name="error_zero_film_home">Attiva internet e riapri l\'applicazione</string>
     <string name="dialogbuttonannulla">Annulla</string>
     <string name="dialogbuttonpositive">Si</string>
     <string name="dialogbuttonnegative">No</string>
