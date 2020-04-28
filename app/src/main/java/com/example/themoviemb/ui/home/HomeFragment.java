@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -34,8 +35,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.themoviemb.EndlessRecyclerViewScrollListener;
 import com.example.themoviemb.R;
+import com.example.themoviemb.R.color;
 import com.example.themoviemb.VerificaInternet;
 import com.example.themoviemb.activities.DescriptionActivity;
+import com.example.themoviemb.activities.HomeActivity;
+import com.example.themoviemb.activities.MainActivity;
 import com.example.themoviemb.adapters.MoviesAdapter;
 import com.example.themoviemb.data.FavoriteTableHelper;
 import com.example.themoviemb.data.MovieProvider;
@@ -126,7 +130,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
                 ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         rvHome = root.findViewById(R.id.rvMovies);
-        layoutManagerHome = new GridLayoutManager(getContext(), filmPerRow);
+        layoutManagerHome = new GridLayoutManager(getActivity().getApplicationContext(), filmPerRow);
         pbHome = root.findViewById(R.id.pbHome);
         rvHome.setLayoutManager(layoutManagerHome);
         adapterHome = new MoviesAdapter(null, this, filmPerRow);

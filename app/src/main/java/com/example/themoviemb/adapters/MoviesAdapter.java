@@ -1,8 +1,10 @@
 package com.example.themoviemb.adapters;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,10 +13,13 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.themoviemb.R;
+import com.example.themoviemb.activities.HomeActivity;
 import com.example.themoviemb.data.MovieTableHelper;
 import com.example.themoviemb.data.models.Movie;
 
@@ -29,6 +34,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     private static final float POSTER_ASPECT_RATIO = 1.5f;
     private List<Movie> movies;
     private int filmPerRow;
+    private CardView cvMovie;
 
     private OnItemClickListener onItemClickListener;
 
@@ -78,14 +84,14 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
             Glide.with(context)
                     .load(movie.getPosterPath())
                     .into(holder.imageView);
-            holder.view.setOnClickListener(v -> {
+            holder.cvMovie.setOnClickListener(view -> {
                 try {
                     onItemClickListener.sendDetails(Integer.parseInt(holder.textViewId.getText().toString()), onItemClickListener);
                 } catch (Exception e) {
                     Log.d("Error", e.getMessage());
                 }
             });
-            holder.view.setOnLongClickListener(view -> {
+            holder.cvMovie.setOnLongClickListener(view->{
                 onItemClickListener.longClick(Integer.parseInt(holder.textViewId.getText().toString()), onItemClickListener);
                 return true;
             });
@@ -114,6 +120,8 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         ImageView imageView;
         @BindView(R.id.textViewId)
         TextView textViewId;
+        @BindView(R.id.cdMovie)
+        CardView cvMovie;
 
         private MovieViewHolder(View view) {
             super(view);

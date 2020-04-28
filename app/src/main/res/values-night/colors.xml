@@ -7,7 +7,7 @@
     <color name="tabbar">#121212</color>
     <color name="toolbar">#f77000</color>
     <color name="toolbarText">#121212</color>
-    <color name="recyclerview">#9A121212</color>
+    <color name="recyclerview">#121212</color>
     <color name="tab_indicator_text">#FFFFFF</color>
     <color name="notchecked">#FFFFFF</color>
 </resources>
