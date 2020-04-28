@@ -83,6 +83,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
             holder.textViewId.setText(movie.get_id());
             Glide.with(context)
                     .load(movie.getPosterPath())
+                    .placeholder(R.drawable.error_image)
                     .into(holder.imageView);
             holder.cvMovie.setOnClickListener(view -> {
                 try {
