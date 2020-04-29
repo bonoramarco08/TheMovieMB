@@ -49,7 +49,8 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
 
     private static final int LOADER_ID = 1;
     private static final String FILM_PER_ROW = "FILM_PER_ROW";
-private RemoveBadgeInterface listener;
+    private static final String SEARCHTEXT = "SEARCTEXT" ;
+    private RemoveBadgeInterface listener;
     private static int filmPerRow=0;
     private FavoriteViewModel favoriteViewModel;
     private RecyclerView rvFavorite;
@@ -59,6 +60,8 @@ private RemoveBadgeInterface listener;
     private SearchView.OnQueryTextListener queryTextListener;
     private TextView error;
     ProgressBar pbFavorite2;
+    private String searchText;
+
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -66,6 +69,9 @@ private RemoveBadgeInterface listener;
             filmPerRow=4;
         }else{
             filmPerRow=2;
+        }
+        if (savedInstanceState != null) {
+            searchText = savedInstanceState.getString(SEARCHTEXT);
         }
         favoriteViewModel =
                 ViewModelProviders.of(this).get(FavoriteViewModel.class);
@@ -76,7 +82,7 @@ private RemoveBadgeInterface listener;
         layoutManagerFavorite = new GridLayoutManager(getContext(), filmPerRow);
 
         rvFavorite.setLayoutManager(layoutManagerFavorite);
-        adapterFavorite = new MoviesAdapter(null, this,filmPerRow);
+        adapterFavorite = new MoviesAdapter(null, this,filmPerRow ,getContext());
         rvFavorite.setAdapter(adapterFavorite);
 
         favoriteViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
@@ -113,6 +119,7 @@ private RemoveBadgeInterface listener;
             queryTextListener = new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextChange(String newText) {
+                    if(!newText.equals(""))searchText = newText;
                     Cursor data = (getActivity()).getContentResolver().query(MovieProvider.JOIN_URI, null, MovieTableHelper.TITLE + " LIKE '%" + newText + "%' and " + FavoriteTableHelper.IS_FAVORITE + " = 1", null, null);
                     List<Movie> mArrayList = new ArrayList<>();
                     for(data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
@@ -130,6 +137,11 @@ private RemoveBadgeInterface listener;
                 }
             };
             searchView.setOnQueryTextListener(queryTextListener);
+        }
+        if (searchText != null) {
+            searchItem.expandActionView();
+            searchView.setQuery(searchText, false);
+            searchView.clearFocus();
         }
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -210,12 +222,9 @@ private RemoveBadgeInterface listener;
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
+        if (searchText != null)
+            outState.putString(SEARCHTEXT, searchText);
         super.onSaveInstanceState(outState);
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            outState.putInt(FILM_PER_ROW, 2);
-        } else {
-            outState.putInt(FILM_PER_ROW, 4);
-        }
     }
     public void aggiornaLista(){
         Cursor data = (getActivity()).getContentResolver().query(MovieProvider.JOIN_URI, null, FavoriteTableHelper.IS_FAVORITE + " = 1", null, null);

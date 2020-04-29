@@ -16,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 import com.bumptech.glide.Glide;
 import com.example.themoviemb.R;
@@ -35,6 +36,7 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     private List<Movie> movies;
     private int filmPerRow;
     private CardView cvMovie;
+    private Context context;
 
     private OnItemClickListener onItemClickListener;
 
@@ -44,10 +46,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         void longClick(int id, OnItemClickListener onItemClickListener);
     }
 
-    public MoviesAdapter(List<Movie> movies, OnItemClickListener onItemClickListener, int filmPerRow) {
+    public MoviesAdapter(List<Movie> movies, OnItemClickListener onItemClickListener, int filmPerRow ,Context context) {
         this.movies = movies;
         this.onItemClickListener = onItemClickListener;
         this.filmPerRow=filmPerRow;
+        this.context = context;
     }
 
 
@@ -77,13 +80,17 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
     @Override
     public void onBindViewHolder(@NonNull final MovieViewHolder holder, int position) {
         final Context context = holder.view.getContext();
-
         if (movies.size() > position) {
             Movie movie = movies.get(position);
             holder.textViewId.setText(movie.get_id());
+            CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(context);
+            circularProgressDrawable.setStrokeWidth(10);
+            circularProgressDrawable.setCenterRadius(40);
+            circularProgressDrawable.setColorSchemeColors(R.color.colorPrimary , R.color.colorPrimary);
+            circularProgressDrawable.start();
             Glide.with(context)
                     .load(movie.getPosterPath())
-                    .placeholder(R.drawable.error_image)
+                    .placeholder(circularProgressDrawable)
                     .into(holder.imageView);
             holder.cvMovie.setOnClickListener(view -> {
                 try {

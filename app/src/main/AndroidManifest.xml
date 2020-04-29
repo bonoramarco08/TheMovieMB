@@ -25,7 +25,6 @@
         <activity android:name=".activities.DescriptionActivity"/>
         <activity android:name=".activities.MainActivity">
         </activity>
-
         <provider
             android:name=".data.MovieProvider"
             android:authorities="com.example.themoviemb.data.MovieProvider"
