@@ -40,6 +40,7 @@ import com.example.themoviemb.data.MovieTableHelper;
 import com.example.themoviemb.data.models.Movie;
 import com.example.themoviemb.interface_movie.DialogFavorite;
 import com.example.themoviemb.interface_movie.ErrorZeroItem;
+import com.example.themoviemb.ui.home.HomeFragment;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +49,7 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
 
     private static final int LOADER_ID = 1;
     private static final String FILM_PER_ROW = "FILM_PER_ROW";
-
+private RemoveBadgeInterface listener;
     private static int filmPerRow=0;
     private FavoriteViewModel favoriteViewModel;
     private RecyclerView rvFavorite;
@@ -171,6 +172,7 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
         if (data.getCount() == 0) {
             setVisibleText(getString(R.string.no_film_favorite));
         }
+        listener.deleteBadge();
     }
 
 
@@ -239,6 +241,18 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
                 aggiornaLista();
             }
         }
+    }
+    public  interface  RemoveBadgeInterface{
+        void deleteBadge();
+    }
+
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof RemoveBadgeInterface){
+            listener= (RemoveBadgeInterface) context;
+        }
+        else
+            listener=null;
     }
 }
 

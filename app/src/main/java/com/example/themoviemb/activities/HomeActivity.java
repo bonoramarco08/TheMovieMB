@@ -35,10 +35,12 @@ import com.example.themoviemb.interface_movie.DialogFavorite;
 import com.example.themoviemb.interface_movie.IWebServer;
 import com.example.themoviemb.networks.WebService;
 import com.example.themoviemb.ui.favorite.FavoriteFragment;
+import com.example.themoviemb.ui.home.HomeFragment;
+import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
-public class HomeActivity extends AppCompatActivity{
+public class HomeActivity extends AppCompatActivity implements HomeFragment.AddOrCreateBadge , FavoriteFragment.RemoveBadgeInterface {
 
 
     private WebService webService;
@@ -191,5 +193,15 @@ public class HomeActivity extends AppCompatActivity{
     }
 
 
+    @Override
+    public void createOrAddBadge() {
+        BadgeDrawable badge = navView.getOrCreateBadge(R.id.navigation_favorite);
+        badge.setNumber(badge.getNumber() + 1);
+        badge.setVisible(true);
+    }
 
+    @Override
+    public void deleteBadge() {
+        navView.removeBadge(R.id.navigation_favorite);
+    }
 }
