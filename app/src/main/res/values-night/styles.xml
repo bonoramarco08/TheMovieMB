@@ -8,8 +8,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColorPrimary">@color/colorAccent</item>
-
-
+        <item name="android:editTextColor">@color/colorAccent</item>
 
     </style>
     <style name="MyDialog" parent="Theme.MaterialComponents.Dialog.Alert">

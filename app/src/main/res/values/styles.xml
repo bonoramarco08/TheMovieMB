@@ -4,10 +4,13 @@
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="android:editTextColor">@color/colorAccent</item>
     </style>
     <style name="MyDialog" parent="Theme.MaterialComponents.Light.Dialog.Alert">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="android:textColor">@color/colorPrimaryDark</item>
+
+
     </style>
     <!-- Base application theme. -->
     <style name="Theme.MaterialComponents.Light.NoActionBar">
