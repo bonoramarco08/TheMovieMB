@@ -1,12 +1,12 @@
 package com.example.themoviemb.ui.home;
 
+import android.app.Activity;
 import android.app.SearchManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -37,11 +37,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.themoviemb.EndlessRecyclerViewScrollListener;
 import com.example.themoviemb.R;
-import com.example.themoviemb.R.color;
 import com.example.themoviemb.VerificaInternet;
 import com.example.themoviemb.activities.DescriptionActivity;
-import com.example.themoviemb.activities.HomeActivity;
-import com.example.themoviemb.activities.MainActivity;
 import com.example.themoviemb.adapters.MoviesAdapter;
 import com.example.themoviemb.data.FavoriteTableHelper;
 import com.example.themoviemb.data.MovieProvider;
@@ -52,14 +49,16 @@ import com.example.themoviemb.interface_movie.DialogFavorite;
 import com.example.themoviemb.interface_movie.ErrorZeroItem;
 import com.example.themoviemb.interface_movie.IWebServer;
 import com.example.themoviemb.networks.WebService;
+import com.google.android.material.badge.BadgeDrawable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 
-public class HomeFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, MoviesAdapter.OnItemClickListener ,DialogFavorite.IFavoritDialog , ErrorZeroItem {
+public class HomeFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, MoviesAdapter.OnItemClickListener, DialogFavorite.IFavoritDialog, ErrorZeroItem {
 
     private static final int LOADER_ID = 1;
+    private static final String SEARCHTEXT = "SEARCHTEXT";
     private int insert;
     private int filmPerRow;
     private WebService webService;
@@ -71,8 +70,10 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     private SearchView.OnQueryTextListener queryTextListener;
     private boolean search = false;
     private LottieAnimationView lottieAnimationView;
-    ProgressBar pbHome,getPbHomeStart;
+    private AddOrCreateBadge listener;
+    ProgressBar pbHome, getPbHomeStart;
     TextView tvHome;
+    private String searchText;
 
     // codice scrool
     private IWebServer webServerListener = new IWebServer() {
@@ -87,18 +88,17 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
                         b = true;
                         for (int y = 0; y < cursor.getCount(); y++) {
                             cursor.moveToPosition(y);
-                            if (cursor.getString(cursor.getColumnIndex(MovieTableHelper.TITLE)).equals(movie.getTitle()))
-                                {
-                                    b = false;
-                                    ContentValues contentValues = new ContentValues();
-                                    contentValues.put(MovieTableHelper.TITLE, movie.getTitle());
-                                    contentValues.put(MovieTableHelper.COVER_PHOTO, movie.getPosterPath());
-                                    contentValues.put(MovieTableHelper.DESCRIPTION, movie.getOverview());
-                                    contentValues.put(MovieTableHelper.DESCRIPTION_PHOTO, movie.getBackdropPath());
-                                    contentValues.put(MovieTableHelper.ID_FILM, movie.getIdFilm());
-                                    getActivity().getContentResolver().update(MovieProvider.MOVIES_URI, contentValues, MovieTableHelper.TITLE +" = "+movie.getTitle(), null);
-                                    y = cursor.getCount();
-                                }
+                            if (cursor.getString(cursor.getColumnIndex(MovieTableHelper.TITLE)).equals(movie.getTitle())) {
+                                b = false;
+                                ContentValues contentValues = new ContentValues();
+                                contentValues.put(MovieTableHelper.TITLE, movie.getTitle());
+                                contentValues.put(MovieTableHelper.COVER_PHOTO, movie.getPosterPath());
+                                contentValues.put(MovieTableHelper.DESCRIPTION, movie.getOverview());
+                                contentValues.put(MovieTableHelper.DESCRIPTION_PHOTO, movie.getBackdropPath());
+                                contentValues.put(MovieTableHelper.ID_FILM, movie.getIdFilm());
+                                getActivity().getContentResolver().update(MovieProvider.MOVIES_URI, contentValues, MovieTableHelper.TITLE + " = " + movie.getTitle(), null);
+                                y = cursor.getCount();
+                            }
                         }
                         if (b) {
                             ContentValues contentValues = new ContentValues();
@@ -142,6 +142,9 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         rvHome.setLayoutManager(layoutManagerHome);
         adapterHome = new MoviesAdapter(null, this, filmPerRow);
         rvHome.setAdapter(adapterHome);
+        if (savedInstanceState != null) {
+            searchText = savedInstanceState.getString(SEARCHTEXT);
+        }
         homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
@@ -170,11 +173,11 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
                     } else {
                         pbHome.setVisibility(View.VISIBLE);
                         insertScroll(page + 1);
-                     Cursor data = (getActivity()).getContentResolver().query(MovieProvider.MOVIES_URI, null, null, null, null);
+                        Cursor data = (getActivity()).getContentResolver().query(MovieProvider.MOVIES_URI, null, null, null, null);
                         List<Movie> mArrayList = new ArrayList<>();
-                        for(data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
+                        for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
                             // The Cursor is now set to the right position
-                            mArrayList.add(new Movie(data.getString(data.getColumnIndex(MovieTableHelper.TITLE)),data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION_PHOTO)),data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION)),data.getString(data.getColumnIndex(MovieTableHelper.COVER_PHOTO)),data.getString(data.getColumnIndex(MovieTableHelper._ID))));
+                            mArrayList.add(new Movie(data.getString(data.getColumnIndex(MovieTableHelper.TITLE)), data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION_PHOTO)), data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION)), data.getString(data.getColumnIndex(MovieTableHelper.COVER_PHOTO)), data.getString(data.getColumnIndex(MovieTableHelper._ID))));
                         }
                         adapterHome.changeCursor(mArrayList);
                     }
@@ -182,7 +185,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
             }
         });
 
-        lottieAnimationView=root.findViewById(R.id.heartAppear);
+        lottieAnimationView = root.findViewById(R.id.heartAppear);
         return root;
     }
 
@@ -203,7 +206,13 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         }
         if (searchView != null) {
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
-
+            if (searchText != null) {
+                searchView.setIconified(true);
+                searchItem.expandActionView();
+                searchView.onActionViewExpanded();
+                searchView.setQuery(searchText, false);
+                searchView.setFocusable(true);
+            }
             queryTextListener = new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextChange(String newText) {
@@ -212,11 +221,12 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
                     } else {
                         search = true;
                     }
-                     Cursor data = (getActivity()).getContentResolver().query(MovieProvider.MOVIES_URI, null, MovieTableHelper.TITLE + " LIKE '%" + newText + "%'", null, null);
+                    searchText = newText;
+                    Cursor data = (getActivity()).getContentResolver().query(MovieProvider.MOVIES_URI, null, MovieTableHelper.TITLE + " LIKE '%" + newText + "%'", null, null);
                     List<Movie> mArrayList = new ArrayList<>();
-                    for(data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
+                    for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
                         // The Cursor is now set to the right position
-                        mArrayList.add(new Movie(data.getString(data.getColumnIndex(MovieTableHelper.TITLE)),data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION_PHOTO)),data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION)),data.getString(data.getColumnIndex(MovieTableHelper.COVER_PHOTO)),data.getString(data.getColumnIndex(MovieTableHelper._ID))));
+                        mArrayList.add(new Movie(data.getString(data.getColumnIndex(MovieTableHelper.TITLE)), data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION_PHOTO)), data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION)), data.getString(data.getColumnIndex(MovieTableHelper.COVER_PHOTO)), data.getString(data.getColumnIndex(MovieTableHelper._ID))));
                     }
                     adapterHome.changeCursor(mArrayList);
                     return true;
@@ -259,13 +269,17 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         List<Movie> mArrayList = new ArrayList<>();
-        for(data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
+        for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
             // The Cursor is now set to the right position
-            mArrayList.add(new Movie(data.getString(data.getColumnIndex(MovieTableHelper.TITLE)),data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION_PHOTO)),data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION)),data.getString(data.getColumnIndex(MovieTableHelper.COVER_PHOTO)),data.getString(data.getColumnIndex(MovieTableHelper._ID))));
+            mArrayList.add(new Movie(data.getString(data.getColumnIndex(MovieTableHelper.TITLE)), data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION_PHOTO)), data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION)), data.getString(data.getColumnIndex(MovieTableHelper.COVER_PHOTO)), data.getString(data.getColumnIndex(MovieTableHelper._ID))));
         }
         adapterHome.changeCursor(mArrayList);
+
         pbHome.setVisibility(View.GONE);
         getPbHomeStart.setVisibility(View.GONE);
+        if (data.getCount() == 0) {
+            setVisibleText(getString(R.string.no_film_favorite));
+        }
 
     }
 
@@ -307,7 +321,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     // codice scrool
 
     public void insertScroll(int page) {
-        webService.getMoviesPage(webServerListener, page,getString(R.string.lingua));
+        webService.getMoviesPage(webServerListener, page, getString(R.string.lingua));
     }
 
     @Override
@@ -318,6 +332,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
                 cv.put(FavoriteTableHelper.IS_FAVORITE, 1);
                 getActivity().getContentResolver().update(MovieProvider.FAVORITE_URI, cv, FavoriteTableHelper.ID_MOVIE + " = " + aId, null);
                 startAnimation();
+                listener.createOrAddBadge();
             } else {
                 ContentValues cv = new ContentValues();
                 cv.put(FavoriteTableHelper.IS_FAVORITE, 0);
@@ -331,12 +346,33 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         lottieAnimationView.setSpeed(1.0F); // How fast does the animation play
         lottieAnimationView.setProgress(0F); // Starts the animation from 50% of the beginning
     }
+
     private void stopAnimation() {
         lottieAnimationView.cancelAnimation(); // Cancels the animation
     }
 
     @Override
     public void setVisibleText(String message) {
+        tvHome.setVisibility(View.VISIBLE);
         tvHome.setText(getString(R.string.error_zero_film_home));
+    }
+
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        if (searchText != null)
+            outState.putString(SEARCHTEXT, searchText);
+        super.onSaveInstanceState(outState);
+    }
+    public interface AddOrCreateBadge{
+        void createOrAddBadge();
+    }
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if(context instanceof AddOrCreateBadge){
+            listener= (AddOrCreateBadge) context;
+        }
+        else
+            listener=null;
     }
 }
