@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
     tools:context=".activities.DescriptionActivity">
 
     <com.airbnb.lottie.LottieAnimationView
@@ -23,7 +24,7 @@
         android:id="@+id/imgDescription"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/colorAccent"
         android:scaleType="fitXY"
         app:layout_constraintHeight_percent="0.3"
         app:layout_constraintHorizontal_bias="0.0"
@@ -67,7 +68,7 @@
         android:maxLines="2"
         android:text="Titolo"
         android:textSize="24sp"
-        android:textColor="@color/colorPrimary"
+        android:textColor="@color/colorAccent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.05"
         app:layout_constraintHorizontal_bias="0.100"
@@ -82,7 +83,7 @@
         android:layout_marginTop="16dp"
         android:text="Descrizione"
         android:textSize="16sp"
-        android:textColor="@color/colorPrimaryDark"
+        android:textColor="@color/colorAccent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.650"
         app:layout_constraintStart_toStartOf="parent"
