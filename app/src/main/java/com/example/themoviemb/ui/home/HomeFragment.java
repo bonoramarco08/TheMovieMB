@@ -343,7 +343,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
 
     private void startAnimation() {
         lottieAnimationView.playAnimation();
-        lottieAnimationView.setSpeed(2.0F); // How fast does the animation play
+        lottieAnimationView.setSpeed(1.0F); // How fast does the animation play
         lottieAnimationView.setProgress(0F); // Starts the animation from 50% of the beginning
     }
 
