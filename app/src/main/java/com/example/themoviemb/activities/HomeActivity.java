@@ -22,6 +22,7 @@ import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.themoviemb.R;
@@ -90,8 +91,7 @@ public class HomeActivity extends AppCompatActivity{
                 .build();
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         //NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        //NavigationUI.setupWithNavController(navView, navController);
-        navView.setOnNavigationItemSelectedListener(navListener);
+        NavigationUI.setupWithNavController(navView, navController);
 
         navHome.setOnLongClickListener(view -> {
             createToast(getString(R.string.title_home)).show();
@@ -105,44 +105,7 @@ public class HomeActivity extends AppCompatActivity{
 
     }
 
-    private BottomNavigationView.OnNavigationItemSelectedListener navListener = new BottomNavigationView.OnNavigationItemSelectedListener() {
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            if (getSelectedItem(navView.getMenu()) != item.getItemId()) {
-                switch (item.getItemId()) {
-                    case R.id.navigation_favorite:
-                        navOptions = new NavOptions.Builder()
-                                .setEnterAnim(R.anim.slide_in_right)
-                                .setExitAnim(R.anim.slide_out_left)
-                                .setPopEnterAnim(R.anim.slide_in_left)
-                                .setPopExitAnim(R.anim.slide_out_right).build();
-                        item.setChecked(false);
-                        navController.navigate(R.id.navigation_favorite, null, navOptions);
-                        break;
-                    case R.id.navigation_home:
-                        navOptions = new NavOptions.Builder()
-                                .setEnterAnim(R.anim.slide_in_left)
-                                .setExitAnim(R.anim.slide_out_right)
-                                .setPopEnterAnim(R.anim.slide_in_right)
-                                .setPopExitAnim(R.anim.slide_out_left).build();
-                        item.setChecked(false);
-                        navController.navigate(R.id.navigation_home, null, navOptions);
-                        break;
-                }
-            }
-            return false;
-        }
-    };
 
-    private int getSelectedItem(Menu menu) {
-        for (int i = 0; i < menu.size(); i++) {
-            MenuItem menuItem = menu.getItem(i);
-            if (menuItem.isChecked()) {
-                return menuItem.getItemId();
-            }
-        }
-        return 0;
-    }
 
     private Toast createToast(String textToShow) {
         if (toast != null) {

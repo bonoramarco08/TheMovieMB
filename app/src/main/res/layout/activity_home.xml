@@ -4,15 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/tabbar">
+    android:layout_height="match_parent">
 
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/nav_view"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@color/tabbar"
         app:itemIconTint="@color/tabiconcolor"
         app:labelVisibilityMode="unlabeled"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -25,7 +23,6 @@
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:background="@color/tabbar"
         android:elevation="10dp"
         app:defaultNavHost="true"
         app:layout_constraintBottom_toTopOf="@+id/nav_view"
