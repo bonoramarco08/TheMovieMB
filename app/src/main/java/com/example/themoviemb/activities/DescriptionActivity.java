@@ -29,6 +29,7 @@ import com.example.themoviemb.data.MovieTableHelper;
 
 import java.util.ArrayList;
 
+
 public class DescriptionActivity extends AppCompatActivity {
 
     private static int idMovie = -1;
@@ -102,8 +103,6 @@ public class DescriptionActivity extends AppCompatActivity {
             isFavorite = movie.getInt(movie.getColumnIndex(FavoriteTableHelper.IS_FAVORITE));
 
             btnBack.setOnClickListener(view -> finish());
-
-
             descriptionImage.getViewTreeObserver().addOnGlobalLayoutListener(
                     new ViewTreeObserver.OnGlobalLayoutListener() {
                         @Override
@@ -121,11 +120,21 @@ public class DescriptionActivity extends AppCompatActivity {
                             descriptionImage.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                         }
                     });
-        }
+            }
         btnHeart.setOnClickListener(view -> {
             onHeartChange();
         });
+
+        //quando attivo la dark mode, setto un listener che verifica questo evento in modo da cambiare il colore dell'icona in landscape
+        btnBack.getViewTreeObserver().addOnGlobalLayoutListener(
+                () -> {
+                    if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE&&isDarkMode)
+                        btnBack.setImageResource(R.drawable.left_arrow_white);
+                    else if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE&&!isDarkMode)
+                        btnBack.setImageResource(R.drawable.left_arrow_black);
+                });
     }
+
 
     private void setColorImage(long vibrance) {
         if (vibrance >= 50)
@@ -221,6 +230,5 @@ public class DescriptionActivity extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        //outState.putString(IMG_DESCRIPTION, descriptionImage.get);
     }
 }
