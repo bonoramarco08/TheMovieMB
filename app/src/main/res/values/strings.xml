@@ -15,12 +15,12 @@
     <string name="dialogbuttonannulla">Cancel</string>
     <string name="dialogbuttonpositive">Yes</string>
     <string name="dialogbuttonnegative">No</string>
-    <string name="erroImage">Error loading image </string>
-    <string name="dialog_message">Sorry but to use the app the first time is indispensable internet</string>
+    <string name="erroImage">Error loading image</string>
+    <string name="dialog_message">Sorry! But to use this app you need internet connection.</string>
     <string name="dialog_title">Error</string>
-    <string name="dialog_message_homeInternet">To watch more films, an internet connection is essential</string>
+    <string name="dialog_message_homeInternet">To list more films, an internet connection is required.</string>
     <string name="lingua">en-US</string>
-    <string name="toastagg">Movie add to favorite</string>
+    <string name="toastagg">Movie added to favorite</string>
     <string name="toastrem">Movie removed from favorites</string>
-    <string name="error_zero_film_home">Active internet and restart app</string>
+    <string name="error_zero_film_home">Start up internet and restart the app.</string>
 </resources>
