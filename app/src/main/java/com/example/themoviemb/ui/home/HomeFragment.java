@@ -60,7 +60,6 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
 
     private static final int LOADER_ID = 1;
     private static final String SEARCHTEXT = "SEARCHTEXT";
-    private int insert;
     private int filmPerRow;
     private WebService webService;
     private HomeViewModel homeViewModel;
@@ -75,88 +74,83 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     ProgressBar pbHome, getPbHomeStart;
     TextView tvHome;
     private String searchText;
-
+    private Toolbar toolbar;
     // codice scrool
-    private IWebServer webServerListener = new IWebServer() {
-        @Override
-        public void onMoviesFetched(boolean success, Result result, int errorCode, String errorMessage) {
-            insert = 0;
-            if (result != null) {
-                try {
-                    boolean b = true;
-                    Cursor cursor = (getActivity()).getContentResolver().query(MovieProvider.MOVIES_URI, null, null, null, null);
-                    for (Movie movie : result.getResult()) {
-                        b = true;
-                        for (int y = 0; y < cursor.getCount(); y++) {
-                            cursor.moveToPosition(y);
-                            if (cursor.getString(cursor.getColumnIndex(MovieTableHelper.TITLE)).equals(movie.getTitle())) {
-                                b = false;
-                                ContentValues contentValues = new ContentValues();
-                                contentValues.put(MovieTableHelper.TITLE, movie.getTitle());
-                                contentValues.put(MovieTableHelper.COVER_PHOTO, movie.getPosterPath());
-                                contentValues.put(MovieTableHelper.DESCRIPTION, movie.getOverview());
-                                contentValues.put(MovieTableHelper.DESCRIPTION_PHOTO, movie.getBackdropPath());
-                                contentValues.put(MovieTableHelper.ID_FILM, movie.getIdFilm());
-                                getActivity().getContentResolver().update(MovieProvider.MOVIES_URI, contentValues, MovieTableHelper.TITLE + " = " + movie.getTitle(), null);
-                                y = cursor.getCount();
-                            }
-                        }
-                        if (b) {
+    private IWebServer webServerListener = (success, result, errorCode, errorMessage) -> {
+        if (result != null) {
+            try {
+                boolean b;
+                Cursor cursor = (getActivity()).getContentResolver().query(MovieProvider.MOVIES_URI, null, null, null, null);
+                for (Movie movie : result.getResult()) {
+                    b = true;
+                    for (int y = 0; y < cursor.getCount(); y++) {
+                        cursor.moveToPosition(y);
+                        if (cursor.getString(cursor.getColumnIndex(MovieTableHelper.TITLE)).equals(movie.getTitle())) {
+                            b = false;
                             ContentValues contentValues = new ContentValues();
                             contentValues.put(MovieTableHelper.TITLE, movie.getTitle());
                             contentValues.put(MovieTableHelper.COVER_PHOTO, movie.getPosterPath());
                             contentValues.put(MovieTableHelper.DESCRIPTION, movie.getOverview());
                             contentValues.put(MovieTableHelper.DESCRIPTION_PHOTO, movie.getBackdropPath());
                             contentValues.put(MovieTableHelper.ID_FILM, movie.getIdFilm());
-                            Uri r = getActivity().getContentResolver().insert(MovieProvider.MOVIES_URI, contentValues);
-                            long id = Long.parseLong(r.getLastPathSegment());
-                            ContentValues contentValuesFavorite = new ContentValues();
-                            contentValuesFavorite.put(FavoriteTableHelper.ID_MOVIE, id);
-                            contentValuesFavorite.put(FavoriteTableHelper.IS_FAVORITE, 0);
-                            getActivity().getContentResolver().insert(MovieProvider.FAVORITE_URI, contentValuesFavorite);
-                            insert++;
+                            getActivity().getContentResolver().update(MovieProvider.MOVIES_URI, contentValues, MovieTableHelper.TITLE + " = " + movie.getTitle(), null);
+                            y = cursor.getCount();
                         }
                     }
-                } catch (Exception e) {
+                    if (b) {
+                        ContentValues contentValues = new ContentValues();
+                        contentValues.put(MovieTableHelper.TITLE, movie.getTitle());
+                        contentValues.put(MovieTableHelper.COVER_PHOTO, movie.getPosterPath());
+                        contentValues.put(MovieTableHelper.DESCRIPTION, movie.getOverview());
+                        contentValues.put(MovieTableHelper.DESCRIPTION_PHOTO, movie.getBackdropPath());
+                        contentValues.put(MovieTableHelper.ID_FILM, movie.getIdFilm());
+                        Uri r = getActivity().getContentResolver().insert(MovieProvider.MOVIES_URI, contentValues);
+                        long id = Long.parseLong(r.getLastPathSegment());
+                        ContentValues contentValuesFavorite = new ContentValues();
+                        contentValuesFavorite.put(FavoriteTableHelper.ID_MOVIE, id);
+                        contentValuesFavorite.put(FavoriteTableHelper.IS_FAVORITE, 0);
+                        getActivity().getContentResolver().insert(MovieProvider.FAVORITE_URI, contentValuesFavorite);
+                    }
                 }
+            } catch (Exception e) {
             }
-
         }
+
     };
 
 
+    /**
+     * isPortrait()
+     *              true->telefono in portrait
+     *              false->telefono in landscape
+     * setViews()
+     *              findviewbyid degli elementi
+     * setRecyclerView()
+     *              configurazione della recyclerview e settaggio dell'adapter
+     * WebService.getInstance()
+     *              prendo l'istanza del webservice (singleton)*/
     public View onCreateView(@NonNull final LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) {
-            filmPerRow = 4;
-        } else {
-            filmPerRow = 2;
-        }
 
-        homeViewModel =
-                ViewModelProviders.of(this).get(HomeViewModel.class);
+
+        if(isPortrait())
+            filmPerRow=2;
+        else
+            filmPerRow=4;
+
+        homeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
-        rvHome = root.findViewById(R.id.rvMovies);
-        tvHome = root.findViewById(R.id.errorTextView);
-        getPbHomeStart = root.findViewById(R.id.pbHomeStart);
-        layoutManagerHome = new GridLayoutManager(getActivity().getApplicationContext(), filmPerRow);
-        pbHome = root.findViewById(R.id.pbHome);
-        rvHome.setLayoutManager(layoutManagerHome);
-        adapterHome = new MoviesAdapter(null, this, filmPerRow ,getContext());
-        rvHome.setAdapter(adapterHome);
+        setViews(root);
+        setRecyclerView(root);
+
         if (savedInstanceState != null) {
             searchText = savedInstanceState.getString(SEARCHTEXT);
         }
-        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
-            @Override
-            public void onChanged(@Nullable String s) {
 
-            }
-        });
 
-        Toolbar toolbar = root.findViewById(R.id.toolbarHome);
+
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-        rvHome = root.findViewById(R.id.rvMovies);
+
         webService = WebService.getInstance();
 
 
@@ -191,6 +185,24 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         return root;
     }
 
+    private boolean isPortrait(){
+        return (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)?  false : true;
+    }
+
+    private void setViews(View root) {
+        rvHome = root.findViewById(R.id.rvMovies);
+        tvHome = root.findViewById(R.id.errorTextView);
+        getPbHomeStart = root.findViewById(R.id.pbHomeStart);
+        toolbar = root.findViewById(R.id.toolbarHome);
+    }
+
+    private void setRecyclerView(View root) {
+        layoutManagerHome = new GridLayoutManager(getActivity().getApplicationContext(), filmPerRow);
+        pbHome = root.findViewById(R.id.pbHome);
+        rvHome.setLayoutManager(layoutManagerHome);
+        adapterHome = new MoviesAdapter(null, this, filmPerRow, getContext());
+        rvHome.setAdapter(adapterHome);
+    }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -282,8 +294,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         getPbHomeStart.setVisibility(View.GONE);
         if (data.getCount() == 0) {
             setVisibleText(getString(R.string.no_film_favorite));
-        }
-        else
+        } else
             tvHome.setVisibility(View.GONE);
     }
 
@@ -368,15 +379,16 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
             outState.putString(SEARCHTEXT, searchText);
         super.onSaveInstanceState(outState);
     }
-    public interface AddOrCreateBadge{
+
+    public interface AddOrCreateBadge {
         void createOrAddBadge();
     }
+
     public void onAttach(Context context) {
         super.onAttach(context);
-        if(context instanceof AddOrCreateBadge){
-            listener= (AddOrCreateBadge) context;
-        }
-        else
-            listener=null;
+        if (context instanceof AddOrCreateBadge) {
+            listener = (AddOrCreateBadge) context;
+        } else
+            listener = null;
     }
 }
