@@ -85,7 +85,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
                     b = true;
                     for (int y = 0; y < cursor.getCount(); y++) {
                         cursor.moveToPosition(y);
-                        if (cursor.getString(cursor.getColumnIndex(MovieTableHelper.TITLE)).equals(movie.getTitle())) {
+                        if (cursor.getString(cursor.getColumnIndex(MovieTableHelper.ID_FILM)).equals(movie.getIdFilm())) {
                             b = false;
                             ContentValues contentValues = new ContentValues();
                             contentValues.put(MovieTableHelper.TITLE, movie.getTitle());
@@ -93,7 +93,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
                             contentValues.put(MovieTableHelper.DESCRIPTION, movie.getOverview());
                             contentValues.put(MovieTableHelper.DESCRIPTION_PHOTO, movie.getBackdropPath());
                             contentValues.put(MovieTableHelper.ID_FILM, movie.getIdFilm());
-                            getActivity().getContentResolver().update(MovieProvider.MOVIES_URI, contentValues, MovieTableHelper.TITLE + " = " + movie.getTitle(), null);
+                            getActivity().getContentResolver().update(MovieProvider.MOVIES_URI, contentValues, MovieTableHelper.ID_FILM + " = " + movie.getIdFilm(), null);
                             y = cursor.getCount();
                         }
                     }

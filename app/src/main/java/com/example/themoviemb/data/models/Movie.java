@@ -4,6 +4,9 @@ import androidx.annotation.Nullable;
 
 import com.google.gson.annotations.SerializedName;
 
+/**
+ * classe dei movie
+ */
 public class Movie {
 
     private String title;

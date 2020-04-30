@@ -13,6 +13,9 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+/**
+ * provider del database
+ */
 public class MovieProvider extends ContentProvider {
 
     public static final String AUTORITY = "com.example.themoviemb.data.MovieProvider";
@@ -35,9 +38,7 @@ public class MovieProvider extends ContentProvider {
     private static final UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
     public static final String BASE_PATH_JOIN = "join";
     public static final String MIME_TYPE_JOINS = ContentResolver.CURSOR_DIR_BASE_TYPE + "vnd.all_joins";
-    public static final String MIME_TYPE_JOIN = ContentResolver.CURSOR_DIR_BASE_TYPE + "vnd.single_join";
     public static Uri JOIN_URI = Uri.parse(ContentResolver.SCHEME_CONTENT + "://" + AUTORITY + "/" + BASE_PATH_JOIN);
-    public static final int SINGLE_JOIN = 5;
     public static final int ALL_JOIN = 6;
 
     static {
@@ -45,7 +46,6 @@ public class MovieProvider extends ContentProvider {
         uriMatcher.addURI(AUTORITY, BASE_PATH_MOVIES + "/#", SINGLE_MOVIE);
         uriMatcher.addURI(AUTORITY, BASE_PATH_FAVORITES, ALL_FAVORITE);
         uriMatcher.addURI(AUTORITY, BASE_PATH_FAVORITES + "/#", SINGLE_FAVORITE);
-        uriMatcher.addURI(AUTORITY, BASE_PATH_JOIN+ "/#",SINGLE_JOIN);
         uriMatcher.addURI(AUTORITY, BASE_PATH_JOIN,ALL_JOIN);
     }
 
@@ -77,10 +77,6 @@ public class MovieProvider extends ContentProvider {
             case ALL_FAVORITE:
                 vBuilder.setTables(FavoriteTableHelper.TABLE_NAME);
                 break;
-            case SINGLE_JOIN:
-                vBuilder.setTables(MovieTableHelper.TABLE_NAME +" LEFT OUTER JOIN "+ FavoriteTableHelper.TABLE_NAME+" ON ("+MovieTableHelper.TABLE_NAME+"."+ MovieTableHelper._ID+" = "+FavoriteTableHelper.TABLE_NAME+"."+ FavoriteTableHelper.ID_MOVIE+")");
-                vBuilder.appendWhere(MovieTableHelper._ID + " = " + uri.getLastPathSegment());
-                break;
             case ALL_JOIN:
                 vBuilder.setTables(MovieTableHelper.TABLE_NAME +" LEFT OUTER JOIN "+ FavoriteTableHelper.TABLE_NAME+" ON ("+MovieTableHelper.TABLE_NAME+"."+ MovieTableHelper._ID+" = "+FavoriteTableHelper.TABLE_NAME+"."+ FavoriteTableHelper.ID_MOVIE+")");
                 break;
@@ -107,8 +103,6 @@ public class MovieProvider extends ContentProvider {
                 return MIME_TYPE_FAVORITE;
             case ALL_FAVORITE:
                 return MIME_TYPE_FAVORITES;
-            case SINGLE_JOIN:
-                return MIME_TYPE_JOIN;
             case ALL_JOIN:
                 return MIME_TYPE_JOINS;
         }

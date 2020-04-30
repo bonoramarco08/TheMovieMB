@@ -2,6 +2,9 @@ package com.example.themoviemb.data.models;
 
 import java.util.List;
 
+/**
+ * classe del risultato della chiamata api , che contiene la lista di film
+ */
 public class Result {
 
     private List<Movie> results;

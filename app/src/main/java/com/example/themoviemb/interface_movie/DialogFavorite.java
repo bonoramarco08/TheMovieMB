@@ -25,6 +25,13 @@ public class DialogFavorite extends DialogFragment {
     Boolean isRemoved;
     long mId;
 
+    /**
+     * Costruttore del  DialogFavorite
+     * @param aTitle titolo del dialog
+     * @param aMessage messagio del dialog
+     * @param aId id del film
+     * @param isRemoved boolean che indica se il film è tra i preferiti o no
+     */
     public DialogFavorite(String aTitle, String aMessage, long aId, Boolean isRemoved) {
         mTitle = aTitle;
         mMessage = aMessage;
@@ -37,6 +44,11 @@ public class DialogFavorite extends DialogFragment {
         super.onCreate(savedInstanceState);
     }
 
+    /**
+     * Imposta i vari casi di risposta
+     * @param savedInstanceState
+     * @return restituisce il builder del dialog
+     */
     @NonNull
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
@@ -58,11 +70,15 @@ public class DialogFavorite extends DialogFragment {
         vBuilder.setNeutralButton(getString(R.string.dialogbuttonannulla), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                mListener.onResponse(false, mId, isRemoved);
             }
         });
         return vBuilder.create();
     }
+
+    /**
+     * setta il listener per le risposte
+     * @param mListener
+     */
     public void setmListener(IFavoritDialog mListener) {
         this.mListener = mListener;
     }

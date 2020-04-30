@@ -7,8 +7,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -24,7 +22,6 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
-import com.airbnb.lottie.LottieAnimationView;
 import com.example.themoviemb.R;
 import com.example.themoviemb.VerificaInternet;
 import com.example.themoviemb.data.FavoriteTableHelper;
@@ -32,7 +29,6 @@ import com.example.themoviemb.data.MovieProvider;
 import com.example.themoviemb.data.MovieTableHelper;
 import com.example.themoviemb.data.models.Movie;
 import com.example.themoviemb.data.models.Result;
-import com.example.themoviemb.interface_movie.DialogFavorite;
 import com.example.themoviemb.interface_movie.IWebServer;
 import com.example.themoviemb.networks.WebService;
 import com.example.themoviemb.ui.favorite.FavoriteFragment;
@@ -41,7 +37,7 @@ import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
-public class HomeActivity extends AppCompatActivity implements FavoriteFragment.RemoveBadgeInterface {
+public class HomeActivity extends AppCompatActivity implements FavoriteFragment.RemoveBadgeInterface, HomeFragment.AddOrCreateBadge {
 
 
     private WebService webService;
@@ -108,7 +104,6 @@ public class HomeActivity extends AppCompatActivity implements FavoriteFragment.
     }
 
 
-
     private Toast createToast(String textToShow) {
         if (toast != null) {
             toast.cancel();
@@ -139,6 +134,7 @@ public class HomeActivity extends AppCompatActivity implements FavoriteFragment.
         }
 
     }
+
     @Override
     public void onConfigurationChanged(@NonNull Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -155,7 +151,7 @@ public class HomeActivity extends AppCompatActivity implements FavoriteFragment.
         }
     }
 
-
+    @Override
     public void createOrAddBadge() {
         BadgeDrawable badge = navView.getOrCreateBadge(R.id.navigation_favorite);
         badge.setNumber(badge.getNumber() + 1);

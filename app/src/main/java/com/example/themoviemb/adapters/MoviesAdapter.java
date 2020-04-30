@@ -29,6 +29,9 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+/**
+ * Adapter per la recycleview
+ */
 public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewHolder> {
 
     private final static String LOG_TAG = MoviesAdapter.class.getSimpleName();
@@ -40,12 +43,22 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
 
     private OnItemClickListener onItemClickListener;
 
+    /**
+     * interfaccia per il click e il longclick sulla cella
+     */
     public interface OnItemClickListener {
         void sendDetails(int id, OnItemClickListener onItemClickListener);
 
         void longClick(int id, OnItemClickListener onItemClickListener);
     }
 
+    /**
+     * Costruttore con tutti i campi
+     * @param movies lista dei film da inserire nella recycleview
+     * @param onItemClickListener istanza dell' interfaccia per il click e il longclick
+     * @param filmPerRow numero di film per riga (2 in portrait e 4 in landscape)
+     * @param context il context della recycleview
+     */
     public MoviesAdapter(List<Movie> movies, OnItemClickListener onItemClickListener, int filmPerRow ,Context context) {
         this.movies = movies;
         this.onItemClickListener = onItemClickListener;
@@ -53,7 +66,12 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         this.context = context;
     }
 
-
+    /**
+     * imposta il numero di film per riga e imposta il layout della cella
+     * @param parent
+     * @param viewType
+     * @return il viewHolder con la cella personalizzata
+     */
     @NonNull
     @Override
     public MovieViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -65,6 +83,11 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         return new MovieViewHolder(view);
     }
 
+    /**
+     * medoto che cabia la lista dei film , controlla che il parametro passsato non sia null o che non sia uguale a quello già impostato
+     * @param moviesChenge list di movie da inserire
+     * @return restituisce la lista di movie ( o quella attuale o quella "nuova" dopo aver effettuato i dovuti controlli)
+     */
     public List<Movie> changeCursor(List<Movie> moviesChenge) {
         if (movies == moviesChenge) {
             return null;
@@ -77,6 +100,12 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         return oldCursor;
     }
 
+    /**
+     *  Inserisco nella cella i vaalori del film , attraverso glide imposto un immagine di placeholder e faccio il load per l'immagine del film
+     *  e richiamo l'interfaccia del long e del click sulla card view dellla cella
+     * @param holder
+     * @param position la positione della cella nella recycleview
+     */
     @Override
     public void onBindViewHolder(@NonNull final MovieViewHolder holder, int position) {
         final Context context = holder.view.getContext();
@@ -106,6 +135,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         }
     }
 
+    /**
+     *
+     * @return restituisce il numero di movie
+     */
     @Override
     public int getItemCount() {
         return (movies == null) ? 0 : movies.size();
@@ -117,10 +150,9 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         super.onViewRecycled(holder);
     }
 
-
-
-
-
+    /**
+     * crea il viewHolde e faccio il bind con la cella scelta prima sui vari elementi
+     */
     public class MovieViewHolder extends RecyclerView.ViewHolder {
         private final View view;
 
@@ -131,6 +163,10 @@ public class MoviesAdapter extends RecyclerView.Adapter<MoviesAdapter.MovieViewH
         @BindView(R.id.cdMovie)
         CardView cvMovie;
 
+        /**
+         * costruttore del viewHolder
+         * @param view
+         */
         private MovieViewHolder(View view) {
             super(view);
             ButterKnife.bind(this, view);
