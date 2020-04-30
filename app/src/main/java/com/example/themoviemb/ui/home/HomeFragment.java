@@ -181,7 +181,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
             }
         });
 
-        lottieAnimationView = root.findViewById(R.id.heartAppear);
+
         return root;
     }
 
@@ -194,6 +194,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         tvHome = root.findViewById(R.id.errorTextView);
         getPbHomeStart = root.findViewById(R.id.pbHomeStart);
         toolbar = root.findViewById(R.id.toolbarHome);
+        lottieAnimationView = root.findViewById(R.id.heartAppear);
     }
 
     private void setRecyclerView(View root) {
