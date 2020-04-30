@@ -115,9 +115,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
             } catch (Exception e) {
             }
         }
-
     };
-
 
     /**
      * isPortrait()
@@ -143,6 +141,14 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         setViews(root);
         setRecyclerView(root);
 
+        rvHome = root.findViewById(R.id.rvMovies);
+        tvHome = root.findViewById(R.id.errorTextView);
+        getPbHomeStart = root.findViewById(R.id.pbHomeStart);
+        layoutManagerHome = new GridLayoutManager(getActivity().getApplicationContext(), filmPerRow);
+        pbHome = root.findViewById(R.id.pbHome);
+        rvHome.setLayoutManager(layoutManagerHome);
+        adapterHome = new MoviesAdapter(null, this, filmPerRow, getContext());
+        rvHome.setAdapter(adapterHome);
         if (savedInstanceState != null) {
             searchText = savedInstanceState.getString(SEARCHTEXT);
         }
@@ -152,7 +158,6 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
 
         webService = WebService.getInstance();
-
 
         // codice scrool
         rvHome.addOnScrollListener(new EndlessRecyclerViewScrollListener((GridLayoutManager) layoutManagerHome) {
@@ -216,23 +221,18 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         inflater.inflate(R.menu.search_view, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
+
         if (searchItem != null) {
             searchView = (SearchView) searchItem.getActionView();
         }
         if (searchView != null) {
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
+
             queryTextListener = new SearchView.OnQueryTextListener() {
                 @Override
-
                 public boolean onQueryTextChange(String newText) {
-                    if (newText.equals("")) {
-                        search = false;
-                    } else {
-                        search = true;
-                        searchText = newText;
-
-                    }
-                    Cursor data = (getActivity()).getContentResolver().query(MovieProvider.MOVIES_URI, null, MovieTableHelper.TITLE + " LIKE '%" + newText + "%'", null, null);
+                    searchText = newText;
+                    Cursor data = (getActivity()).getContentResolver().query(MovieProvider.JOIN_URI, null, MovieTableHelper.TITLE + " LIKE '%" + newText + "%'", null, null);
                     List<Movie> mArrayList = new ArrayList<>();
                     for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
                         // The Cursor is now set to the right position
@@ -244,18 +244,18 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
 
                 @Override
                 public boolean onQueryTextSubmit(String query) {
+
                     return true;
                 }
-
             };
             searchView.setOnQueryTextListener(queryTextListener);
         }
-        super.onCreateOptionsMenu(menu, inflater);
-        if (searchText != null) {
+        if (searchText != null && !searchText.equals("")) {
             searchItem.expandActionView();
             searchView.setQuery(searchText, false);
             searchView.clearFocus();
         }
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     @Override

@@ -41,7 +41,7 @@ import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
-public class HomeActivity extends AppCompatActivity implements HomeFragment.AddOrCreateBadge , FavoriteFragment.RemoveBadgeInterface {
+public class HomeActivity extends AppCompatActivity implements FavoriteFragment.RemoveBadgeInterface {
 
 
     private WebService webService;
@@ -156,7 +156,6 @@ public class HomeActivity extends AppCompatActivity implements HomeFragment.AddO
     }
 
 
-    @Override
     public void createOrAddBadge() {
         BadgeDrawable badge = navView.getOrCreateBadge(R.id.navigation_favorite);
         badge.setNumber(badge.getNumber() + 1);

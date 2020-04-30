@@ -4,6 +4,8 @@
     <color name="colorPrimaryDark">#006aa9</color>
     <color name="colorPrimaryLight">#73c9ff</color>
     <color name="colorAccent">#ECF0F1</color>
+    <color name="colorNotChecked">#babebe</color>
     <color name="background">#ECF0F1</color>
     <color name="descriptionText">#212121</color>
+
 </resources>

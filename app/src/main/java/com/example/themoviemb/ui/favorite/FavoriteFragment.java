@@ -119,7 +119,7 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
             queryTextListener = new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextChange(String newText) {
-                    if(!newText.equals(""))searchText = newText;
+                  searchText = newText;
                     Cursor data = (getActivity()).getContentResolver().query(MovieProvider.JOIN_URI, null, MovieTableHelper.TITLE + " LIKE '%" + newText + "%' and " + FavoriteTableHelper.IS_FAVORITE + " = 1", null, null);
                     List<Movie> mArrayList = new ArrayList<>();
                     for(data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
@@ -138,7 +138,7 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
             };
             searchView.setOnQueryTextListener(queryTextListener);
         }
-        if (searchText != null) {
+        if (searchText != null && !searchText.equals("")) {
             searchItem.expandActionView();
             searchView.setQuery(searchText, false);
             searchView.clearFocus();
