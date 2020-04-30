@@ -62,7 +62,6 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     private static final String SEARCHTEXT = "SEARCHTEXT";
     private int filmPerRow;
     private WebService webService;
-    private HomeViewModel homeViewModel;
     private RecyclerView rvHome;
     private MoviesAdapter adapterHome;
     private RecyclerView.LayoutManager layoutManagerHome;
@@ -126,34 +125,24 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
      * setRecyclerView()
      *              configurazione della recyclerview e settaggio dell'adapter
      * WebService.getInstance()
-     *              prendo l'istanza del webservice (singleton)*/
+     *              prendo l'istanza del webservice (singleton)
+     * addOnScrollListener
+     *              scarico i film divisi in page, quando arrivo alla fine della page, inizia a caricarmi la page seguente
+     * */
     public View onCreateView(@NonNull final LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
+        filmPerRow=(isPortrait())?setPortrait():setLandscape();
 
-        if(isPortrait())
-            filmPerRow=2;
-        else
-            filmPerRow=4;
-
-        homeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
+        HomeViewModel homeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         setViews(root);
         setRecyclerView(root);
 
-        rvHome = root.findViewById(R.id.rvMovies);
-        tvHome = root.findViewById(R.id.errorTextView);
-        getPbHomeStart = root.findViewById(R.id.pbHomeStart);
-        layoutManagerHome = new GridLayoutManager(getActivity().getApplicationContext(), filmPerRow);
-        pbHome = root.findViewById(R.id.pbHome);
-        rvHome.setLayoutManager(layoutManagerHome);
-        adapterHome = new MoviesAdapter(null, this, filmPerRow, getContext());
-        rvHome.setAdapter(adapterHome);
+
         if (savedInstanceState != null) {
             searchText = savedInstanceState.getString(SEARCHTEXT);
         }
-
-
 
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
 
@@ -178,20 +167,32 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
                         List<Movie> mArrayList = new ArrayList<>();
                         for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
                             // The Cursor is now set to the right position
-                            mArrayList.add(new Movie(data.getString(data.getColumnIndex(MovieTableHelper.TITLE)), data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION_PHOTO)), data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION)), data.getString(data.getColumnIndex(MovieTableHelper.COVER_PHOTO)), data.getString(data.getColumnIndex(MovieTableHelper._ID))));
+                            mArrayList.add(new Movie(data.getString(data.getColumnIndex(MovieTableHelper.TITLE)),
+                                    data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION_PHOTO)),
+                                    data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION)),
+                                    data.getString(data.getColumnIndex(MovieTableHelper.COVER_PHOTO)),
+                                    data.getString(data.getColumnIndex(MovieTableHelper._ID))));
                         }
                         adapterHome.changeCursor(mArrayList);
                     }
                 }
             }
         });
-
-
         return root;
+    }
+
+    private void insertScroll(int page) {
+        webService.getMoviesPage(webServerListener, page, getString(R.string.lingua));
     }
 
     private boolean isPortrait(){
         return (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)?  false : true;
+    }
+    private int setPortrait(){
+        return 2;
+    }
+    private int setLandscape(){
+        return 4;
     }
 
     private void setViews(View root) {
@@ -210,12 +211,19 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         rvHome.setAdapter(adapterHome);
     }
 
+
+    /**
+     * setHasOptionsMenu(true)
+     *          In modo da avere la searchview*/
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
 
+
+    /**
+     * Qui creo il filtro ricerca, che andrà a eseguire una query sul db locale e imposterà il nuovo cursor sulla lista*/
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.search_view, menu);
@@ -258,6 +266,9 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+
+    /**
+     * Quale elemento della toolbar vado a cliccare (in questo caso ce n'è solo uno)*/
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -270,24 +281,35 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Inizializzazione del loader*/
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         getLoaderManager().initLoader(LOADER_ID, null, this);
     }
 
+
+    /**
+     * Creo il Loader*/
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
         return new CursorLoader(getContext(), MovieProvider.MOVIES_URI, null, null, null, null);
     }
 
+    /**
+     * Una volta finito il caricamento...*/
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         List<Movie> mArrayList = new ArrayList<>();
         for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
             // The Cursor is now set to the right position
-            mArrayList.add(new Movie(data.getString(data.getColumnIndex(MovieTableHelper.TITLE)), data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION_PHOTO)), data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION)), data.getString(data.getColumnIndex(MovieTableHelper.COVER_PHOTO)), data.getString(data.getColumnIndex(MovieTableHelper._ID))));
+            mArrayList.add(new Movie(data.getString(data.getColumnIndex(MovieTableHelper.TITLE)),
+                    data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION_PHOTO)),
+                    data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION)),
+                    data.getString(data.getColumnIndex(MovieTableHelper.COVER_PHOTO)),
+                    data.getString(data.getColumnIndex(MovieTableHelper._ID))));
         }
         adapterHome.changeCursor(mArrayList);
 
@@ -304,6 +326,8 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         adapterHome.changeCursor(null);
     }
 
+    /**
+     * Al click di un film, vengo reindirizzato alla descrizione*/
     @Override
     public void sendDetails(int id, MoviesAdapter.OnItemClickListener onItemClickListener) {
         Intent intent = new Intent(getActivity(), DescriptionActivity.class);
@@ -311,6 +335,9 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         startActivity(intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP));
     }
 
+    /**
+     * Al long click mi si apre un dialog se voglio aggiungere ai preferiti o rimuovere in caso sia stato già aggiunto
+     * */
     @Override
     public void longClick(int id, MoviesAdapter.OnItemClickListener onItemClickListener) {
         try {
@@ -333,13 +360,9 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
 
     }
 
-
-    // codice scrool
-
-    public void insertScroll(int page) {
-        webService.getMoviesPage(webServerListener, page, getString(R.string.lingua));
-    }
-
+    /**
+     * Gestione della risposta dell'utente al dialog che compare
+     * Quando aggiungo un film ai preferiti, */
     @Override
     public void onResponse(boolean aResponse, long aId, Boolean isRemoved) {
         if (aResponse) {
@@ -381,6 +404,8 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         super.onSaveInstanceState(outState);
     }
 
+    /**
+     * Quando aggiungo un film ai preferiti, si può notare che compare il badge*/
     public interface AddOrCreateBadge {
         void createOrAddBadge();
     }
