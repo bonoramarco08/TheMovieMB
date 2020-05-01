@@ -40,7 +40,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class HomeActivity extends AppCompatActivity implements FavoriteFragment.RemoveBadgeInterface, HomeFragment.AddOrCreateBadge {
 
 
-    private WebService webService;
+
     private Toolbar toolbar;
     private View navHome, navHeart;
     private Toast toast;
@@ -48,28 +48,7 @@ public class HomeActivity extends AppCompatActivity implements FavoriteFragment.
     private BottomNavigationView navView;
     private NavController navController;
     private NavOptions navOptions;
-    private IWebServer webServerListener = new IWebServer() {
-        @Override
-        public void onMoviesFetched(boolean success, Result result, int errorCode, String errorMessage) {
-            if (result != null) {
-                for (Movie movie : result.getResult()) {
-                    ContentValues contentValues = new ContentValues();
-                    contentValues.put(MovieTableHelper.TITLE, movie.getTitle());
-                    contentValues.put(MovieTableHelper.COVER_PHOTO, movie.getPosterPath());
-                    contentValues.put(MovieTableHelper.DESCRIPTION, movie.getOverview());
-                    contentValues.put(MovieTableHelper.DESCRIPTION_PHOTO, movie.getBackdropPath());
-                    contentValues.put(MovieTableHelper.ID_FILM, movie.getIdFilm());
-                    Uri r = getContentResolver().insert(MovieProvider.MOVIES_URI, contentValues);
 
-                    long id = Long.parseLong(r.getLastPathSegment());
-                    ContentValues contentValuesFavorite = new ContentValues();
-                    contentValuesFavorite.put(FavoriteTableHelper.ID_MOVIE, id);
-                    contentValuesFavorite.put(FavoriteTableHelper.IS_FAVORITE, 0);
-                    getContentResolver().insert(MovieProvider.FAVORITE_URI, contentValuesFavorite);
-                }
-            }
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,8 +59,7 @@ public class HomeActivity extends AppCompatActivity implements FavoriteFragment.
         navHome = findViewById(R.id.navigation_home);
         navHeart = findViewById(R.id.navigation_favorite);
         navView = findViewById(R.id.nav_view);
-        webService = WebService.getInstance();
-        loadMovies();
+
 
 
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
@@ -111,28 +89,6 @@ public class HomeActivity extends AppCompatActivity implements FavoriteFragment.
         toast = Toast.makeText(HomeActivity.this, textToShow, Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
         return toast;
-    }
-
-    private void loadMovies() {
-        try {
-            Cursor cursor = new CursorLoader(getApplicationContext(), MovieProvider.MOVIES_URI, null, null, null, null).loadInBackground();
-            if (cursor.getCount() == 0)
-                if (VerificaInternet.getConnectivityStatusString(getBaseContext())) {
-                    webService.getMoviesPage(webServerListener, 1, getString(R.string.lingua));
-                } else {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(HomeActivity.this, R.style.MyDialog);
-
-                    builder.setMessage(R.string.dialog_message)
-                            .setTitle(R.string.dialog_title)
-                            .setNeutralButton("OK", null);
-                    AlertDialog dialog = builder.create();
-                    dialog.show();
-                }
-
-        } catch (NullPointerException e) {
-            Log.d("Error", e.getMessage());
-        }
-
     }
 
     @Override
