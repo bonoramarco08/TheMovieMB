@@ -48,7 +48,6 @@ import com.example.themoviemb.data.MovieTableHelper;
 import com.example.themoviemb.data.models.Movie;
 import com.example.themoviemb.interface_movie.DialogFavorite;
 import com.example.themoviemb.interface_movie.ErrorZeroItem;
-import com.google.android.material.chip.ChipGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -98,12 +97,12 @@ public class GenereFragment extends Fragment implements LoaderManager.LoaderCall
         Button[] chip = new Button[c.getCount()];
         for (int i = 0; i < c.getCount(); i++) {
             c.moveToPosition(i);
-            chip[i] = new Button(getContext(), null, R.attr.materialButtonOutlinedStyle);
+            chip[i] = new Button(getContext(), null, R.attr.materialButtonStyle);
             chip[i].setText(c.getString(c.getColumnIndex(GenreTableHelper.TEXT_GENRE)));
             chip[i].setHeight(LinearLayout.LayoutParams.MATCH_PARENT);
             chip[i].setId(c.getInt(c.getColumnIndex(GenreTableHelper.ID_GENRE)));
             chip[i].setTextColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
-            chip[i].setBackground(ContextCompat.getDrawable(getContext(), R.drawable.ripple_effect_button));
+            chip[i].setBackground(ContextCompat.getDrawable(chip[i].getContext(), R.drawable.ripple_effect_button));
             linearLayout.addView(chip[i]);
             chip[i].setOnClickListener(this::onClick);
         }
