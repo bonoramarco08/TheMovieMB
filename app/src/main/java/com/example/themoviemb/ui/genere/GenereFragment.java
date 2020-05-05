@@ -101,7 +101,7 @@ public class GenereFragment extends Fragment implements LoaderManager.LoaderCall
             chip[i].setHeight(LinearLayout.LayoutParams.MATCH_PARENT);
             chip[i].setId(c.getInt(c.getColumnIndex(GenreTableHelper.ID_GENRE)));
             chip[i].setTextColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
-            chip[i].setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorPrimaryLight));
+            chip[i].setBackground(ContextCompat.getDrawable(getContext(), R.drawable.ripple_effect_button));
             linearLayout.addView(chip[i]);
             chip[i].setOnClickListener(this::onClick);
         }
