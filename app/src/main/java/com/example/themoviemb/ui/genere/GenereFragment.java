@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -117,6 +118,16 @@ public class GenereFragment extends Fragment implements LoaderManager.LoaderCall
         horizontalScrollView = root.findViewById(R.id.horizontalScrollView);
        // horizontalScrollView.onStartNestedScroll(getView(), getView(), 1);
         return root;
+    }
+
+
+    private void makeRoundCorner(int bgcolor,int radius,View v,int strokeWidth,int strokeColor)
+    {
+        GradientDrawable gdDefault = new GradientDrawable();
+        gdDefault.setColor(bgcolor);
+        gdDefault.setCornerRadius(radius);
+        gdDefault.setStroke(strokeWidth, strokeColor);
+        v.setBackgroundDrawable(gdDefault);
     }
 
     private boolean isPortrait() {
