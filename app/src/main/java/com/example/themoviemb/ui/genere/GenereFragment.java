@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -67,6 +68,7 @@ public class GenereFragment extends Fragment implements LoaderManager.LoaderCall
     ProgressBar pbHome;
     TextView tvHome;
     private Toolbar toolbar;
+    private HorizontalScrollView horizontalScrollView;
 
     /**
      * isPortrait()
@@ -103,9 +105,17 @@ public class GenereFragment extends Fragment implements LoaderManager.LoaderCall
             chip[i].setId(c.getInt(c.getColumnIndex(GenreTableHelper.ID_GENRE)));
             chip[i].setTextColor(ContextCompat.getColor(getContext(), R.color.colorAccent));
             chip[i].setBackground(ContextCompat.getDrawable(chip[i].getContext(), R.drawable.ripple_effect_button));
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT
+            );
+            params.setMargins(4, 2, 4, 2);
+            chip[i].setLayoutParams(params);
             linearLayout.addView(chip[i]);
             chip[i].setOnClickListener(this::onClick);
         }
+        horizontalScrollView = root.findViewById(R.id.horizontalScrollView);
+       // horizontalScrollView.onStartNestedScroll(getView(), getView(), 1);
         return root;
     }
 

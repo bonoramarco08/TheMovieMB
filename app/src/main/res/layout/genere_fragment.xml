@@ -90,7 +90,6 @@
             android:id="@+id/linear"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:elevation="10dp"
             android:orientation="horizontal"
             android:scrollbarStyle="outsideOverlay"></LinearLayout>
     </HorizontalScrollView>
