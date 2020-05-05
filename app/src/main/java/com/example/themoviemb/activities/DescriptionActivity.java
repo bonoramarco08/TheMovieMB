@@ -48,24 +48,8 @@ public class DescriptionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_description);
-        int nightModeFlags =
-                getBaseContext().getResources().getConfiguration().uiMode &
-                        Configuration.UI_MODE_NIGHT_MASK;
-        switch (nightModeFlags) {
-            case Configuration.UI_MODE_NIGHT_YES:
-        isDarkMode = true;
-                break;
-
-            case Configuration.UI_MODE_NIGHT_NO:
-           isDarkMode = false;
-                break;
-        }
-        descriptionImage = findViewById(R.id.imgDescription);
-        title = findViewById(R.id.txtTitle);
-        description = findViewById(R.id.txtDescription);
-        btnBack = findViewById(R.id.btnBack);
-        btnHeart = findViewById(R.id.btnHeart);
-        lottieAnimationView = findViewById(R.id.imageProgress);
+        setNightMode();
+        setViews();
         startAnimation();
 
         idMovie = getIntent().getIntExtra("ID_MOVIE", -1);
@@ -78,31 +62,7 @@ public class DescriptionActivity extends AppCompatActivity {
                 description.setText(getString(R.string.descriptoinull));
             }
             onHeartAppear();
-            Glide.with(getApplicationContext())
-                    .asBitmap()
-                    .load(movie.getString(movie.getColumnIndex(MovieTableHelper.DESCRIPTION_PHOTO)))
-                    .into(new CustomTarget<Bitmap>() {
-                        @Override
-                        public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                            descriptionImage.setImageBitmap(resource);
-                            //al primo giro funziona, ma se riapro la stessa descrizione la seconda volta non mi ritorna i pixel del btnBack
-                            //quindi se succede questo, ho creato un viewTreeObserver sotto che si prende le risorse Bitmap dell'immagine
-                            resourceImageDescription = resource;
-                            int lengthArrow = btnBack.getWidth() * btnBack.getHeight();
-                            int lengthHeart = btnHeart.getWidth() * btnHeart.getHeight();
-                            //se è 0, richiamerà il metodo con il viewTreeObserver
-                            if (lengthArrow != 0) {
-                                long vibrance = sumVibranceImageDescription(resourceImageDescription, btnBack) / lengthArrow;
-                                setColorImage(vibrance);
-
-                            }
-                        }
-
-                        @Override
-                        public void onLoadCleared(@Nullable Drawable placeholder) {
-                            descriptionImage.setImageResource(R.drawable.error_image);
-                        }
-                    });
+            downloadImages(movie);
             isFavorite = movie.getInt(movie.getColumnIndex(FavoriteTableHelper.IS_FAVORITE));
 
             btnBack.setOnClickListener(view -> finish());
@@ -147,6 +107,56 @@ public class DescriptionActivity extends AppCompatActivity {
 
     }
 
+    private void downloadImages(Cursor movie){
+        Glide.with(getApplicationContext())
+                .asBitmap()
+                .load(movie.getString(movie.getColumnIndex(MovieTableHelper.DESCRIPTION_PHOTO)))
+                .into(new CustomTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
+                        descriptionImage.setImageBitmap(resource);
+                        //al primo giro funziona, ma se riapro la stessa descrizione la seconda volta non mi ritorna i pixel del btnBack
+                        //quindi se succede questo, ho creato un viewTreeObserver sotto che si prende le risorse Bitmap dell'immagine
+                        resourceImageDescription = resource;
+                        int lengthArrow = btnBack.getWidth() * btnBack.getHeight();
+                        int lengthHeart = btnHeart.getWidth() * btnHeart.getHeight();
+                        //se è 0, richiamerà il metodo con il viewTreeObserver
+                        if (lengthArrow != 0) {
+                            long vibrance = sumVibranceImageDescription(resourceImageDescription, btnBack) / lengthArrow;
+                            setColorImage(vibrance);
+
+                        }
+                    }
+
+                    @Override
+                    public void onLoadCleared(@Nullable Drawable placeholder) {
+                        descriptionImage.setImageResource(R.drawable.error_image);
+                    }
+                });
+    }
+
+    private void setNightMode(){
+        int nightModeFlags =
+                getBaseContext().getResources().getConfiguration().uiMode &
+                        Configuration.UI_MODE_NIGHT_MASK;
+        switch (nightModeFlags) {
+            case Configuration.UI_MODE_NIGHT_YES:
+                isDarkMode = true;
+                break;
+
+            case Configuration.UI_MODE_NIGHT_NO:
+                isDarkMode = false;
+                break;
+        }
+    }
+    private void setViews(){
+        descriptionImage = findViewById(R.id.imgDescription);
+        title = findViewById(R.id.txtTitle);
+        description = findViewById(R.id.txtDescription);
+        btnBack = findViewById(R.id.btnBack);
+        btnHeart = findViewById(R.id.btnHeart);
+        lottieAnimationView = findViewById(R.id.imageProgress);
+    }
 
     public void onHeartAppear() {
         if (idMovie != -1) {
