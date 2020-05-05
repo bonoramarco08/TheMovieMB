@@ -25,6 +25,6 @@
     <string name="toastagg">Film aggiunto ai preferiti</string>
     <string name="toastrem">Film rimosso dai preferiti</string>
     <string name="descriptoinull">Descrizione non disponibile</string>
-    <string name="title_genere">Genre</string>
-    <string name="nofilm">Sorry but there isn\'t any film with this genre</string>
+    <string name="title_genere">Genere</string>
+    <string name="nofilm">Ci spiace ma non c\'è nessun film di questo genere</string>
 </resources>

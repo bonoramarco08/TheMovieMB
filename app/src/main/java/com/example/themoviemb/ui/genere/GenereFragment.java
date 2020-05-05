@@ -53,20 +53,16 @@ public class GenereFragment extends Fragment implements LoaderManager.LoaderCall
 
 
     private static final int LOADER_ID = 1;
-    private static final String SEARCHTEXT = "SEARCHTEXT";
     private int filmPerRow;
     private RecyclerView rvGenre;
     private MoviesAdapter adapterGenre;
     private RecyclerView.LayoutManager layoutManagerGenre;
-    private SearchView searchView = null;
     private SearchView.OnQueryTextListener queryTextListener;
     private boolean search = false;
     private LottieAnimationView lottieAnimationView;
     private AddOrCreateBadge listener;
     ProgressBar pbHome;
     TextView tvHome;
-    private String searchText;
-    private ChipGroup chipGroup;
     private Toolbar toolbar;
 
     /**
@@ -90,9 +86,6 @@ public class GenereFragment extends Fragment implements LoaderManager.LoaderCall
         View root = inflater.inflate(R.layout.genere_fragment, container, false);
         setViews(root);
         setRecyclerView(root);
-        if (savedInstanceState != null) {
-            searchText = savedInstanceState.getString(SEARCHTEXT);
-        }
         Toolbar toolbar = root.findViewById(R.id.toolbarHome);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         toolbar.setTitle(getString(R.string.title_genere));
@@ -148,69 +141,6 @@ public class GenereFragment extends Fragment implements LoaderManager.LoaderCall
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
     }
-
-
-    /**
-     * Qui creo il filtro ricerca, che andrà a eseguire una query sul db locale e imposterà il nuovo cursor sulla lista
-     */
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.search_view, menu);
-        MenuItem searchItem = menu.findItem(R.id.action_search);
-        SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-
-        if (searchItem != null) {
-            searchView = (SearchView) searchItem.getActionView();
-        }
-        if (searchView != null) {
-            searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
-
-            queryTextListener = new SearchView.OnQueryTextListener() {
-                @Override
-                public boolean onQueryTextChange(String newText) {
-                    searchText = newText;
-                    Cursor data = (getActivity()).getContentResolver().query(MovieProvider.JOIN_URI, null, MovieTableHelper.TITLE + " LIKE '%" + newText + "%'", null, null);
-                    List<Movie> mArrayList = new ArrayList<>();
-                    for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
-                        // The Cursor is now set to the right position
-                        mArrayList.add(new Movie(data.getString(data.getColumnIndex(MovieTableHelper.TITLE)), data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION_PHOTO)), data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION)), data.getString(data.getColumnIndex(MovieTableHelper.COVER_PHOTO)), data.getString(data.getColumnIndex(MovieTableHelper._ID))));
-                    }
-                    adapterGenre.changeCursor(mArrayList);
-                    return true;
-                }
-
-                @Override
-                public boolean onQueryTextSubmit(String query) {
-
-                    return true;
-                }
-            };
-            searchView.setOnQueryTextListener(queryTextListener);
-        }
-        if (searchText != null && !searchText.equals("")) {
-            searchItem.expandActionView();
-            searchView.setQuery(searchText, false);
-            searchView.clearFocus();
-        }
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-
-
-    /**
-     * Quale elemento della toolbar vado a cliccare (in questo caso ce n'è solo uno)
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.action_search:
-                return false;
-            default:
-                break;
-        }
-        searchView.setOnQueryTextListener(queryTextListener);
-        return super.onOptionsItemSelected(item);
-    }
-
     /**
      * Inizializzazione del loader
      */
@@ -333,13 +263,6 @@ public class GenereFragment extends Fragment implements LoaderManager.LoaderCall
     public void setText() {
         tvHome.setVisibility(View.VISIBLE);
         tvHome.setText(getString(R.string.nofilm));
-    }
-
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        if (searchText != null && searchText != "")
-            outState.putString(SEARCHTEXT, searchText);
-        super.onSaveInstanceState(outState);
     }
 
     /**

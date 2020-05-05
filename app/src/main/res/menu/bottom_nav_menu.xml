@@ -13,7 +13,7 @@
         android:title="Favorite" />
     <item
         android:id="@+id/navigation_genere"
-        android:icon="@drawable/favorite"
+        android:icon="@drawable/round_filter_list_24"
         android:title="Genere" />
 
 </menu>
