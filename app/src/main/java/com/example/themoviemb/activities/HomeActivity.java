@@ -47,7 +47,6 @@ public class HomeActivity extends AppCompatActivity implements FavoriteFragment.
 
     private BottomNavigationView navView;
     private NavController navController;
-    private NavOptions navOptions;
     private IWebServer webServerListener = new IWebServer() {
         @Override
         public void onMoviesFetched(boolean success, Result result, int errorCode, String errorMessage) {
