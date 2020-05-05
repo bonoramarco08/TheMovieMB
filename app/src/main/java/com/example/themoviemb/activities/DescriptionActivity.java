@@ -74,6 +74,9 @@ public class DescriptionActivity extends AppCompatActivity {
             movie.moveToNext();
             title.setText(movie.getString(movie.getColumnIndex(MovieTableHelper.TITLE)));
             description.setText(movie.getString(movie.getColumnIndexOrThrow(MovieTableHelper.DESCRIPTION)));
+            if(description.getText().toString().equals("")){
+                description.setText(getString(R.string.descriptoinull));
+            }
             onHeartAppear();
             Glide.with(getApplicationContext())
                     .asBitmap()

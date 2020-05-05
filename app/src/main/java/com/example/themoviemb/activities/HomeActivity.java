@@ -42,7 +42,7 @@ public class HomeActivity extends AppCompatActivity implements FavoriteFragment.
 
 
     private Toolbar toolbar;
-    private View navHome, navHeart;
+    private View navHome, navHeart , navGenere;
     private Toast toast;
 
     private BottomNavigationView navView;
@@ -58,12 +58,13 @@ public class HomeActivity extends AppCompatActivity implements FavoriteFragment.
         setSupportActionBar(toolbar);
         navHome = findViewById(R.id.navigation_home);
         navHeart = findViewById(R.id.navigation_favorite);
+        navGenere = findViewById(R.id.navigation_genere);
         navView = findViewById(R.id.nav_view);
 
 
 
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_favorite)
+                R.id.navigation_home, R.id.navigation_favorite , R.id.navigation_genere)
                 .build();
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         //NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
@@ -75,6 +76,10 @@ public class HomeActivity extends AppCompatActivity implements FavoriteFragment.
         });
         navHeart.setOnLongClickListener(view -> {
             createToast(getString(R.string.title_favorite)).show();
+            return true;
+        });
+        navGenere.setOnLongClickListener(view -> {
+            createToast(getString(R.string.title_genere)).show();
             return true;
         });
 
@@ -89,22 +94,6 @@ public class HomeActivity extends AppCompatActivity implements FavoriteFragment.
         toast = Toast.makeText(HomeActivity.this, textToShow, Toast.LENGTH_SHORT);
         toast.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL, 0, 0);
         return toast;
-    }
-
-    @Override
-    public void onConfigurationChanged(@NonNull Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        int currentNightMode = newConfig.uiMode & Configuration.UI_MODE_NIGHT_MASK;
-        switch (currentNightMode) {
-            case Configuration.UI_MODE_NIGHT_NO:
-                // Night mode is not active, we're using the light theme
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-                break;
-            case Configuration.UI_MODE_NIGHT_YES:
-                // Night mode is active, we're using dark theme
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
-                break;
-        }
     }
 
     @Override

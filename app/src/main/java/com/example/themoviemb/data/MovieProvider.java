@@ -40,6 +40,16 @@ public class MovieProvider extends ContentProvider {
     public static final String MIME_TYPE_JOINS = ContentResolver.CURSOR_DIR_BASE_TYPE + "vnd.all_joins";
     public static Uri JOIN_URI = Uri.parse(ContentResolver.SCHEME_CONTENT + "://" + AUTORITY + "/" + BASE_PATH_JOIN);
     public static final int ALL_JOIN = 6;
+    public static final String BASE_PATH_GENRE = "genre";
+    public static final String MIME_TYPE_GENRES = ContentResolver.CURSOR_DIR_BASE_TYPE + "vnd.all_genres";
+    public static Uri GENRE_URI = Uri.parse(ContentResolver.SCHEME_CONTENT + "://" + AUTORITY + "/" + BASE_PATH_GENRE);
+    public static final int ALL_GENRE = 7;
+    public static final int ADD_GENERE_FOR_FILM = 8;
+    public static final String BASE_PATH_GENRE_MOVIE = "genreMovie";
+    public static Uri GENREMOVIE_URI = Uri.parse(ContentResolver.SCHEME_CONTENT + "://" + AUTORITY + "/" + BASE_PATH_GENRE_MOVIE);
+    public static final int ALL_GENRE_JOIN =9;
+    public static final String BASE_PATHALL_GENRE_JOIN = "all_genre_join";
+    public static Uri ALL_GENRE_JOIN_URI = Uri.parse(ContentResolver.SCHEME_CONTENT + "://" + AUTORITY + "/" + BASE_PATHALL_GENRE_JOIN);
 
     static {
         uriMatcher.addURI(AUTORITY, BASE_PATH_MOVIES, ALL_MOVIE);
@@ -47,6 +57,9 @@ public class MovieProvider extends ContentProvider {
         uriMatcher.addURI(AUTORITY, BASE_PATH_FAVORITES, ALL_FAVORITE);
         uriMatcher.addURI(AUTORITY, BASE_PATH_FAVORITES + "/#", SINGLE_FAVORITE);
         uriMatcher.addURI(AUTORITY, BASE_PATH_JOIN,ALL_JOIN);
+        uriMatcher.addURI(AUTORITY, BASE_PATH_GENRE,ALL_GENRE);
+        uriMatcher.addURI(AUTORITY, BASE_PATH_GENRE_MOVIE,ADD_GENERE_FOR_FILM);
+        uriMatcher.addURI(AUTORITY, BASE_PATHALL_GENRE_JOIN,ALL_GENRE_JOIN);
     }
 
 
@@ -80,6 +93,15 @@ public class MovieProvider extends ContentProvider {
             case ALL_JOIN:
                 vBuilder.setTables(MovieTableHelper.TABLE_NAME +" LEFT OUTER JOIN "+ FavoriteTableHelper.TABLE_NAME+" ON ("+MovieTableHelper.TABLE_NAME+"."+ MovieTableHelper._ID+" = "+FavoriteTableHelper.TABLE_NAME+"."+ FavoriteTableHelper.ID_MOVIE+")");
                 break;
+            case ALL_GENRE:
+                vBuilder.setTables(GenreTableHelper.TABLE_NAME);
+                break;
+            case ADD_GENERE_FOR_FILM:
+                vBuilder.setTables(GenreMovieTableHelper.TABLE_NAME);
+                break;
+            case ALL_GENRE_JOIN:
+                vBuilder.setTables(GenreMovieTableHelper.TABLE_NAME +" LEFT OUTER JOIN "+ GenreTableHelper.TABLE_NAME+" ON ("+GenreMovieTableHelper.TABLE_NAME+"."+ GenreMovieTableHelper.ID_GENRE+" = "+GenreTableHelper.TABLE_NAME+"."+ GenreTableHelper.ID_GENRE+")");
+                break;
         }
 
         Cursor vCursor = vBuilder.query(vDb, strings, s, strings1, null, null, s1);
@@ -105,6 +127,9 @@ public class MovieProvider extends ContentProvider {
                 return MIME_TYPE_FAVORITES;
             case ALL_JOIN:
                 return MIME_TYPE_JOINS;
+            case ALL_GENRE:
+                return  MIME_TYPE_GENRES;
+
         }
 
         return null;
@@ -128,6 +153,28 @@ public class MovieProvider extends ContentProvider {
             SQLiteDatabase vDb = dBHelper.getWritableDatabase();
             long vResult = vDb.insert(FavoriteTableHelper.TABLE_NAME, null, contentValues);
             String vResultString = ContentResolver.SCHEME_CONTENT + "://" + BASE_PATH_FAVORITES + "/" + vResult;
+            try {
+                getContext().getContentResolver().notifyChange(uri, null);
+            } catch (NullPointerException e) {
+                Log.d("Error", e.getMessage());
+            }
+            return Uri.parse(vResultString);
+        }
+        if (uriMatcher.match(uri) == ALL_GENRE) {
+            SQLiteDatabase vDb = dBHelper.getWritableDatabase();
+            long vResult = vDb.insert(GenreTableHelper.TABLE_NAME, null, contentValues);
+            String vResultString = ContentResolver.SCHEME_CONTENT + "://" + BASE_PATH_FAVORITES + "/" + vResult;
+            try {
+                getContext().getContentResolver().notifyChange(uri, null);
+            } catch (NullPointerException e) {
+                Log.d("Error", e.getMessage());
+            }
+            return Uri.parse(vResultString);
+        }
+        if (uriMatcher.match(uri) == ADD_GENERE_FOR_FILM) {
+            SQLiteDatabase vDb = dBHelper.getWritableDatabase();
+            long vResult = vDb.insert(GenreMovieTableHelper.TABLE_NAME, null, contentValues);
+            String vResultString = ContentResolver.SCHEME_CONTENT + "://" + BASE_PATH_GENRE_MOVIE + "/" + vResult;
             try {
                 getContext().getContentResolver().notifyChange(uri, null);
             } catch (NullPointerException e) {
@@ -164,6 +211,13 @@ public class MovieProvider extends ContentProvider {
             case SINGLE_FAVORITE:
                 vTableName = FavoriteTableHelper.TABLE_NAME;
                 vQuery = FavoriteTableHelper._ID + " = " + uri.getLastPathSegment();
+                if (s != null) {
+                    vQuery += " AND " + s;
+                }
+                break;
+            case ADD_GENERE_FOR_FILM:
+                vTableName = GenreMovieTableHelper.TABLE_NAME;
+                vQuery = GenreMovieTableHelper._ID + " = " + uri.getLastPathSegment();
                 if (s != null) {
                     vQuery += " AND " + s;
                 }
@@ -206,6 +260,14 @@ public class MovieProvider extends ContentProvider {
                     vQuery += " AND " + s;
                 }
                 break;
+            case ADD_GENERE_FOR_FILM:
+                vTableName = GenreMovieTableHelper.TABLE_NAME;
+                vQuery = GenreMovieTableHelper._ID + " = " + uri.getLastPathSegment();
+                if (s != null) {
+                    vQuery += " AND " + s;
+                }
+                break;
+
         }
         int vUpdateRows = vDb.update(vTableName, contentValues, vQuery, strings);
         try {

@@ -42,8 +42,12 @@ import com.example.themoviemb.VerificaInternet;
 import com.example.themoviemb.activities.DescriptionActivity;
 import com.example.themoviemb.adapters.MoviesAdapter;
 import com.example.themoviemb.data.FavoriteTableHelper;
+import com.example.themoviemb.data.GenreMovieTableHelper;
+import com.example.themoviemb.data.GenreTableHelper;
 import com.example.themoviemb.data.MovieProvider;
 import com.example.themoviemb.data.MovieTableHelper;
+import com.example.themoviemb.data.models.Genres;
+import com.example.themoviemb.data.models.GenresList;
 import com.example.themoviemb.data.models.Movie;
 import com.example.themoviemb.data.models.Result;
 import com.example.themoviemb.interface_movie.DialogFavorite;
@@ -75,44 +79,36 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     private String searchText;
     private Toolbar toolbar;
     // codice scrool
-    private IWebServer webServerListener = (success, result, errorCode, errorMessage) -> {
-        if (result != null) {
-            try {
-                boolean b;
-                Cursor cursor = (getActivity()).getContentResolver().query(MovieProvider.MOVIES_URI, null, null, null, null);
+    private IWebServer webServerListener =new IWebServer() {
+        @Override
+        public void onMoviesFetched(boolean success, Result result, int errorCode, String errorMessage) {
+            if (result != null) {
                 for (Movie movie : result.getResult()) {
-                    b = true;
-                    for (int y = 0; y < cursor.getCount(); y++) {
-                        cursor.moveToPosition(y);
-                        if (cursor.getString(cursor.getColumnIndex(MovieTableHelper.ID_FILM)).equals(movie.getIdFilm())) {
-                            b = false;
-                            ContentValues contentValues = new ContentValues();
-                            contentValues.put(MovieTableHelper.TITLE, movie.getTitle());
-                            contentValues.put(MovieTableHelper.COVER_PHOTO, movie.getPosterPath());
-                            contentValues.put(MovieTableHelper.DESCRIPTION, movie.getOverview());
-                            contentValues.put(MovieTableHelper.DESCRIPTION_PHOTO, movie.getBackdropPath());
-                            contentValues.put(MovieTableHelper.ID_FILM, movie.getIdFilm());
-                            getActivity().getContentResolver().update(MovieProvider.MOVIES_URI, contentValues, MovieTableHelper.ID_FILM + " = " + movie.getIdFilm(), null);
-                            y = cursor.getCount();
-                        }
-                    }
-                    if (b) {
-                        ContentValues contentValues = new ContentValues();
-                        contentValues.put(MovieTableHelper.TITLE, movie.getTitle());
-                        contentValues.put(MovieTableHelper.COVER_PHOTO, movie.getPosterPath());
-                        contentValues.put(MovieTableHelper.DESCRIPTION, movie.getOverview());
-                        contentValues.put(MovieTableHelper.DESCRIPTION_PHOTO, movie.getBackdropPath());
-                        contentValues.put(MovieTableHelper.ID_FILM, movie.getIdFilm());
-                        Uri r = getActivity().getContentResolver().insert(MovieProvider.MOVIES_URI, contentValues);
-                        long id = Long.parseLong(r.getLastPathSegment());
-                        ContentValues contentValuesFavorite = new ContentValues();
-                        contentValuesFavorite.put(FavoriteTableHelper.ID_MOVIE, id);
-                        contentValuesFavorite.put(FavoriteTableHelper.IS_FAVORITE, 0);
-                        getActivity().getContentResolver().insert(MovieProvider.FAVORITE_URI, contentValuesFavorite);
+                    ContentValues contentValues = new ContentValues();
+                    contentValues.put(MovieTableHelper.TITLE, movie.getTitle());
+                    contentValues.put(MovieTableHelper.COVER_PHOTO, movie.getPosterPath());
+                    contentValues.put(MovieTableHelper.DESCRIPTION, movie.getOverview());
+                    contentValues.put(MovieTableHelper.DESCRIPTION_PHOTO, movie.getBackdropPath());
+                    contentValues.put(MovieTableHelper.ID_FILM, movie.getIdFilm());
+                    Uri r = getActivity().getContentResolver().insert(MovieProvider.MOVIES_URI, contentValues);
+                    long id = Long.parseLong(r.getLastPathSegment());
+                    ContentValues contentValuesFavorite = new ContentValues();
+                    contentValuesFavorite.put(FavoriteTableHelper.ID_MOVIE, id);
+                    contentValuesFavorite.put(FavoriteTableHelper.IS_FAVORITE, 0);
+                    getActivity().getContentResolver().insert(MovieProvider.FAVORITE_URI, contentValuesFavorite);
+                    for (int i = 0 ; i<movie.getGenres().length ; i++) {
+                        ContentValues contentValuesGenre = new ContentValues();
+                        contentValuesGenre.put(GenreMovieTableHelper.ID_MOVIE, id);
+                        contentValuesGenre.put(GenreMovieTableHelper.ID_GENRE, movie.getGenres()[i]);
+                        getActivity().getContentResolver().insert(MovieProvider.GENREMOVIE_URI, contentValuesFavorite);
                     }
                 }
-            } catch (Exception e) {
             }
+        }
+
+        @Override
+        public void onGeneresFetched(boolean success, GenresList result, int errorCode, String errorMessage) {
+            return;
         }
     };
 

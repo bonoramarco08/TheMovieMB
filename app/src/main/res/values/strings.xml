@@ -23,4 +23,7 @@
     <string name="toastagg">Movie added to favorite</string>
     <string name="toastrem">Movie removed from favorites</string>
     <string name="error_zero_film_home">Start up internet and restart the app.</string>
+    <string name="descriptoinull">Description not available</string>
+    <string name="title_genere">Genre</string>
+    <string name="nofilm">Sorry but there isn\'t any film with this genre</string>
 </resources>

@@ -18,8 +18,28 @@ public class Movie {
     private String posterPath;
     @SerializedName("id")
     private String idFilm;
+    @SerializedName("genre_ids")
+    private int[] genres;
     private String _id;
 
+
+    public int[] getGenres() {
+        return genres;
+    }
+
+    public void setGenres(int[] genres) {
+        this.genres = genres;
+    }
+
+    public Movie(String title, String backdropPath, String overview, String posterPath, String idFilm, int[] genres, String _id) {
+        this.title = title;
+        this.backdropPath = backdropPath;
+        this.overview = overview;
+        this.posterPath = posterPath;
+        this.idFilm = idFilm;
+        this.genres = genres;
+        this._id = _id;
+    }
 
     public Movie() {
 
