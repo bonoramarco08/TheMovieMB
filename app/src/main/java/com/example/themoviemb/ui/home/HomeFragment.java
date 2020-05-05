@@ -96,11 +96,11 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
                     contentValuesFavorite.put(FavoriteTableHelper.ID_MOVIE, id);
                     contentValuesFavorite.put(FavoriteTableHelper.IS_FAVORITE, 0);
                     getActivity().getContentResolver().insert(MovieProvider.FAVORITE_URI, contentValuesFavorite);
-                    for (int i = 0 ; i<movie.getGenres().length ; i++) {
+                    for (int i = 0 ; i<movie.getGenres().length ; i++){
                         ContentValues contentValuesGenre = new ContentValues();
                         contentValuesGenre.put(GenreMovieTableHelper.ID_MOVIE, id);
                         contentValuesGenre.put(GenreMovieTableHelper.ID_GENRE, movie.getGenres()[i]);
-                        getActivity().getContentResolver().insert(MovieProvider.GENREMOVIE_URI, contentValuesFavorite);
+                        getActivity().getContentResolver().insert(MovieProvider.GENREMOVIE_URI, contentValuesGenre);
                     }
                 }
             }

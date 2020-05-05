@@ -1,43 +1,25 @@
 package com.example.themoviemb.activities;
 
-import android.content.ContentValues;
-import android.content.res.Configuration;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Toast;
-
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
-import androidx.loader.content.CursorLoader;
 import androidx.navigation.NavController;
 import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-
 import com.example.themoviemb.R;
-import com.example.themoviemb.VerificaInternet;
-import com.example.themoviemb.data.FavoriteTableHelper;
-import com.example.themoviemb.data.MovieProvider;
-import com.example.themoviemb.data.MovieTableHelper;
-import com.example.themoviemb.data.models.Movie;
-import com.example.themoviemb.data.models.Result;
-import com.example.themoviemb.interface_movie.IWebServer;
-import com.example.themoviemb.networks.WebService;
 import com.example.themoviemb.ui.favorite.FavoriteFragment;
+import com.example.themoviemb.ui.genere.GenereFragment;
 import com.example.themoviemb.ui.home.HomeFragment;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
-public class HomeActivity extends AppCompatActivity implements FavoriteFragment.RemoveBadgeInterface, HomeFragment.AddOrCreateBadge {
+public class HomeActivity extends AppCompatActivity implements FavoriteFragment.RemoveBadgeInterface, HomeFragment.AddOrCreateBadge , GenereFragment.AddOrCreateBadge {
 
 
 

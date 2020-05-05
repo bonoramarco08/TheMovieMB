@@ -343,8 +343,7 @@ public class GenereFragment extends Fragment implements LoaderManager.LoaderCall
     }
 
     /**
-     * Quando aggiungo un film ai preferiti, si può notare che compare il badge
-     */
+     * Quando aggiungo un film ai preferiti, si può notare che compare il badge*/
     public interface AddOrCreateBadge {
         void createOrAddBadge();
     }
