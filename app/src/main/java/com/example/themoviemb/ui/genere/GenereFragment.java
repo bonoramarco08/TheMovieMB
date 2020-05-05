@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -22,6 +23,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
@@ -283,9 +285,12 @@ public class GenereFragment extends Fragment implements LoaderManager.LoaderCall
             listener = null;
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void onClick(View view) {
         Cursor dataGenre = (getActivity()).getContentResolver().query(MovieProvider.ALL_GENRE_JOIN_URI, null, GenreTableHelper.TABLE_NAME + "." + GenreTableHelper.ID_GENRE + " = " + view.getId(), null, null);
         String genre = "";
+        Button b = (Button)view;
+        toolbar.setTitle(getString(R.string.title_genere)+":"+b.getText().toString());
         if (dataGenre.getCount() >= 1) {
             tvHome.setVisibility(View.INVISIBLE);
             dataGenre.moveToFirst();
