@@ -3,6 +3,7 @@ package com.example.themoviemb.networks;
 import android.annotation.SuppressLint;
 import android.util.Log;
 
+import com.example.themoviemb.data.models.GenresList;
 import com.example.themoviemb.data.models.Movie;
 import com.example.themoviemb.data.models.Result;
 import com.example.themoviemb.interface_movie.IWebServer;
@@ -105,6 +106,42 @@ public class WebService {
             @Override
             public void onFailure(Call<Result> call, Throwable t) {
                 callback.onMoviesFetched(false, null, -1, t.getLocalizedMessage());
+
+            }
+
+        });
+    }
+    public void getGenres(final IWebServer callback , String lingua) {
+        Call<GenresList> moviesrequest = movieService.getGenres(lingua);
+        moviesrequest.enqueue(new Callback<GenresList>() {
+            @Override
+            public void onResponse(Call<GenresList> call, Response<GenresList> response) {
+                /**
+                 * chiamata andata a buon fine
+                 */
+                if (response.code() == 200) {
+                    callback.onGeneresFetched(true, response.body(), -1, null);
+                } else {
+                    try {
+                        /**
+                         * chiamata non andata a  buon fine
+                         */
+                        callback.onGeneresFetched(true, null, response.code(), response.errorBody().string());
+                    } catch (IOException ex) {
+                        Log.e("WebService", ex.toString());
+                        /**
+                         * errore nella chiamata
+                         */
+                        callback.onGeneresFetched(true, null, response.code(), "Generic error message");
+                    }
+                }
+            }
+            /**
+             * in caso la chiamta falisca
+             */
+            @Override
+            public void onFailure(Call<GenresList> call, Throwable t) {
+                callback.onGeneresFetched(false, null, -1, t.getLocalizedMessage());
 
             }
 

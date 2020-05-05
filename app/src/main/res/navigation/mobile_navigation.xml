@@ -17,4 +17,10 @@
         android:label="@string/title_favorite"
         tools:layout="@layout/fragment_favorite" />
 
+    <fragment
+        android:id="@+id/navigation_genere"
+        android:name="com.example.themoviemb.ui.genere.GenereFragment"
+        android:label="@string/title_genere"
+        tools:layout="@layout/genere_fragment" />
+
 </navigation>

@@ -1,4 +1,5 @@
 package com.example.themoviemb.interface_movie;
+import com.example.themoviemb.data.models.GenresList;
 import com.example.themoviemb.data.models.Result;
 
 import java.util.List;
@@ -13,4 +14,6 @@ public interface MovieService {
 
     @GET("3/discover/movie?api_key=525e39d1c3568cd23cdaf0a3674918fa")
     Call<Result> getMoviesPage(@Query("page") int page , @Query("primary_release_date.lte") String releaseDate ,@Query("language") String lingua);
+    @GET("3/genre/movie/list?api_key=525e39d1c3568cd23cdaf0a3674918fa")
+    Call<GenresList> getGenres(@Query("language") String lingua);
 }

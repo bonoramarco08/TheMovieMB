@@ -1,13 +1,11 @@
-package com.example.themoviemb.ui.home;
+package com.example.themoviemb.ui.genere;
 
-import android.app.Activity;
 import android.app.SearchManager;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,17 +14,17 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.loader.app.LoaderManager;
 import androidx.loader.content.CursorLoader;
@@ -35,9 +33,7 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.airbnb.lottie.LottieAnimationView;
-import com.example.themoviemb.EndlessRecyclerViewScrollListener;
 import com.example.themoviemb.R;
-import com.example.themoviemb.VerificaInternet;
 import com.example.themoviemb.activities.DescriptionActivity;
 import com.example.themoviemb.adapters.MoviesAdapter;
 import com.example.themoviemb.data.FavoriteTableHelper;
@@ -45,171 +41,108 @@ import com.example.themoviemb.data.GenreMovieTableHelper;
 import com.example.themoviemb.data.GenreTableHelper;
 import com.example.themoviemb.data.MovieProvider;
 import com.example.themoviemb.data.MovieTableHelper;
-import com.example.themoviemb.data.models.Genres;
-import com.example.themoviemb.data.models.GenresList;
 import com.example.themoviemb.data.models.Movie;
-import com.example.themoviemb.data.models.Result;
 import com.example.themoviemb.interface_movie.DialogFavorite;
 import com.example.themoviemb.interface_movie.ErrorZeroItem;
-import com.example.themoviemb.interface_movie.IWebServer;
-import com.example.themoviemb.networks.WebService;
-import com.google.android.material.badge.BadgeDrawable;
+import com.google.android.material.chip.ChipGroup;
 
 import java.util.ArrayList;
 import java.util.List;
 
+public class GenereFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, MoviesAdapter.OnItemClickListener, DialogFavorite.IFavoritDialog, ErrorZeroItem {
 
-public class HomeFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, MoviesAdapter.OnItemClickListener, DialogFavorite.IFavoritDialog, ErrorZeroItem {
 
     private static final int LOADER_ID = 1;
     private static final String SEARCHTEXT = "SEARCHTEXT";
     private int filmPerRow;
-    private WebService webService;
-    private RecyclerView rvHome;
-    private MoviesAdapter adapterHome;
-    private RecyclerView.LayoutManager layoutManagerHome;
+    private RecyclerView rvGenre;
+    private MoviesAdapter adapterGenre;
+    private RecyclerView.LayoutManager layoutManagerGenre;
     private SearchView searchView = null;
     private SearchView.OnQueryTextListener queryTextListener;
     private boolean search = false;
     private LottieAnimationView lottieAnimationView;
     private AddOrCreateBadge listener;
-    ProgressBar pbHome, getPbHomeStart;
+    ProgressBar pbHome;
     TextView tvHome;
     private String searchText;
+    private ChipGroup chipGroup;
     private Toolbar toolbar;
-    // codice scrool
-    private IWebServer webServerListener =new IWebServer() {
-        @Override
-        public void onMoviesFetched(boolean success, Result result, int errorCode, String errorMessage) {
-            if (result != null) {
-                for (Movie movie : result.getResult()) {
-                    ContentValues contentValues = new ContentValues();
-                    contentValues.put(MovieTableHelper.TITLE, movie.getTitle());
-                    contentValues.put(MovieTableHelper.COVER_PHOTO, movie.getPosterPath());
-                    contentValues.put(MovieTableHelper.DESCRIPTION, movie.getOverview());
-                    contentValues.put(MovieTableHelper.DESCRIPTION_PHOTO, movie.getBackdropPath());
-                    contentValues.put(MovieTableHelper.ID_FILM, movie.getIdFilm());
-                    Uri r = getActivity().getContentResolver().insert(MovieProvider.MOVIES_URI, contentValues);
-                    long id = Long.parseLong(r.getLastPathSegment());
-                    ContentValues contentValuesFavorite = new ContentValues();
-                    contentValuesFavorite.put(FavoriteTableHelper.ID_MOVIE, id);
-                    contentValuesFavorite.put(FavoriteTableHelper.IS_FAVORITE, 0);
-                    getActivity().getContentResolver().insert(MovieProvider.FAVORITE_URI, contentValuesFavorite);
-                    for (int i = 0 ; i<movie.getGenres().length ; i++){
-                        ContentValues contentValuesGenre = new ContentValues();
-                        contentValuesGenre.put(GenreMovieTableHelper.ID_MOVIE, id);
-                        contentValuesGenre.put(GenreMovieTableHelper.ID_GENRE, movie.getGenres()[i]);
-                        getActivity().getContentResolver().insert(MovieProvider.GENREMOVIE_URI, contentValuesGenre);
-                    }
-                }
-            }
-        }
-
-        @Override
-        public void onGeneresFetched(boolean success, GenresList result, int errorCode, String errorMessage) {
-            return;
-        }
-    };
 
     /**
      * isPortrait()
-     *              true->telefono in portrait
-     *              false->telefono in landscape
+     * true->telefono in portrait
+     * false->telefono in landscape
      * setViews()
-     *              findviewbyid degli elementi
+     * findviewbyid degli elementi
      * setRecyclerView()
-     *              configurazione della recyclerview e settaggio dell'adapter
+     * configurazione della recyclerview e settaggio dell'adapter
      * WebService.getInstance()
-     *              prendo l'istanza del webservice (singleton)
+     * prendo l'istanza del webservice (singleton)
      * addOnScrollListener
-     *              scarico i film divisi in page, quando arrivo alla fine della page, inizia a caricarmi la page seguente
-     * */
+     * scarico i film divisi in page, quando arrivo alla fine della page, inizia a caricarmi la page seguente
+     */
     public View onCreateView(@NonNull final LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
 
-        filmPerRow=(isPortrait())?setPortrait():setLandscape();
-
-        HomeViewModel homeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_home, container, false);
+        filmPerRow = (isPortrait()) ? setPortrait() : setLandscape();
+        GenereViewModel genereViewModel = ViewModelProviders.of(this).get(GenereViewModel.class);
+        View root = inflater.inflate(R.layout.genere_fragment, container, false);
         setViews(root);
         setRecyclerView(root);
-
-
         if (savedInstanceState != null) {
             searchText = savedInstanceState.getString(SEARCHTEXT);
         }
-
+        Toolbar toolbar = root.findViewById(R.id.toolbarHome);
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
-
-        webService = WebService.getInstance();
-
-        // codice scrool
-        rvHome.addOnScrollListener(new EndlessRecyclerViewScrollListener((GridLayoutManager) layoutManagerHome) {
-            @Override
-            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
-                if (!search) {
-                    if (!VerificaInternet.getConnectivityStatusString(getContext())) {
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), R.style.MyDialog);
-                        builder.setMessage(R.string.dialog_message_homeInternet)
-                                .setTitle(R.string.dialog_title)
-                                .setNeutralButton("OK", null);
-                        AlertDialog dialog = builder.create();
-                        dialog.show();
-                    } else {
-                        pbHome.setVisibility(View.VISIBLE);
-                        insertScroll(page + 1);
-                        Cursor data = (getActivity()).getContentResolver().query(MovieProvider.MOVIES_URI, null, null, null, null);
-                        List<Movie> mArrayList = new ArrayList<>();
-                        for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
-                            // The Cursor is now set to the right position
-                            mArrayList.add(new Movie(data.getString(data.getColumnIndex(MovieTableHelper.TITLE)),
-                                    data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION_PHOTO)),
-                                    data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION)),
-                                    data.getString(data.getColumnIndex(MovieTableHelper.COVER_PHOTO)),
-                                    data.getString(data.getColumnIndex(MovieTableHelper._ID))));
-                        }
-                        adapterHome.changeCursor(mArrayList);
-                    }
-                }
-            }
-        });
+        toolbar.setTitle(getString(R.string.title_genere));
+        LinearLayout linearLayout = root.findViewById(R.id.linear);
+        Cursor c = new CursorLoader(getContext(), MovieProvider.GENRE_URI, null, null, null, null).loadInBackground();
+        Button[] chip = new Button[c.getCount()];
+        for (int i = 0; i < c.getCount(); i++) {
+            c.moveToPosition(i);
+            chip[i] = new Button(getContext(), null, R.attr.materialButtonOutlinedStyle);
+            chip[i].setText(c.getString(c.getColumnIndex(GenreTableHelper.TEXT_GENRE)));
+            chip[i].setHeight(LinearLayout.LayoutParams.MATCH_PARENT);
+            chip[i].setId(c.getInt(c.getColumnIndex(GenreTableHelper.ID_GENRE)));
+            linearLayout.addView(chip[i]);
+            chip[i].setOnClickListener(this::onClick);
+        }
         return root;
     }
 
-    private void insertScroll(int page) {
-        webService.getMoviesPage(webServerListener, page, getString(R.string.lingua));
+    private boolean isPortrait() {
+        return (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE) ? false : true;
     }
 
-    private boolean isPortrait(){
-        return (getResources().getConfiguration().orientation == Configuration.ORIENTATION_LANDSCAPE)?  false : true;
-    }
-    private int setPortrait(){
+    private int setPortrait() {
         return 2;
     }
-    private int setLandscape(){
+
+    private int setLandscape() {
         return 4;
     }
 
     private void setViews(View root) {
-        rvHome = root.findViewById(R.id.rvMovies);
+        rvGenre = root.findViewById(R.id.rvMovies);
         tvHome = root.findViewById(R.id.errorTextView);
-        getPbHomeStart = root.findViewById(R.id.pbHomeStart);
         toolbar = root.findViewById(R.id.toolbarHome);
         lottieAnimationView = root.findViewById(R.id.heartAppear);
     }
 
     private void setRecyclerView(View root) {
-        layoutManagerHome = new GridLayoutManager(getActivity().getApplicationContext(), filmPerRow);
-        pbHome = root.findViewById(R.id.pbHome);
-        rvHome.setLayoutManager(layoutManagerHome);
-        adapterHome = new MoviesAdapter(null, this, filmPerRow, getContext());
-        rvHome.setAdapter(adapterHome);
+        layoutManagerGenre = new GridLayoutManager(getActivity().getApplicationContext(), filmPerRow);
+        pbHome = root.findViewById(R.id.pbFavorite2);
+        rvGenre.setLayoutManager(layoutManagerGenre);
+        adapterGenre = new MoviesAdapter(null, this, filmPerRow, getContext());
+        rvGenre.setAdapter(adapterGenre);
     }
 
 
     /**
      * setHasOptionsMenu(true)
-     *          In modo da avere la searchview*/
+     * In modo da avere la searchview
+     */
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -218,7 +151,8 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
 
 
     /**
-     * Qui creo il filtro ricerca, che andrà a eseguire una query sul db locale e imposterà il nuovo cursor sulla lista*/
+     * Qui creo il filtro ricerca, che andrà a eseguire una query sul db locale e imposterà il nuovo cursor sulla lista
+     */
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.search_view, menu);
@@ -241,7 +175,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
                         // The Cursor is now set to the right position
                         mArrayList.add(new Movie(data.getString(data.getColumnIndex(MovieTableHelper.TITLE)), data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION_PHOTO)), data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION)), data.getString(data.getColumnIndex(MovieTableHelper.COVER_PHOTO)), data.getString(data.getColumnIndex(MovieTableHelper._ID))));
                     }
-                    adapterHome.changeCursor(mArrayList);
+                    adapterGenre.changeCursor(mArrayList);
                     return true;
                 }
 
@@ -263,7 +197,8 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
 
 
     /**
-     * Quale elemento della toolbar vado a cliccare (in questo caso ce n'è solo uno)*/
+     * Quale elemento della toolbar vado a cliccare (in questo caso ce n'è solo uno)
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -277,7 +212,8 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     }
 
     /**
-     * Inizializzazione del loader*/
+     * Inizializzazione del loader
+     */
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -286,7 +222,8 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
 
 
     /**
-     * Creo il Loader*/
+     * Creo il Loader
+     */
     @NonNull
     @Override
     public Loader<Cursor> onCreateLoader(int id, @Nullable Bundle args) {
@@ -294,7 +231,8 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     }
 
     /**
-     * Una volta finito il caricamento...*/
+     * Una volta finito il caricamento...
+     */
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         List<Movie> mArrayList = new ArrayList<>();
@@ -306,10 +244,9 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
                     data.getString(data.getColumnIndex(MovieTableHelper.COVER_PHOTO)),
                     data.getString(data.getColumnIndex(MovieTableHelper._ID))));
         }
-        adapterHome.changeCursor(mArrayList);
+        adapterGenre.changeCursor(mArrayList);
 
         pbHome.setVisibility(View.GONE);
-        getPbHomeStart.setVisibility(View.GONE);
         if (data.getCount() == 0) {
             setVisibleText(getString(R.string.no_film_favorite));
         } else
@@ -318,11 +255,12 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
 
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
-        adapterHome.changeCursor(null);
+        adapterGenre.changeCursor(null);
     }
 
     /**
-     * Al click di un film, vengo reindirizzato alla descrizione*/
+     * Al click di un film, vengo reindirizzato alla descrizione
+     */
     @Override
     public void sendDetails(int id, MoviesAdapter.OnItemClickListener onItemClickListener) {
         Intent intent = new Intent(getActivity(), DescriptionActivity.class);
@@ -332,7 +270,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
 
     /**
      * Al long click mi si apre un dialog se voglio aggiungere ai preferiti o rimuovere in caso sia stato già aggiunto
-     * */
+     */
     @Override
     public void longClick(int id, MoviesAdapter.OnItemClickListener onItemClickListener) {
         try {
@@ -340,11 +278,11 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
             if (cursor.moveToNext()) {
                 if (cursor.getInt(cursor.getColumnIndex(FavoriteTableHelper.IS_FAVORITE)) == 0) {
                     DialogFavorite vDialog = new DialogFavorite(getString(R.string.dialogtitleinsert), getString(R.string.dilagotextinsert) + " \"" + cursor.getString(cursor.getColumnIndex(MovieTableHelper.TITLE)) + " \"" + getString(R.string.dilagotextcomum), id, false);
-                    vDialog.setmListener(HomeFragment.this);
+                    vDialog.setmListener(GenereFragment.this);
                     vDialog.show(getChildFragmentManager(), null);
                 } else {
                     DialogFavorite vDialog = new DialogFavorite(getString(R.string.dialogtitleiremove), getString(R.string.dilagotextremove) + " \"" + cursor.getString(cursor.getColumnIndex(MovieTableHelper.TITLE)) + "\" " + getString(R.string.dilagotextcomumfasle), id, true);
-                    vDialog.setmListener(HomeFragment.this);
+                    vDialog.setmListener(GenereFragment.this);
                     vDialog.show(getChildFragmentManager(), null);
                 }
             }
@@ -357,7 +295,8 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
 
     /**
      * Gestione della risposta dell'utente al dialog che compare
-     * Quando aggiungo un film ai preferiti, */
+     * Quando aggiungo un film ai preferiti,
+     */
     @Override
     public void onResponse(boolean aResponse, long aId, Boolean isRemoved) {
         if (aResponse) {
@@ -391,6 +330,10 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         tvHome.setText(getString(R.string.error_zero_film_home));
     }
 
+    public void setText() {
+        tvHome.setVisibility(View.VISIBLE);
+        tvHome.setText(getString(R.string.nofilm));
+    }
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
@@ -411,5 +354,34 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
             listener = (AddOrCreateBadge) context;
         } else
             listener = null;
+    }
+
+    public void onClick(View view) {
+        Cursor dataGenre = (getActivity()).getContentResolver().query(MovieProvider.ALL_GENRE_JOIN_URI, null, GenreTableHelper.TABLE_NAME + "." + GenreTableHelper.ID_GENRE + " = " + view.getId(), null, null);
+        String genre = "";
+        if (dataGenre.getCount() >= 1) {
+            tvHome.setVisibility(View.INVISIBLE);
+            dataGenre.moveToFirst();
+            genre = MovieTableHelper._ID + " = " + dataGenre.getString(dataGenre.getColumnIndex(GenreMovieTableHelper.ID_MOVIE));
+            if (dataGenre.getCount() > 1) {
+                dataGenre.moveToNext();
+                for (; !dataGenre.isAfterLast(); dataGenre.moveToNext()) {
+                    genre = genre + " or " + MovieTableHelper._ID + " = " + dataGenre.getString(dataGenre.getColumnIndex(GenreMovieTableHelper.ID_MOVIE));
+                }
+            }
+            Cursor data = (getActivity()).getContentResolver().query(MovieProvider.MOVIES_URI, null, genre, null, null);
+            List<Movie> mArrayList = new ArrayList<>();
+            for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
+                // The Cursor is now set to the right position
+                mArrayList.add(new Movie(data.getString(data.getColumnIndex(MovieTableHelper.TITLE)), data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION_PHOTO)), data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION)), data.getString(data.getColumnIndex(MovieTableHelper.COVER_PHOTO)), data.getString(data.getColumnIndex(MovieTableHelper._ID))));
+            }
+            adapterGenre.changeCursor(mArrayList);
+            adapterGenre.notifyDataSetChanged();
+        } else {
+            List<Movie> mArrayList = new ArrayList<>();
+            adapterGenre.changeCursor(mArrayList);
+            adapterGenre.notifyDataSetChanged();
+            setText();
+        }
     }
 }
