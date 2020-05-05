@@ -33,7 +33,6 @@ import androidx.loader.content.CursorLoader;
 import androidx.loader.content.Loader;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.themoviemb.EndlessRecyclerViewScrollListener;
