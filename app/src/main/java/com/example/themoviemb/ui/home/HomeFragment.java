@@ -1,5 +1,6 @@
 package com.example.themoviemb.ui.home;
 
+import android.animation.Animator;
 import android.app.Activity;
 import android.app.SearchManager;
 import android.content.ContentValues;
@@ -167,6 +168,28 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
                         adapterHome.changeCursor(mArrayList);
                     }
                 }
+            }
+        });
+        lottieAnimationView.addAnimatorListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                Log.e("Animation:","start");
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                Log.e("Animation:","end");
+                lottieAnimationView.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                Log.e("Animation:","cancel");
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+                Log.e("Animation:","repeat");
             }
         });
         return root;
@@ -361,12 +384,18 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
                 ContentValues cv = new ContentValues();
                 cv.put(FavoriteTableHelper.IS_FAVORITE, 1);
                 getActivity().getContentResolver().update(MovieProvider.FAVORITE_URI, cv, FavoriteTableHelper.ID_MOVIE + " = " + aId, null);
+                lottieAnimationView.setAnimation(R.raw.heart_animated);
+                lottieAnimationView.setVisibility(View.VISIBLE);
                 startAnimation();
                 listener.createOrAddBadge();
             } else {
                 ContentValues cv = new ContentValues();
                 cv.put(FavoriteTableHelper.IS_FAVORITE, 0);
                 getActivity().getContentResolver().update(MovieProvider.FAVORITE_URI, cv, FavoriteTableHelper.ID_MOVIE + " = " + aId, null);
+                lottieAnimationView.setAnimation(R.raw.deleted);
+                lottieAnimationView.setVisibility(View.VISIBLE);
+                startAnimation();
+
             }
         }
     }
