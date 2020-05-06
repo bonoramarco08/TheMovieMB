@@ -60,6 +60,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
 
     private static final int LOADER_ID = 1;
     private static final String SEARCHTEXT = "SEARCHTEXT";
+    private static final String SCROLLSTOP = "ScrollStop";
     private int filmPerRow;
     private WebService webService;
     private RecyclerView rvHome;
@@ -156,16 +157,17 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
      * */
     public View onCreateView(@NonNull final LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-
+        if (savedInstanceState != null) {
+            searchText = savedInstanceState.getString(SEARCHTEXT);
+            search = savedInstanceState.getBoolean(SCROLLSTOP);
+        }
         filmPerRow=(isPortrait())?setPortrait():setLandscape();
         HomeViewModel homeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         setViews(root);
         setRecyclerView(root);
 
-        if (savedInstanceState != null) {
-            searchText = savedInstanceState.getString(SEARCHTEXT);
-        }
+
 
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
 
@@ -458,8 +460,9 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
 
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
-        if (searchText != null && searchText != "")
+        if (searchText != null && searchText != ""){
             outState.putString(SEARCHTEXT, searchText);
+            outState.putBoolean(SCROLLSTOP , search);}
         super.onSaveInstanceState(outState);
     }
 
