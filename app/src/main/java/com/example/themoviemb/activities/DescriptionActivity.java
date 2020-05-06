@@ -49,6 +49,7 @@ public class DescriptionActivity extends AppCompatActivity {
     private boolean isDarkMode;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,7 +90,7 @@ public class DescriptionActivity extends AppCompatActivity {
                         }
                     });
             Cursor genre = getContentResolver().query(MovieProvider.ALL_GENRE_JOIN_URI, null, GenreMovieTableHelper.ID_MOVIE +" = " + idMovie ,null, null);
-           String s =   getString(R.string.genere) + ":<br>";
+            String s =   getString(R.string.genere) + ":<br>";
             for(genre.moveToFirst();!genre.isAfterLast();genre.moveToNext()){
                     s = s +"&#8226;" + genre.getString(genre.getColumnIndex(GenreTableHelper.TEXT_GENRE)) + "<br>";
             }
@@ -111,6 +112,7 @@ public class DescriptionActivity extends AppCompatActivity {
     }
 
 
+    //setta la freccia in base al valore vibrance
     private void setColorImage(long vibrance) {
         if (vibrance >= 50)
             btnBack.setImageResource(R.drawable.left_arrow_black);
