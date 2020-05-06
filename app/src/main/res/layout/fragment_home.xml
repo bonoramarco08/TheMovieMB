@@ -12,6 +12,7 @@
         android:layout_height="0dp"
         android:layout_width="match_parent"
         android:elevation="16dp"
+        app:liftOnScroll="true"
         android:theme="@style/AppTheme"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

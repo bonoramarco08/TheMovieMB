@@ -115,8 +115,7 @@ public class GenereFragment extends Fragment implements LoaderManager.LoaderCall
             linearLayout.addView(chip[i]);
             chip[i].setOnClickListener(this::onClick);
         }
-        horizontalScrollView = root.findViewById(R.id.horizontalScrollView);
-       // horizontalScrollView.onStartNestedScroll(getView(), getView(), 1);
+
         return root;
     }
 
@@ -193,7 +192,6 @@ public class GenereFragment extends Fragment implements LoaderManager.LoaderCall
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         List<Movie> mArrayList = new ArrayList<>();
         for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
-            // The Cursor is now set to the right position
             mArrayList.add(new Movie(data.getString(data.getColumnIndex(MovieTableHelper.TITLE)),
                     data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION_PHOTO)),
                     data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION)),
@@ -327,6 +325,7 @@ public class GenereFragment extends Fragment implements LoaderManager.LoaderCall
                 // The Cursor is now set to the right position
                 mArrayList.add(new Movie(data.getString(data.getColumnIndex(MovieTableHelper.TITLE)), data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION_PHOTO)), data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION)), data.getString(data.getColumnIndex(MovieTableHelper.COVER_PHOTO)), data.getString(data.getColumnIndex(MovieTableHelper._ID))));
             }
+            rvGenre.smoothScrollToPosition(0);
             adapterGenre.changeCursor(mArrayList);
             adapterGenre.notifyDataSetChanged();
         } else {

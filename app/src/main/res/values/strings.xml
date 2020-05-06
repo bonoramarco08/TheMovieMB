@@ -26,4 +26,6 @@
     <string name="descriptoinull">Description not available</string>
     <string name="title_genere">Genre</string>
     <string name="nofilm">Sorry but there isn\'t any film with this genre</string>
+    <string name="search">No films with this title</string>
+    <string name="genere">Genres</string>
 </resources>
