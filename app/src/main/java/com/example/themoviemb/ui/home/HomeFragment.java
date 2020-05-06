@@ -78,25 +78,58 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         @Override
         public void onMoviesFetched(boolean success, Result result, int errorCode, String errorMessage) {
             if (result != null) {
-                for (Movie movie : result.getResult()) {
-                    ContentValues contentValues = new ContentValues();
-                    contentValues.put(MovieTableHelper.TITLE, movie.getTitle());
-                    contentValues.put(MovieTableHelper.COVER_PHOTO, movie.getPosterPath());
-                    contentValues.put(MovieTableHelper.DESCRIPTION, movie.getOverview());
-                    contentValues.put(MovieTableHelper.DESCRIPTION_PHOTO, movie.getBackdropPath());
-                    contentValues.put(MovieTableHelper.ID_FILM, movie.getIdFilm());
-                    Uri r = getActivity().getContentResolver().insert(MovieProvider.MOVIES_URI, contentValues);
-                    long id = Long.parseLong(r.getLastPathSegment());
-                    ContentValues contentValuesFavorite = new ContentValues();
-                    contentValuesFavorite.put(FavoriteTableHelper.ID_MOVIE, id);
-                    contentValuesFavorite.put(FavoriteTableHelper.IS_FAVORITE, 0);
-                    getActivity().getContentResolver().insert(MovieProvider.FAVORITE_URI, contentValuesFavorite);
-                    for (int i = 0 ; i<movie.getGenres().length ; i++){
-                        ContentValues contentValuesGenre = new ContentValues();
-                        contentValuesGenre.put(GenreMovieTableHelper.ID_MOVIE, id);
-                        contentValuesGenre.put(GenreMovieTableHelper.ID_GENRE, movie.getGenres()[i]);
-                        getActivity().getContentResolver().insert(MovieProvider.GENREMOVIE_URI, contentValuesGenre);
+                try {
+                    boolean b = true;
+                    Cursor cursor = (getActivity()).getContentResolver().query(MovieProvider.MOVIES_URI, null, null, null, null);
+                    for (Movie movie : result.getResult()) {
+                        b = true;
+                        for (int y = 0; y < cursor.getCount(); y++) {
+                            cursor.moveToPosition(y);
+                            Log.d("LOGIDC", cursor.getString(cursor.getColumnIndex(MovieTableHelper.ID_FILM)));
+                            Log.d("LOGIDM", movie.getIdFilm());
+                            if (cursor.getString(cursor.getColumnIndex(MovieTableHelper.ID_FILM)).equals(movie.getIdFilm())) {
+                                b = false;
+                                ContentValues contentValues = new ContentValues();
+                                contentValues.put(MovieTableHelper.TITLE, movie.getTitle());
+                                contentValues.put(MovieTableHelper.COVER_PHOTO, movie.getPosterPath());
+                                contentValues.put(MovieTableHelper.DESCRIPTION, movie.getOverview());
+                                contentValues.put(MovieTableHelper.DESCRIPTION_PHOTO, movie.getBackdropPath());
+                                contentValues.put(MovieTableHelper.ID_FILM, movie.getIdFilm());
+                                long id = getActivity().getContentResolver().update(MovieProvider.MOVIES_URI, contentValues, MovieTableHelper.ID_FILM + " = " + movie.getIdFilm(), null);
+                                Cursor c = getActivity().getContentResolver().query(MovieProvider.GENREMOVIE_URI, null, GenreMovieTableHelper.ID_MOVIE + " = " + id, null, null);
+                                c.moveToFirst();
+                                for (int i = 0; i < c.getCount(); i++) {
+                                    ContentValues contentValuesGenre = new ContentValues();
+                                    contentValuesGenre.put(GenreMovieTableHelper.ID_MOVIE, id);
+                                    contentValuesGenre.put(GenreMovieTableHelper.ID_GENRE, movie.getGenres()[i]);
+                                    getActivity().getContentResolver().update(MovieProvider.GENREMOVIE_URI, contentValuesGenre, GenreMovieTableHelper._ID + " = " + c.getString(c.getColumnIndex(GenreMovieTableHelper._ID)), null);
+                                    c.moveToNext();
+                                }
+                                y = cursor.getCount();
+                            }
+                        }
+                        if (b) {
+                            ContentValues contentValues = new ContentValues();
+                            contentValues.put(MovieTableHelper.TITLE, movie.getTitle());
+                            contentValues.put(MovieTableHelper.COVER_PHOTO, movie.getPosterPath());
+                            contentValues.put(MovieTableHelper.DESCRIPTION, movie.getOverview());
+                            contentValues.put(MovieTableHelper.DESCRIPTION_PHOTO, movie.getBackdropPath());
+                            contentValues.put(MovieTableHelper.ID_FILM, movie.getIdFilm());
+                            Uri r = getActivity().getContentResolver().insert(MovieProvider.MOVIES_URI, contentValues);
+                            long id = Long.parseLong(r.getLastPathSegment());
+                            ContentValues contentValuesFavorite = new ContentValues();
+                            contentValuesFavorite.put(FavoriteTableHelper.ID_MOVIE, id);
+                            contentValuesFavorite.put(FavoriteTableHelper.IS_FAVORITE, 0);
+                            getActivity().getContentResolver().insert(MovieProvider.FAVORITE_URI, contentValuesFavorite);
+                            for (int i = 0 ; i<movie.getGenres().length ; i++){
+                                ContentValues contentValuesGenre = new ContentValues();
+                                contentValuesGenre.put(GenreMovieTableHelper.ID_MOVIE, id);
+                                contentValuesGenre.put(GenreMovieTableHelper.ID_GENRE, movie.getGenres()[i]);
+                                getActivity().getContentResolver().insert(MovieProvider.GENREMOVIE_URI, contentValuesGenre);
+                            }
+                        }
                     }
+                } catch (Exception e) {
                 }
             }
         }
@@ -124,12 +157,10 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
                              ViewGroup container, Bundle savedInstanceState) {
 
         filmPerRow=(isPortrait())?setPortrait():setLandscape();
-
         HomeViewModel homeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
         View root = inflater.inflate(R.layout.fragment_home, container, false);
         setViews(root);
         setRecyclerView(root);
-
 
         if (savedInstanceState != null) {
             searchText = savedInstanceState.getString(SEARCHTEXT);
@@ -220,22 +251,38 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         inflater.inflate(R.menu.search_view, menu);
         MenuItem searchItem = menu.findItem(R.id.action_search);
         SearchManager searchManager = (SearchManager) getActivity().getSystemService(Context.SEARCH_SERVICE);
-
         if (searchItem != null) {
             searchView = (SearchView) searchItem.getActionView();
+
         }
         if (searchView != null) {
             searchView.setSearchableInfo(searchManager.getSearchableInfo(getActivity().getComponentName()));
-
+            if(searchText !=null && !searchText.equals("")){
+                searchItem.expandActionView();
+                searchView.setQuery(searchText, false);
+                Cursor data = (getActivity()).getContentResolver().query(MovieProvider.MOVIES_URI, null, MovieTableHelper.TITLE + " LIKE '%" + searchText + "%'", null, null);
+                List<Movie> mArrayList = new ArrayList<>();
+                for(data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
+                    // The Cursor is now set to the right position
+                    mArrayList.add(new Movie(data.getString(data.getColumnIndex(MovieTableHelper.TITLE)),data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION_PHOTO)),data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION)),data.getString(data.getColumnIndex(MovieTableHelper.COVER_PHOTO)),data.getString(data.getColumnIndex(MovieTableHelper._ID))));
+                }
+                search = true;
+                adapterHome.changeCursor(mArrayList);
+            }
             queryTextListener = new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextChange(String newText) {
-                    searchText = newText;
-                    Cursor data = (getActivity()).getContentResolver().query(MovieProvider.JOIN_URI, null, MovieTableHelper.TITLE + " LIKE '%" + newText + "%'", null, null);
+                    if (newText.equals("")) {
+                        search = false;
+                    } else {
+                        search = true;
+                        searchText=newText;
+                    }
+                    Cursor data = (getActivity()).getContentResolver().query(MovieProvider.MOVIES_URI, null, MovieTableHelper.TITLE + " LIKE '%" + newText + "%'", null, null);
                     List<Movie> mArrayList = new ArrayList<>();
-                    for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
+                    for(data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
                         // The Cursor is now set to the right position
-                        mArrayList.add(new Movie(data.getString(data.getColumnIndex(MovieTableHelper.TITLE)), data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION_PHOTO)), data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION)), data.getString(data.getColumnIndex(MovieTableHelper.COVER_PHOTO)), data.getString(data.getColumnIndex(MovieTableHelper._ID))));
+                        mArrayList.add(new Movie(data.getString(data.getColumnIndex(MovieTableHelper.TITLE)),data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION_PHOTO)),data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION)),data.getString(data.getColumnIndex(MovieTableHelper.COVER_PHOTO)),data.getString(data.getColumnIndex(MovieTableHelper._ID))));
                     }
                     adapterHome.changeCursor(mArrayList);
                     return true;
@@ -243,16 +290,10 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
 
                 @Override
                 public boolean onQueryTextSubmit(String query) {
-
                     return true;
                 }
             };
             searchView.setOnQueryTextListener(queryTextListener);
-        }
-        if (searchText != null && !searchText.equals("")) {
-            searchItem.expandActionView();
-            searchView.setQuery(searchText, false);
-            searchView.clearFocus();
         }
         super.onCreateOptionsMenu(menu, inflater);
     }
@@ -293,23 +334,23 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
      * Una volta finito il caricamento...*/
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
-        List<Movie> mArrayList = new ArrayList<>();
-        for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
-            // The Cursor is now set to the right position
-            mArrayList.add(new Movie(data.getString(data.getColumnIndex(MovieTableHelper.TITLE)),
-                    data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION_PHOTO)),
-                    data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION)),
-                    data.getString(data.getColumnIndex(MovieTableHelper.COVER_PHOTO)),
-                    data.getString(data.getColumnIndex(MovieTableHelper._ID))));
-        }
-        adapterHome.changeCursor(mArrayList);
+            List<Movie> mArrayList = new ArrayList<>();
+            for (data.moveToFirst(); !data.isAfterLast(); data.moveToNext()) {
+                // The Cursor is now set to the right position
+                mArrayList.add(new Movie(data.getString(data.getColumnIndex(MovieTableHelper.TITLE)),
+                        data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION_PHOTO)),
+                        data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION)),
+                        data.getString(data.getColumnIndex(MovieTableHelper.COVER_PHOTO)),
+                        data.getString(data.getColumnIndex(MovieTableHelper._ID))));
+            }
+            adapterHome.changeCursor(mArrayList);
 
-        pbHome.setVisibility(View.GONE);
-        getPbHomeStart.setVisibility(View.GONE);
-        if (data.getCount() == 0) {
-            setVisibleText(getString(R.string.no_film_favorite));
-        } else
-            tvHome.setVisibility(View.GONE);
+            pbHome.setVisibility(View.GONE);
+            getPbHomeStart.setVisibility(View.GONE);
+            if (data.getCount() == 0) {
+                setVisibleText(getString(R.string.error_zero_film_home));
+            } else
+                tvHome.setVisibility(View.GONE);
     }
 
     @Override
@@ -347,8 +388,6 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         } catch (NullPointerException e) {
             Log.d("Error", e.getMessage());
         }
-
-
     }
 
     /**

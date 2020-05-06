@@ -8,6 +8,9 @@ import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.Spanned;
+import android.util.Log;
 import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -24,6 +27,8 @@ import com.bumptech.glide.request.target.CustomTarget;
 import com.bumptech.glide.request.transition.Transition;
 import com.example.themoviemb.R;
 import com.example.themoviemb.data.FavoriteTableHelper;
+import com.example.themoviemb.data.GenreMovieTableHelper;
+import com.example.themoviemb.data.GenreTableHelper;
 import com.example.themoviemb.data.MovieProvider;
 import com.example.themoviemb.data.MovieTableHelper;
 
@@ -34,7 +39,7 @@ public class DescriptionActivity extends AppCompatActivity {
 
     private static int idMovie = -1;
     private ImageView descriptionImage;
-    private TextView title, description;
+    private TextView title, description ,generi;
     private ImageButton btnBack;
     private ImageButton btnHeart;
     private Bitmap resourceImageDescription;
@@ -83,6 +88,13 @@ public class DescriptionActivity extends AppCompatActivity {
                             descriptionImage.getViewTreeObserver().removeOnGlobalLayoutListener(this);
                         }
                     });
+            Cursor genre = getContentResolver().query(MovieProvider.ALL_GENRE_JOIN_URI, null, GenreMovieTableHelper.ID_MOVIE +" = " + idMovie ,null, null);
+           String s =   getString(R.string.genere) + ":<br>";
+            for(genre.moveToFirst();!genre.isAfterLast();genre.moveToNext()){
+                    s = s +"&#8226;" + genre.getString(genre.getColumnIndex(GenreTableHelper.TEXT_GENRE)) + "<br>";
+            }
+            Log.d("TAGG", s + genre.getCount());
+            generi.setText(Html.fromHtml(s,1));
             }
         btnHeart.setOnClickListener(view -> {
             onHeartChange();
@@ -156,6 +168,7 @@ public class DescriptionActivity extends AppCompatActivity {
         btnBack = findViewById(R.id.btnBack);
         btnHeart = findViewById(R.id.btnHeart);
         lottieAnimationView = findViewById(R.id.imageProgress);
+        generi = findViewById(R.id.generi);
     }
 
     public void onHeartAppear() {
