@@ -28,5 +28,5 @@
     <string name="nofilm">Sorry but there isn\'t any film with this genre</string>
     <string name="search">No films with this title</string>
     <string name="genere">Genres</string>
-    <string name="error_zero_film_cerca">No film with this title</string>
+    <string name="error_zero_film_cerca">Your research have not returned any result.</string>
 </resources>
