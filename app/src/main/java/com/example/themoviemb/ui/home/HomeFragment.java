@@ -87,8 +87,6 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
                         b = true;
                         for (int y = 0; y < cursor.getCount(); y++) {
                             cursor.moveToPosition(y);
-                            Log.d("LOGIDC", cursor.getString(cursor.getColumnIndex(MovieTableHelper.ID_FILM)));
-                            Log.d("LOGIDM", movie.getIdFilm());
                             if (cursor.getString(cursor.getColumnIndex(MovieTableHelper.ID_FILM)).equals(movie.getIdFilm())) {
                                 b = false;
                                 ContentValues contentValues = new ContentValues();
@@ -298,6 +296,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
                 @Override
                 public boolean onQueryTextChange(String newText) {
                     if (newText.equals("")) {
+                        searchText="";
                         search = false;
                     } else {
                         search = true;
@@ -320,6 +319,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
                 public boolean onQueryTextSubmit(String query) {
                     return true;
                 }
+
             };
             searchView.setOnQueryTextListener(queryTextListener);
         }

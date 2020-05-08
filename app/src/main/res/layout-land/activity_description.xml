@@ -89,7 +89,19 @@
                 app:layout_constraintStart_toStartOf="@id/btnBack"
                 app:layout_constraintTop_toBottomOf="@+id/txtTitle"
                 app:layout_constraintWidth_percent="0.875" />
-
+            <TextView
+                android:id="@+id/generi2"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/genere"
+                android:textColor="@color/colorPrimaryLight"
+                android:textSize="16sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.650"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/txtDescription"
+                app:layout_constraintWidth_percent="0.89" />
             <TextView
                 android:id="@+id/generi"
                 android:layout_width="0dp"
@@ -102,7 +114,7 @@
                 app:layout_constraintHeight_percent="0.20"
                 app:layout_constraintHorizontal_bias="0.400"
                 app:layout_constraintStart_toStartOf="@id/btnBack"
-                app:layout_constraintTop_toBottomOf="@+id/txtDescription"
+                app:layout_constraintTop_toBottomOf="@+id/generi2"
                 app:layout_constraintWidth_percent="0.875" />
             <com.airbnb.lottie.LottieAnimationView
                 android:id="@+id/imageProgress"
