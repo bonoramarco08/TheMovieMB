@@ -59,6 +59,7 @@ import java.util.List;
 public class HomeFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, MoviesAdapter.OnItemClickListener, DialogFavorite.IFavoritDialog, ErrorZeroItem {
 
     private static final int LOADER_ID = 1;
+    private static final String ISNOFILM = "NOFILM";
     private static final String SEARCHTEXT = "SEARCHTEXT";
     private static final String SCROLLSTOP = "ScrollStop";
     private int filmPerRow;
@@ -75,6 +76,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     TextView tvHome;
     private String searchText;
     private Toolbar toolbar;
+    boolean noFIlm = false;
     // codice scrool
     private IWebServer webServerListener =new IWebServer() {
         @Override
@@ -157,15 +159,19 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
      * */
     public View onCreateView(@NonNull final LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
+        View root = inflater.inflate(R.layout.fragment_home, container, false);
+        setViews(root);
         if (savedInstanceState != null) {
             searchText = savedInstanceState.getString(SEARCHTEXT);
             search = savedInstanceState.getBoolean(SCROLLSTOP);
+            noFIlm = savedInstanceState.getBoolean(ISNOFILM);
+            if(noFIlm){
+                    setVisibleText(getString(R.string.error_zero_film_cerca));
+            }
         }
         filmPerRow=(isPortrait())?setPortrait():setLandscape();
         HomeViewModel homeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_home, container, false);
-        setViews(root);
-        setRecyclerView(root);
+         setRecyclerView(root);
 
 
 
@@ -310,6 +316,11 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
                         mArrayList.add(new Movie(data.getString(data.getColumnIndex(MovieTableHelper.TITLE)),data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION_PHOTO)),data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION)),data.getString(data.getColumnIndex(MovieTableHelper.COVER_PHOTO)),data.getString(data.getColumnIndex(MovieTableHelper._ID))));
                     }
                     adapterHome.changeCursor(mArrayList);
+                    if(mArrayList.size() ==0){
+                        noFIlm = true;
+                        noFIlm = true;
+                        setVisibleText(getString(R.string.error_zero_film_cerca));
+                    }
                     return true;
                 }
 
@@ -435,6 +446,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
                 getActivity().getContentResolver().update(MovieProvider.FAVORITE_URI, cv, FavoriteTableHelper.ID_MOVIE + " = " + aId, null);
                 lottieAnimationView.setAnimation(R.raw.deleted);
                 lottieAnimationView.setVisibility(View.VISIBLE);
+                listener.removeBadge();
                 startAnimation();
 
             }
@@ -454,7 +466,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     @Override
     public void setVisibleText(String message) {
         tvHome.setVisibility(View.VISIBLE);
-        tvHome.setText(getString(R.string.error_zero_film_home));
+        tvHome.setText(message);
     }
 
 
@@ -462,7 +474,8 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     public void onSaveInstanceState(@NonNull Bundle outState) {
         if (searchText != null && searchText != ""){
             outState.putString(SEARCHTEXT, searchText);
-            outState.putBoolean(SCROLLSTOP , search);}
+            outState.putBoolean(SCROLLSTOP , search);
+            outState.putBoolean(ISNOFILM , noFIlm);}
         super.onSaveInstanceState(outState);
     }
 
@@ -470,6 +483,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
      * Quando aggiungo un film ai preferiti, si può notare che compare il badge*/
     public interface AddOrCreateBadge {
         void createOrAddBadge();
+        void removeBadge();
     }
 
     public void onAttach(Context context) {

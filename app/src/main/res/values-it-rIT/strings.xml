@@ -29,4 +29,5 @@
     <string name="nofilm">Ci spiace ma non c\'è nessun film di questo genere</string>
     <string name="search">Nessun film con questo titolo</string>
     <string name="genere">Generi</string>
+    <string name="error_zero_film_cerca">Your research have not returned any result.</string>
 </resources>

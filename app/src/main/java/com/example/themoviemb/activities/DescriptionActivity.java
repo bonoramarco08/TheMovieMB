@@ -137,7 +137,6 @@ public class DescriptionActivity extends AppCompatActivity {
                         if (lengthArrow != 0) {
                             long vibrance = sumVibranceImageDescription(resourceImageDescription, btnBack) / lengthArrow;
                             setColorImage(vibrance);
-
                         }
                     }
 

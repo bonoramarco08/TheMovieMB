@@ -264,6 +264,7 @@ public class GenereFragment extends Fragment implements LoaderManager.LoaderCall
                 ContentValues cv = new ContentValues();
                 cv.put(FavoriteTableHelper.IS_FAVORITE, 0);
                 getActivity().getContentResolver().update(MovieProvider.FAVORITE_URI, cv, FavoriteTableHelper.ID_MOVIE + " = " + aId, null);
+                listener.removeBadge();
             }
         }
     }
@@ -293,6 +294,7 @@ public class GenereFragment extends Fragment implements LoaderManager.LoaderCall
      * Quando aggiungo un film ai preferiti, si può notare che compare il badge*/
     public interface AddOrCreateBadge {
         void createOrAddBadge();
+        void removeBadge();
     }
 
     public void onAttach(Context context) {
