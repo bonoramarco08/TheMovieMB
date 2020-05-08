@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
+import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -47,7 +48,7 @@ public class DescriptionActivity extends AppCompatActivity {
     private long vibranceHeart;
     private LottieAnimationView lottieAnimationView;
     private boolean isDarkMode;
-
+    private Bitmap bitmap;
 
 
     @Override

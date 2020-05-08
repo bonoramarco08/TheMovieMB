@@ -1,5 +1,6 @@
 package com.example.themoviemb.ui.favorite;
 
+import android.animation.Animator;
 import android.app.SearchManager;
 import android.content.ContentValues;
 import android.content.Context;
@@ -31,6 +32,7 @@ import androidx.loader.content.Loader;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.themoviemb.R;
 import com.example.themoviemb.activities.DescriptionActivity;
 import com.example.themoviemb.adapters.MoviesAdapter;
@@ -59,6 +61,7 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
     private SearchView searchView = null;
     private SearchView.OnQueryTextListener queryTextListener;
     private TextView error;
+    private LottieAnimationView lottieAnimationView;
     ProgressBar pbFavorite2;
     private String searchText;
 
@@ -79,6 +82,7 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
         pbFavorite2 = root.findViewById(R.id.pbFavorite2);
         rvFavorite = root.findViewById(R.id.rvMovies);
         error = root.findViewById(R.id.errorTextView);
+        lottieAnimationView=root.findViewById(R.id.deleteAppear);
         layoutManagerFavorite = new GridLayoutManager(getContext(), filmPerRow);
 
         rvFavorite.setLayoutManager(layoutManagerFavorite);
@@ -95,6 +99,28 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
         ((AppCompatActivity) getActivity()).setSupportActionBar(toolbar);
         toolbar.setTitle(getString(R.string.title_favorite));
         rvFavorite = root.findViewById(R.id.rvMovies);
+        lottieAnimationView.addAnimatorListener(new Animator.AnimatorListener() {
+            @Override
+            public void onAnimationStart(Animator animation) {
+                Log.e("Animation:","start");
+            }
+
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                Log.e("Animation:","end");
+                lottieAnimationView.setVisibility(View.INVISIBLE);
+            }
+
+            @Override
+            public void onAnimationCancel(Animator animation) {
+                Log.e("Animation:","cancel");
+            }
+
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+                Log.e("Animation:","repeat");
+            }
+        });
         return root;
     }
 
@@ -248,9 +274,19 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
                 cv.put(FavoriteTableHelper.IS_FAVORITE, 0);
                 getActivity().getContentResolver().update(MovieProvider.FAVORITE_URI, cv, FavoriteTableHelper.ID_MOVIE + " = " + aId, null);
                 aggiornaLista();
+                lottieAnimationView.setAnimation(R.raw.deleted);
+                lottieAnimationView.setVisibility(View.VISIBLE);
+                startAnimation();
             }
         }
     }
+
+    private void startAnimation() {
+        lottieAnimationView.playAnimation();
+        lottieAnimationView.setSpeed(1.0F); // How fast does the animation play
+        lottieAnimationView.setProgress(0F); // Starts the animation from 50% of the beginning
+    }
+
     public  interface  RemoveBadgeInterface{
         void deleteBadge();
     }
