@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -64,6 +65,7 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
     private LottieAnimationView lottieAnimationView;
     ProgressBar pbFavorite2;
     private String searchText;
+    private ImageView imageView;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -82,6 +84,7 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
         pbFavorite2 = root.findViewById(R.id.pbFavorite2);
         rvFavorite = root.findViewById(R.id.rvMovies);
         error = root.findViewById(R.id.errorTextView);
+        imageView=root.findViewById(R.id.imageView2);
         lottieAnimationView=root.findViewById(R.id.deleteAppear);
         layoutManagerFavorite = new GridLayoutManager(getContext(), filmPerRow);
 
@@ -212,6 +215,7 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
         pbFavorite2.setVisibility(View.INVISIBLE);
         if (data.getCount() == 0) {
             setVisibleText(getString(R.string.no_film_favorite));
+            imageView.setVisibility(View.VISIBLE);
         }
         listener.deleteBadge();
     }
@@ -266,6 +270,7 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
         adapterFavorite.notifyDataSetChanged();
         if(mArrayList.size() == 0){
             setVisibleText(getString(R.string.no_film_favorite));
+
         }
     }
     @Override
