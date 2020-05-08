@@ -235,6 +235,9 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
         }
         adapterFavorite.changeCursor(mArrayList);
         adapterFavorite.notifyDataSetChanged();
+        if(mArrayList.size() == 0){
+            setVisibleText(getString(R.string.no_film_favorite));
+        }
     }
     @Override
     public void onResponse(boolean aResponse, long aId, Boolean isRemoved) {
