@@ -131,13 +131,6 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
             }
         });
 
-        imageView.getViewTreeObserver().addOnGlobalLayoutListener(
-                () -> {
-                    if (!isDarkMode)
-                        imageView.setImageResource(R.drawable.tecnology);
-                    else if(isDarkMode)
-                        imageView.setImageResource(R.drawable.technology);
-                });
         return root;
     }
 
