@@ -86,6 +86,16 @@ public class HomeActivity extends AppCompatActivity implements FavoriteFragment.
     }
 
     @Override
+    public void removeBadge() {
+        BadgeDrawable badge = navView.getOrCreateBadge(R.id.navigation_favorite);
+        if(badge.getNumber() == 1){
+            navView.removeBadge(R.id.navigation_favorite);
+        }else{
+        badge.setNumber(badge.getNumber() - 1);
+        badge.setVisible(true);}
+    }
+
+    @Override
     public void deleteBadge() {
         navView.removeBadge(R.id.navigation_favorite);
     }

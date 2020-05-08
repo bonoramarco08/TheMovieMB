@@ -153,6 +153,9 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
                         mArrayList.add(new Movie(data.getString(data.getColumnIndex(MovieTableHelper.TITLE)),data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION_PHOTO)),data.getString(data.getColumnIndex(MovieTableHelper.DESCRIPTION)),data.getString(data.getColumnIndex(MovieTableHelper.COVER_PHOTO)),data.getString(data.getColumnIndex(MovieTableHelper._ID))));
                     }
                     adapterFavorite.changeCursor(mArrayList);
+                    if(mArrayList.size() ==0){
+                        setVisibleText(getString(R.string.error_zero_film_cerca));
+                    }
                     return true;
                 }
 
@@ -261,6 +264,9 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
         }
         adapterFavorite.changeCursor(mArrayList);
         adapterFavorite.notifyDataSetChanged();
+        if(mArrayList.size() == 0){
+            setVisibleText(getString(R.string.no_film_favorite));
+        }
     }
     @Override
     public void onResponse(boolean aResponse, long aId, Boolean isRemoved) {

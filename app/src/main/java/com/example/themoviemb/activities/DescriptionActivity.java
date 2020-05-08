@@ -71,7 +71,6 @@ public class DescriptionActivity extends AppCompatActivity {
             onHeartAppear();
             downloadImages(movie);
             isFavorite = movie.getInt(movie.getColumnIndex(FavoriteTableHelper.IS_FAVORITE));
-
             btnBack.setOnClickListener(view -> finish());
             descriptionImage.getViewTreeObserver().addOnGlobalLayoutListener(
                     new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -130,6 +129,7 @@ public class DescriptionActivity extends AppCompatActivity {
                     @Override
                     public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
                         descriptionImage.setImageBitmap(resource);
+                        lottieAnimationView.setVisibility(View.GONE);
                         //al primo giro funziona, ma se riapro la stessa descrizione la seconda volta non mi ritorna i pixel del btnBack
                         //quindi se succede questo, ho creato un viewTreeObserver sotto che si prende le risorse Bitmap dell'immagine
                         resourceImageDescription = resource;
@@ -139,7 +139,6 @@ public class DescriptionActivity extends AppCompatActivity {
                         if (lengthArrow != 0) {
                             long vibrance = sumVibranceImageDescription(resourceImageDescription, btnBack) / lengthArrow;
                             setColorImage(vibrance);
-
                         }
                     }
 
