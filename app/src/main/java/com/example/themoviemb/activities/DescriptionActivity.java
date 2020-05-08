@@ -90,7 +90,7 @@ public class DescriptionActivity extends AppCompatActivity {
                         }
                     });
             Cursor genre = getContentResolver().query(MovieProvider.ALL_GENRE_JOIN_URI, null, GenreMovieTableHelper.ID_MOVIE +" = " + idMovie ,null, null);
-            String s =   getString(R.string.genere) + ":<br>";
+            String s =   "";
             for(genre.moveToFirst();!genre.isAfterLast();genre.moveToNext()){
                     s = s +"&#8226;" + genre.getString(genre.getColumnIndex(GenreTableHelper.TEXT_GENRE)) + "<br>";
             }
