@@ -48,7 +48,7 @@ public class DescriptionActivity extends AppCompatActivity {
     private long vibranceHeart;
     private LottieAnimationView lottieAnimationView;
     private boolean isDarkMode;
-
+    private Bitmap bitmap;
 
 
     @Override
