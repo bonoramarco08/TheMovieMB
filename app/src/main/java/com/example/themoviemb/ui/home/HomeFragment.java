@@ -59,7 +59,6 @@ import java.util.List;
 public class HomeFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>, MoviesAdapter.OnItemClickListener, DialogFavorite.IFavoritDialog, ErrorZeroItem {
 
     private static final int LOADER_ID = 1;
-    private static final String ISNOFILM = "NOFILM";
     private static final String SEARCHTEXT = "SEARCHTEXT";
     private static final String SCROLLSTOP = "ScrollStop";
     private int filmPerRow;
@@ -76,7 +75,6 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
     TextView tvHome;
     private String searchText;
     private Toolbar toolbar;
-    boolean noFIlm = false;
     // codice scrool
     private IWebServer webServerListener =new IWebServer() {
         @Override
@@ -164,10 +162,6 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         if (savedInstanceState != null) {
             searchText = savedInstanceState.getString(SEARCHTEXT);
             search = savedInstanceState.getBoolean(SCROLLSTOP);
-            noFIlm = savedInstanceState.getBoolean(ISNOFILM);
-            if(noFIlm){
-                    setVisibleText(getString(R.string.error_zero_film_cerca));
-            }
         }
         filmPerRow=(isPortrait())?setPortrait():setLandscape();
         HomeViewModel homeViewModel = ViewModelProviders.of(this).get(HomeViewModel.class);
@@ -317,8 +311,6 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
                     }
                     adapterHome.changeCursor(mArrayList);
                     if(mArrayList.size() ==0){
-                        noFIlm = true;
-                        noFIlm = true;
                         setVisibleText(getString(R.string.error_zero_film_cerca));
                     }
                     return true;
@@ -475,7 +467,7 @@ public class HomeFragment extends Fragment implements LoaderManager.LoaderCallba
         if (searchText != null && searchText != ""){
             outState.putString(SEARCHTEXT, searchText);
             outState.putBoolean(SCROLLSTOP , search);
-            outState.putBoolean(ISNOFILM , noFIlm);}
+ }
         super.onSaveInstanceState(outState);
     }
 
