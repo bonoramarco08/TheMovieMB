@@ -66,6 +66,7 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
     ProgressBar pbFavorite2;
     private String searchText;
     private ImageView imageView;
+    private boolean isDarkMode = false;
 
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -85,6 +86,11 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
         rvFavorite = root.findViewById(R.id.rvMovies);
         error = root.findViewById(R.id.errorTextView);
         imageView=root.findViewById(R.id.imageView2);
+        setNightMode();
+        if(isDarkMode){
+            imageView.setImageResource(R.drawable.technology);
+        }
+
         lottieAnimationView=root.findViewById(R.id.deleteAppear);
         layoutManagerFavorite = new GridLayoutManager(getContext(), filmPerRow);
 
@@ -215,7 +221,7 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
         pbFavorite2.setVisibility(View.INVISIBLE);
         if (data.getCount() == 0) {
             setVisibleText(getString(R.string.no_film_favorite));
-            imageView.setVisibility(View.VISIBLE);
+
         }
         listener.deleteBadge();
     }
@@ -251,6 +257,7 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
     public void setVisibleText(String message) {
         error.setText(message);
         error.setVisibility(View.VISIBLE);
+        imageView.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -309,6 +316,20 @@ public class FavoriteFragment extends Fragment implements LoaderManager.LoaderCa
         }
         else
             listener=null;
+    }
+    private void setNightMode(){
+        int nightModeFlags =
+                getContext().getResources().getConfiguration().uiMode &
+                        Configuration.UI_MODE_NIGHT_MASK;
+        switch (nightModeFlags) {
+            case Configuration.UI_MODE_NIGHT_YES:
+                isDarkMode = false;
+                break;
+
+            case Configuration.UI_MODE_NIGHT_NO:
+                isDarkMode = true;
+                break;
+        }
     }
 }
 
